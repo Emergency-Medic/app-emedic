@@ -1,6 +1,11 @@
 import { useFonts } from "expo-font";
 import { Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import SignInScreen from './SignInScreen'
 
+const Stack = createStackNavigator();
 
 export default function Index() {
   useFonts({
@@ -12,17 +17,8 @@ export default function Index() {
     'black': require('.././assets/fonts/Nunito-Black.ttf'),
   })
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text style={{
-        fontFamily: 'regular',
-        fontSize: 18
-      }}>Edit app/index.tsx to edit this screen.</Text>
+    <View>
+      <SignInScreen />
     </View>
   );
 }
