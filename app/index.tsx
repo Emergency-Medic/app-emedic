@@ -10,6 +10,7 @@ import React from "react";
 import Onboarding from "./Onboarding"
 import SignInScreen from './(auth)/SignInScreen'
 import RegisterScreen from './(auth)/RegisterScreen'
+import Quiz from "./Quiz"
 
 const Stack = createStackNavigator(); 
 
@@ -25,7 +26,7 @@ export default function Index() {
   })
   return (
     <View>
-      <MenuAwal />
+      <Quiz />
     </View>
   );
 }
