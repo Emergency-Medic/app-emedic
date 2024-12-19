@@ -5,8 +5,11 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import SignInScreen from './SignInScreen'
 import EmergencyCallScreen from "./EmergencyCallScreen";
+import MenuAwal from "./MenuAwal";
+import React from "react";
+import Onboarding from "./Onboarding"
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator(); 
 
 export default function Index() {
   useFonts({
