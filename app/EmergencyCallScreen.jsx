@@ -85,12 +85,13 @@ const EmergencyCallScreen = () => {
 
 const styles = StyleSheet.create({
   header : {
-    marginTop: 20, 
+    marginTop: 10, 
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: 'White',
     alignItems: 'center',
     padding: 32,
+    gap: 20, 
     // shadowColor: '#000',
     // shadowOffset: { width: 0, height: 2 },
     // shadowOpacity: 0.2,
