@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import SignInScreen from './SignInScreen'
+import EmergencyCallScreen from "./EmergencyCallScreen";
 import MenuAwal from "./MenuAwal";
 import React from "react";
 import Onboarding from "./Onboarding"
