@@ -85,7 +85,7 @@ const EmergencyCallScreen = () => {
 
 const styles = StyleSheet.create({
   header : {
-    marginTop: 10, 
+    marginTop: 20, 
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: 'White',
@@ -114,8 +114,8 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
   name: {
+    fontFamily: 'semibold',
     fontSize: 14,
-    fontWeight: 'semibold',
     color: '#A8201A',
   },
   role: {
