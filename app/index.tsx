@@ -3,10 +3,15 @@ import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+
+import EmergencyCallScreen from "./EmergencyCallScreen";
+import MenuAwal from "./MenuAwal";
+import React from "react";
+import Onboarding from "./Onboarding"
 import SignInScreen from './(auth)/SignInScreen'
 import RegisterScreen from './(auth)/RegisterScreen'
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator(); 
 
 export default function Index() {
   useFonts({
@@ -20,8 +25,7 @@ export default function Index() {
   })
   return (
     <View>
-      <RegisterScreen />
-      {/* <SignInScreen /> */}
+      
     </View>
   );
 }
