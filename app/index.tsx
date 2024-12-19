@@ -4,6 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import SignInScreen from './SignInScreen'
+import React from "react"
+import summaryQuiz from './summaryQuiz'
 
 const Stack = createStackNavigator();
 
@@ -18,7 +20,7 @@ export default function Index() {
   })
   return (
     <View>
-      <SignInScreen />
+        <summaryQuiz />
     </View>
   );
 }
