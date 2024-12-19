@@ -22,7 +22,6 @@ export default function Index() {
   })
   return (
     <View>
-     
     </View>
   );
 }
