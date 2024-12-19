@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
-export default function MenuAwal():JSX.Element {
+const MenuAwal = () =>{
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.touchOpacityLogo}>
@@ -92,18 +92,18 @@ const styles = StyleSheet.create({
       backgroundColor: '#B71C1C', // Warna merah
     },
     textWelcome: {
-        font:'Nunito',
+        fontFamily:'regular',
         fontWeight: 'bold',
         fontSize: 24,
         color: '#B71C1C',
-        marginBottom:'30',
+        marginBottom:30,
     },
 
     doingtext: {
-        font: 'Nunito',
-        marginLeft:'-90',
+        fontFamily:'regular',
+        marginLeft:-90,
         fontSize:16,
-        marginBottom:'20',
+        marginBottom:20,
     },
     card: {
         width: '80%',
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     touchOpacityLogo: {
-        marginBottom: '40',
+        marginBottom: 40,
     },
     cardBelajar: {
         backgroundColor: '#29335C',
@@ -136,14 +136,14 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
     },
     cardImageBelajar: {
-        width: '135',
-        height: '80',
+        width: 135,
+        height: 80,
         marginLeft: 10,
     },
     cardImageAmbulance: {
-        width: '120',
-        height: '80',
-        marginLeft: 10,
+        width: 120,
+        height: 80,
+        marginLeft:10,
     },
 });
 
