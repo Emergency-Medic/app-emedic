@@ -37,7 +37,7 @@ const MenuAwal = () =>{
             <TouchableOpacity style={[styles.card, styles.cardEmergency]}>
                 <View style={styles.cardcontent}>
                     <View>
-                        <Text style={styles.textcontentatas}>Panggilan Darurat</Text>
+                        <Text style={styles.textcontentatas}>PANGGILAN DARURAT</Text>
                         <Text style={styles.textcontentbawah}>Klik disini untuk</Text>
                         <Text style={styles.textcontentbawah}>menghubungi 112</Text>
                     </View>
