@@ -85,11 +85,13 @@ const EmergencyCallScreen = () => {
 
 const styles = StyleSheet.create({
   header : {
+    marginTop: 10, 
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: 'White',
     alignItems: 'center',
     padding: 32,
+    gap: 20, 
     // shadowColor: '#000',
     // shadowOffset: { width: 0, height: 2 },
     // shadowOpacity: 0.2,
@@ -210,7 +212,7 @@ const styles = StyleSheet.create({
     marginBottom: 70,
   },
   buttonContainer: {
-    width: 380, 
+    width: 350, 
     height: 48, 
     flexDirection: 'row',
     alignItems: 'center',
@@ -218,7 +220,7 @@ const styles = StyleSheet.create({
     borderRadius: 30, 
     backgroundColor: '#A8201A', 
     marginLeft: 20,  
-    marginRight: 30, 
+    marginEnd: 30,  
   }, 
   cancelText:{
     color: '#FFF', 
