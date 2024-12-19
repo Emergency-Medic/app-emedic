@@ -58,7 +58,7 @@ export default function SignInScreen() {
                     <Text style= {styles.atau}>atau</Text>
                     <TouchableOpacity style={styles.google} onPress={() => console.log("Masuk dengan Google")}>
                         
-                        <Image source={require('../assets/images/sign in/google.png')} style={styles.googleImg}></Image>
+                        <Image source={require('../../assets/images/sign in/google.png')} style={styles.googleImg}></Image>
                         
                         <Text style={styles.googletxt}>Masuk dengan Google</Text>
                     </TouchableOpacity>

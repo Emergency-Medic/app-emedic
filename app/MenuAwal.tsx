@@ -1,7 +1,9 @@
 import * as React from 'react';
+import { useRouter } from "expo-router";
 import { Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
-const MenuAwal = () =>{
+const MenuAwal = () => {
+    const router = useRouter();
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.touchOpacityLogo}>
@@ -17,7 +19,7 @@ const MenuAwal = () =>{
             <Text style={styles.textWelcome}>Selamat Datang!</Text>
             <Text style={styles.doingtext}>Apa yang ingin anda lakukan?</Text>
             {/* Card 1 */}
-            <TouchableOpacity style={[styles.card, styles.cardBelajar]}>
+            <TouchableOpacity onPress={() => router.push("./Onboarding")} style={[styles.card, styles.cardBelajar]}>
                 <View style={styles.cardcontent}>
                     <View>
                         <Text style={styles.textcontentatas}>BELAJAR</Text>
@@ -34,7 +36,7 @@ const MenuAwal = () =>{
                 </View>
             </TouchableOpacity>
             {/* Card 2 */}
-            <TouchableOpacity style={[styles.card, styles.cardEmergency]}>
+            <TouchableOpacity onPress={() => router.push("./EmergencyCallScreen")} style={[styles.card, styles.cardEmergency]}>
                 <View style={styles.cardcontent}>
                     <View>
                         <Text style={styles.textcontentatas}>Panggilan Darurat</Text>
@@ -104,6 +106,7 @@ const styles = StyleSheet.create({
         marginLeft:-90,
         fontSize:16,
         marginBottom:20,
+        
     },
     card: {
         width: '80%',
