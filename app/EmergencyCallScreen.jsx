@@ -5,8 +5,10 @@ import Entypo from '@expo/vector-icons/Entypo';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Foundation from '@expo/vector-icons/Foundation';
+import { useRouter } from "expo-router";
 
 const EmergencyCallScreen = () => {
+  const router = useRouter();
   return(
     <View style={styles.container}> 
       <View style={styles.header}>
@@ -70,7 +72,7 @@ const EmergencyCallScreen = () => {
         Penekanan tombol hanya dipergunakan untuk situasi darurat seperti A, B, C, dan D.
       </Text>
       {/* Cancel Button */}
-      <TouchableOpacity style={styles.buttonContainer}>
+      <TouchableOpacity onPress={() => router.push('./MenuAwal')} style={styles.buttonContainer}>
         <Text style={styles.cancelText}> 
           Batal
         </Text>

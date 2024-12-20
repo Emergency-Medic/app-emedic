@@ -1,14 +1,18 @@
 import React, {useState} from 'react'
+import { useRouter } from "expo-router";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native'
+import BackButton from '@/components/BackButton'
+import { Colors } from '@/constants/Colors';
 
 export default function SignInScreen() {
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-
+    const router = useRouter();
     return (
         <ScrollView style={styles.allwrap}>
             <View style={styles.container}>
+                <BackButton color='white'/>
                 <Text style={styles.title}>Masuk</Text>
             </View>
             <View style={styles.wrapper}>
@@ -48,7 +52,7 @@ export default function SignInScreen() {
                         <Text style={styles.belumAda}>
                             Belum punya akun? {" "}
                         </Text>
-                        <TouchableOpacity onPress={() => console.log("Pindah ke register page")}>
+                        <TouchableOpacity onPress={() => router.push('./RegisterScreen')}>
                             <Text style={styles.daftarskrg} >Daftar sekarang</Text>
                         </TouchableOpacity>
                     </View>
@@ -74,9 +78,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF'
     },
     container: {
+        flexDirection: 'row',
         padding: 20,
         justifyContent: 'center',
-        backgroundColor: '#A8201A',
+        backgroundColor: Colors.red,
         width: '100%',
         alignItems: 'center'
     },
