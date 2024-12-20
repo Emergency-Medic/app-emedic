@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import { useRouter } from "expo-router";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native'
 import BackButton from '@/components/BackButton'
+import { Colors } from '@/constants/Colors';
 
 export default function SignInScreen() {
 
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         padding: 20,
         justifyContent: 'center',
-        backgroundColor: '#A8201A',
+        backgroundColor: Colors.red,
         width: '100%',
         alignItems: 'center'
     },

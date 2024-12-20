@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useRouter } from "expo-router";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native'
 import BackButton from '@/components/BackButton'
+import { StatusBar } from 'expo-status-bar';
 export default function RegisterScreen() {
     const [namaDepan, setNamaDepan] = useState('')
     const [namaBelakang, setNamaBelakang] = useState('')
@@ -13,6 +14,7 @@ export default function RegisterScreen() {
 
     return (
         <ScrollView style={styles.allwrap}>
+            <StatusBar backgroundColor='#A8201A'/>
             <View style={styles.container}>
                 <BackButton color='white'/>
                 <Text style={styles.title}>Daftar</Text>
