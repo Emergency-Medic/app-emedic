@@ -8,7 +8,7 @@ import Foundation from '@expo/vector-icons/Foundation';
 
 const EmergencyCallScreen = () => {
   return(
-    <View> 
+    <View style={styles.container}> 
       <View style={styles.header}>
         {/* Profile */}
         <View style={styles.profileSection}>
@@ -85,7 +85,7 @@ const EmergencyCallScreen = () => {
 
 const styles = StyleSheet.create({
   header : {
-    marginTop: 10, 
+    marginTop: 20, 
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: 'White',
@@ -114,8 +114,8 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
   name: {
+    fontFamily: 'semibold',
     fontSize: 14,
-    fontWeight: 'semibold',
     color: '#A8201A',
   },
   role: {
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     alignItems: 'left',
     justifyContent: 'left', 
     textAlign: 'left',
-    marginLeft: 20, 
+    marginLeft: 25, 
     marginBottom: 8, 
     padding: 8,
   },
@@ -207,8 +207,8 @@ const styles = StyleSheet.create({
     color: '#29335C',
     fontWeight: 'semibold', 
     fontSize: 12, 
-    marginLeft: 30, 
-    marginRight: 30, 
+    marginLeft: 25, 
+    marginRight: 25, 
     marginBottom: 70,
   },
   buttonContainer: {
@@ -219,8 +219,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 30, 
     backgroundColor: '#A8201A', 
-    marginLeft: 20,  
-    marginEnd: 30,  
+    marginLeft: 25,  
+    marginRight: 25,  
   }, 
   cancelText:{
     color: '#FFF', 

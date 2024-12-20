@@ -21,12 +21,11 @@ const MenuAwal = () => {
             {/* Card 1 */}
             <TouchableOpacity onPress={() => router.push("./Onboarding")} style={[styles.card, styles.cardBelajar]}>
                 <View style={styles.cardcontent}>
-                    <View>
+                    <View style={styles.textcard}>
                         <Text style={styles.textcontentatas}>BELAJAR</Text>
-                        <Text style={styles.textcontentbawah}>Klik disini untuk belajar</Text>
-                        <Text style={styles.textcontentbawah}>mengatasi situasi darurat</Text>
+                        <Text style={styles.textcontentbawah}>Klik disini untuk belajar mengatasi situasi darurat</Text>
                     </View>
-                    <View>
+                    <View style={styles.imagecard}>
                         <Image
                             source={require('@/assets/images/GambarBelajar.png')}
                             style={styles.cardImageBelajar}
@@ -38,12 +37,11 @@ const MenuAwal = () => {
             {/* Card 2 */}
             <TouchableOpacity onPress={() => router.push("./EmergencyCallScreen")} style={[styles.card, styles.cardEmergency]}>
                 <View style={styles.cardcontent}>
-                    <View>
-                        <Text style={styles.textcontentatas}>Panggilan Darurat</Text>
-                        <Text style={styles.textcontentbawah}>Klik disini untuk</Text>
-                        <Text style={styles.textcontentbawah}>menghubungi 112</Text>
+                    <View style={styles.textcard}>
+                        <Text style={styles.textcontentatas}>DARURAT</Text>
+                        <Text style={styles.textcontentbawah}>Klik disini untuk menghubungi 112</Text>
                     </View>
-                    <View>
+                    <View style={styles.imagecard}>
                         <Image
                             source={require('@/assets/images/GambarAmbulance.png')}
                             style={styles.cardImageAmbulance}
@@ -88,10 +86,10 @@ const styles = StyleSheet.create({
     },
     circle: {
         zIndex:-1,
-      width: 100, // Lebar lingkaran
-      height: 100, // Tinggi lingkaran
-      borderRadius: 50, // Setengah dari width/height untuk membuat lingkaran
-      backgroundColor: '#B71C1C', // Warna merah
+        width: 100, // Lebar lingkaran
+        height: 100, // Tinggi lingkaran
+        borderRadius: 50, // Setengah dari width/height untuk membuat lingkaran
+        backgroundColor: '#B71C1C', // Warna merah
     },
     textWelcome: {
         fontFamily:'regular',
@@ -100,13 +98,11 @@ const styles = StyleSheet.create({
         color: '#B71C1C',
         marginBottom:30,
     },
-
     doingtext: {
         fontFamily:'regular',
         marginLeft:-90,
         fontSize:16,
         marginBottom:20,
-        
     },
     card: {
         width: '80%',
@@ -128,15 +124,22 @@ const styles = StyleSheet.create({
         backgroundColor: '#A8201A',
     },
     cardcontent: {
+        width:'100%',
+        height:'100%',
         flexDirection: 'row',
     },
     textcontentatas: {
         color: '#FFFFFF',
         fontSize: 20,
         marginBottom: 15,
+        textAlign: 'left',
+        fontWeight:'bold',
     },
     textcontentbawah: {
         color: '#FFFFFF',
+        fontSize: 15,
+        marginBottom: 15,
+        textAlign: 'left',
     },
     cardImageBelajar: {
         width: 135,
@@ -148,6 +151,18 @@ const styles = StyleSheet.create({
         height: 80,
         marginLeft:10,
     },
+    textcard: {
+        width:'50%',
+        height: '100%',
+        justifyContent:"center",
+        textAlign:"left",
+    },
+    imagecard: {
+        width:'50%',
+        height: '100%',
+        justifyContent:"center",
+        alignItems:"center",
+    }
 });
 
 export default MenuAwal;
