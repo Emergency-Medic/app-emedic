@@ -26,6 +26,7 @@ export default function Index() {
   return (
     <View>
       <MenuAwal />
+      <MenuAwal/>
     </View>
   );
 }
