@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   buttonText: {
       color: '#FFFFFF',
       fontSize: 20,
-      fontWeight: 'semibold'
+      fontFamily: 'semibold'
   },
   belumwrap: {
       width: '100%',
