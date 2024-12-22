@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import { useRouter } from "expo-router";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native'
 import BackButton from '@/components/BackButton'
+import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
 
 export default function SignInScreen() {
@@ -11,6 +12,7 @@ export default function SignInScreen() {
     const router = useRouter();
     return (
         <ScrollView style={styles.allwrap}>
+            <StatusBar backgroundColor={Colors.red} translucent={false}/>
             <View style={styles.container}>
                 <BackButton color='white'/>
                 <Text style={styles.title}>Masuk</Text>
@@ -38,7 +40,7 @@ export default function SignInScreen() {
                         
                         />
                         <View style={styles.forgotPass}>
-                            <TouchableOpacity onPress={() => console.log("Lupa kata sandi")} >
+                            <TouchableOpacity onPress={() => router.push('./ForgotPass')} >
                                 <Text style={styles.forgotPassTxt}>Lupa Kata Sandi?</Text>
                             </TouchableOpacity>
                         </View>

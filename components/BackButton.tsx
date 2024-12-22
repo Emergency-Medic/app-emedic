@@ -6,9 +6,10 @@ import { useRouter } from "expo-router";
 interface BackButtonProps {
   color?: string; // Warna teks dan ikon (default: "black")
   onPress?: () => void; // Aksi tambahan (opsional)
+  top?: number;
 }
 
-const BackButton: React.FC<BackButtonProps> = ({ color = "black", onPress }) => {
+const BackButton: React.FC<BackButtonProps> = ({ color = "black", onPress, top }) => {
   const router = useRouter();
 
   const handlePress = () => {
@@ -27,7 +28,7 @@ const BackButton: React.FC<BackButtonProps> = ({ color = "black", onPress }) => 
         alignItems: "center",
         position: 'absolute',
         left: 25,
-        // top: 40
+        top
         // padding: 10,
       }}
     >
