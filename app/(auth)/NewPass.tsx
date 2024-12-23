@@ -37,7 +37,7 @@ export default function NewPass() {
             secureTextEntry={true}
             />
         </View>
-        <TouchableOpacity style={styles.submit} onPress={() => router.push('./ForgotPassOTP')}>
+        <TouchableOpacity style={styles.submit} onPress={() => router.push('./SignInScreen')}>
           <Text style={styles.buttonText} >Konfirmasi</Text>
         </TouchableOpacity>
     </View>
