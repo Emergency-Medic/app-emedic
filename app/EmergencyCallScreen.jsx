@@ -12,7 +12,7 @@ const EmergencyCallScreen = () => {
   const router = useRouter();
   return(
     <View style={styles.container}> 
-    <StatusBar style='dark'/>
+    <StatusBar style='dark' translucent={true}/>
       <View style={styles.header}>
         {/* Profile */}
         <View style={styles.profileSection}>
