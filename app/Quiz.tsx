@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Image, View, Text, StyleSheet, ImageBackground, TouchableOpacity, FlatList } from 'react-native';
 import Swiper from 'react-native-swiper';
 import { router, useRouter } from "expo-router";
+import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import * as Progress from 'react-native-progress';
 
@@ -73,6 +74,7 @@ const Quiz = () => {
     return (
       
       <View style={styles.container}>
+        <StatusBar style='dark'/>
         <Text style={styles.progressText}>
         Soal {currentQuestionIndex + 1} / {totalQuestions}
         </Text>
@@ -85,7 +87,6 @@ const Quiz = () => {
       
       
         <View style={styles.navigationButtons2}>
-          <Text>QUIZ</Text>
             <TouchableOpacity style={styles.skipButton}>
                 <Text style={styles.skipText}>Skip {'>'}{'>'}</Text>
             </TouchableOpacity>
