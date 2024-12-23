@@ -1,11 +1,12 @@
-import React from "react";
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native'; 
+import React, {useState} from "react";
+import {Alert, Modal, View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native'; 
+import { useRouter } from "expo-router";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Foundation from '@expo/vector-icons/Foundation';
-import { useRouter } from "expo-router";
+
 
 const EmergencyCallScreen = () => {
   const router = useRouter();
@@ -82,6 +83,12 @@ const EmergencyCallScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  conitainer: {
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: '#FFFFFF',
+  },
   header : {
     marginTop: 20, 
     flexDirection: 'row',
@@ -186,10 +193,10 @@ const styles = StyleSheet.create({
   },
   warningContainer: {
     flexDirection: 'row',
-    alignItems: 'left',
-    justifyContent: 'left', 
+    alignItems: 'center',
+    justifyContent: 'center', 
     textAlign: 'left',
-    marginLeft: 25, 
+    marginLeft:30, 
     marginBottom: 8, 
     padding: 8,
   },
@@ -205,20 +212,16 @@ const styles = StyleSheet.create({
     color: '#29335C',
     fontFamily: 'semibold',
     fontSize: 12, 
-    marginLeft: 25, 
-    marginRight: 25, 
+    marginLeft: 35, 
+    marginRight: 35, 
     marginBottom: 70,
+    gap: 35,
   },
-  buttonContainer: {
-    width: 350, 
+  buttonContainer: { 
+    width: 300, 
     height: 48, 
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
     borderRadius: 30, 
-    backgroundColor: '#A8201A', 
-    marginLeft: 25,  
-    marginRight: 25,  
+    backgroundColor: '#A8201A',  
   }, 
   cancelText:{
     color: '#FFF', 
