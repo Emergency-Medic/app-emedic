@@ -6,11 +6,13 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Foundation from '@expo/vector-icons/Foundation';
 import { useRouter } from "expo-router";
+import { StatusBar } from 'expo-status-bar';
 
 const EmergencyCallScreen = () => {
   const router = useRouter();
   return(
     <View style={styles.container}> 
+    <StatusBar style='dark'/>
       <View style={styles.header}>
         {/* Profile */}
         <View style={styles.profileSection}>
