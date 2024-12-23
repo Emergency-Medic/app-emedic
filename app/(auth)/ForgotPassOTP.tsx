@@ -2,12 +2,12 @@ import { View, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { Colors } from '@/constants/Colors';
 import BackButton from '@/components/BackButton'
 import { useRouter } from "expo-router";
+import OtpTextInput from 'react-native-text-input-otp'
 import React, { useState } from "react";
 
 function ForgotPassOTP() {
   const router = useRouter();
-  const [otp, setOtp] = useState(["", "", "", ""]); // Untuk menyimpan nilai input OTP
-  const otpLength = 4
+  const [otp, setOtp] = useState(''); 
   
   return (
     <View style={styles.allwrap}>
@@ -17,7 +17,14 @@ function ForgotPassOTP() {
           Silakan masukkan kode OTP yang telah dikirimkan melalui email <Text style={styles.bold}>youremail@gmail.com</Text>
         </Text>
         <View style={styles.otpwrap}>
-          
+        <OtpTextInput 
+          otp={ otp }
+          setOtp={ setOtp }
+          digits={4}
+          style={styles.otp}
+          fontStyle={{ fontSize: 20, fontfamily: 'regular', color: Colors.black }}
+          focusedStyle={{ borderColor: Colors.red, borderBottomWidth: 2 }} 
+/>
         </View>
         <TouchableOpacity style={styles.submit} onPress={() => router.push('./NewPass')}>
           <Text style={styles.buttonText}>Verifikasi Kode OTP</Text>
@@ -48,7 +55,17 @@ const styles = StyleSheet.create({
       fontFamily: 'regular'
     },
     otpwrap: {
-
+      marginHorizontal: 44,
+    },
+    otp: {
+      borderWidth: 1,
+      borderColor: Colors.grey,
+      width: 54,
+      height: 56,
+      borderRadius: 8,
+      alignItems: 'center',
+      justifyContent: 'center'
+      // gap: 20
     },
     submit: {
       marginHorizontal: 25,

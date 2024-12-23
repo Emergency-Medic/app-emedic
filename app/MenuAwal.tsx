@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { useRouter } from "expo-router";
+import { StatusBar } from 'expo-status-bar';
 import { Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
 const MenuAwal = () => {
     const router = useRouter();
     return (
         <View style={styles.container}>
+            <StatusBar style='dark'/>
             <TouchableOpacity style={styles.touchOpacityLogo}>
               <View style={styles.containerlogo}>
                     <Image

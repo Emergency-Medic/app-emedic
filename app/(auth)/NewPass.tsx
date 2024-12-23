@@ -2,8 +2,6 @@ import { View, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-nativ
 import { Colors } from '@/constants/Colors';
 import React, { useState } from 'react'
 import BackButton from '@/components/BackButton'
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouter } from "expo-router";
 
 export default function NewPass() {
@@ -37,7 +35,7 @@ export default function NewPass() {
             secureTextEntry={true}
             />
         </View>
-        <TouchableOpacity style={styles.submit} onPress={() => router.push('./ForgotPassOTP')}>
+        <TouchableOpacity style={styles.submit} onPress={() => router.push('./SignInScreen')}>
           <Text style={styles.buttonText} >Konfirmasi</Text>
         </TouchableOpacity>
     </View>
