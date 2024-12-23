@@ -1,11 +1,12 @@
 import React, { useRef } from 'react';
 import { Image, View, Text, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
 import Swiper from 'react-native-swiper';
+import { useRouter } from "expo-router";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const OnboardingScreen = () => {
   const swiperRef = useRef(null);
-
+  const router = useRouter();
   return (
     <View style={styles.container}>
         <Swiper
@@ -28,7 +29,7 @@ const OnboardingScreen = () => {
             </ImageBackground>
 
             <View style={styles.navigationButtons2}>
-            <TouchableOpacity style={styles.skipButton}>
+            <TouchableOpacity onPress={() => router.push("./(auth)/SignInScreen")} style={styles.skipButton}>
                 <Text style={styles.skipText}>Skip {'>'}{'>'}</Text>
             </TouchableOpacity>
             </View>
@@ -71,7 +72,7 @@ const OnboardingScreen = () => {
             </ImageBackground>
 
             <View style={styles.navigationButtons2}>
-            <TouchableOpacity style={styles.skipButton}>
+            <TouchableOpacity onPress={() => router.push("./(auth)/SignInScreen")} style={styles.skipButton}>
                 <Text style={styles.skipText}>Skip {'>'}{'>'}</Text>
             </TouchableOpacity>
             </View>
@@ -103,7 +104,7 @@ const OnboardingScreen = () => {
             </ImageBackground>
 
             <View style={styles.navigationButtons2}>
-            <TouchableOpacity style={styles.skipButton}>
+            <TouchableOpacity onPress={() => router.push("./(auth)/SignInScreen")}  style={styles.skipButton}>
                 <Text style={styles.skipText}>Skip {'>'}{'>'}</Text>
             </TouchableOpacity>
             </View>
@@ -136,7 +137,7 @@ const OnboardingScreen = () => {
             </ImageBackground>
 
             <View style={styles.navigationButtons2}>
-            <TouchableOpacity style={styles.skipButton}>
+            <TouchableOpacity onPress={() => router.push("./(auth)/SignInScreen")}  style={styles.skipButton}>
                 <Text style={styles.skipText}>Skip {'>'}{'>'}</Text>
             </TouchableOpacity>
             </View>
@@ -148,10 +149,10 @@ const OnboardingScreen = () => {
             </Text>
 
             {/* Tambahkan Tombol Sign Up dan Log In */}
-            <TouchableOpacity style={styles.signUpButton}>
+            <TouchableOpacity onPress={() => router.push("./(auth)/RegisterScreen")}  style={styles.signUpButton}>
                 <Text style={styles.buttonTextWhite}>Sign Up</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.logInButton}>
+            <TouchableOpacity onPress={() => router.push("./(auth)/SignInScreen")}  style={styles.logInButton}>
                 <Text style={styles.buttonTextWhite}>Log In</Text>
             </TouchableOpacity>
             </View>
@@ -170,13 +171,13 @@ const OnboardingScreen = () => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        height:'100%',
-        width:'100%',
-        justifyContent:'center',
-        alignItems:'center',
-        backgroundColor: '#ffffff',
-    },
+  container: {
+      height:'100%',
+      width:'100%',
+      justifyContent:'center',
+      alignItems:'center',
+      backgroundColor: '#ffffff',
+  },
   slide: {
     flex: 1,
     justifyContent: 'center',
@@ -220,6 +221,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 28,
     fontWeight: 'bold',
+    fontFamily: 'extrabold'
   },
   title: {
     textAlign:'center',
@@ -227,12 +229,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#fff',
     marginBottom: 10,
+    fontFamily: 'bold'
   },
   description: {
     textAlign:'center',
     fontSize: 14,
     color: '#fff',
     lineHeight: 20,
+    fontFamily: 'regular'
   },
   skipButton: {
     position: 'absolute',
@@ -242,6 +246,7 @@ const styles = StyleSheet.create({
   skipText: {
     fontSize: 13,
     color: '#fff',
+    fontFamily: 'semibold'
   },
   dotStyle: {
     backgroundColor: '#fff',
@@ -258,7 +263,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   navigationButtons: {
-    
     flexDirection: 'row',
     position: 'absolute',
     bottom: 50,
@@ -326,6 +330,7 @@ const styles = StyleSheet.create({
   },
   buttonTextWhite: {
     color: '#fff',
+    fontFamily: 'semibold',
   },
 });
 

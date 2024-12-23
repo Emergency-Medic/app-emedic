@@ -1,7 +1,9 @@
 import * as React from 'react';
+import { useRouter } from "expo-router";
 import { Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
-export default function MenuAwal():JSX.Element {
+const MenuAwal = () => {
+    const router = useRouter();
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.touchOpacityLogo}>
@@ -17,14 +19,13 @@ export default function MenuAwal():JSX.Element {
             <Text style={styles.textWelcome}>Selamat Datang!</Text>
             <Text style={styles.doingtext}>Apa yang ingin anda lakukan?</Text>
             {/* Card 1 */}
-            <TouchableOpacity style={[styles.card, styles.cardBelajar]}>
+            <TouchableOpacity onPress={() => router.push("./Onboarding")} style={[styles.card, styles.cardBelajar]}>
                 <View style={styles.cardcontent}>
-                    <View>
+                    <View style={styles.textcard}>
                         <Text style={styles.textcontentatas}>BELAJAR</Text>
-                        <Text style={styles.textcontentbawah}>Klik disini untuk belajar</Text>
-                        <Text style={styles.textcontentbawah}>mengatasi situasi darurat</Text>
+                        <Text style={styles.textcontentbawah}>Klik disini untuk belajar mengatasi situasi darurat</Text>
                     </View>
-                    <View>
+                    <View style={styles.imagecard}>
                         <Image
                             source={require('@/assets/images/GambarBelajar.png')}
                             style={styles.cardImageBelajar}
@@ -34,14 +35,13 @@ export default function MenuAwal():JSX.Element {
                 </View>
             </TouchableOpacity>
             {/* Card 2 */}
-            <TouchableOpacity style={[styles.card, styles.cardEmergency]}>
+            <TouchableOpacity onPress={() => router.push("./EmergencyCallScreen")} style={[styles.card, styles.cardEmergency]}>
                 <View style={styles.cardcontent}>
-                    <View>
-                        <Text style={styles.textcontentatas}>Panggilan Darurat</Text>
-                        <Text style={styles.textcontentbawah}>Klik disini untuk</Text>
-                        <Text style={styles.textcontentbawah}>menghubungi 112</Text>
+                    <View style={styles.textcard}>
+                        <Text style={styles.textcontentatas}>DARURAT</Text>
+                        <Text style={styles.textcontentbawah}>Klik disini untuk menghubungi 112</Text>
                     </View>
-                    <View>
+                    <View style={styles.imagecard}>
                         <Image
                             source={require('@/assets/images/GambarAmbulance.png')}
                             style={styles.cardImageAmbulance}
@@ -86,24 +86,23 @@ const styles = StyleSheet.create({
     },
     circle: {
         zIndex:-1,
-      width: 100, // Lebar lingkaran
-      height: 100, // Tinggi lingkaran
-      borderRadius: 50, // Setengah dari width/height untuk membuat lingkaran
-      backgroundColor: '#B71C1C', // Warna merah
+        width: 100, // Lebar lingkaran
+        height: 100, // Tinggi lingkaran
+        borderRadius: 50, // Setengah dari width/height untuk membuat lingkaran
+        backgroundColor: '#B71C1C', // Warna merah
     },
     textWelcome: {
-        font:'Nunito',
+        fontFamily:'regular',
         fontWeight: 'bold',
         fontSize: 24,
         color: '#B71C1C',
-        marginBottom:'30',
+        marginBottom:30,
     },
-
     doingtext: {
-        font: 'Nunito',
-        marginLeft:'-90',
+        fontFamily:'regular',
+        marginLeft:-90,
         fontSize:16,
-        marginBottom:'20',
+        marginBottom:20,
     },
     card: {
         width: '80%',
@@ -116,7 +115,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     touchOpacityLogo: {
-        marginBottom: '40',
+        marginBottom: 40,
     },
     cardBelajar: {
         backgroundColor: '#29335C',
@@ -125,26 +124,45 @@ const styles = StyleSheet.create({
         backgroundColor: '#A8201A',
     },
     cardcontent: {
+        width:'100%',
+        height:'100%',
         flexDirection: 'row',
     },
     textcontentatas: {
         color: '#FFFFFF',
         fontSize: 20,
         marginBottom: 15,
+        textAlign: 'left',
+        fontWeight:'bold',
     },
     textcontentbawah: {
         color: '#FFFFFF',
+        fontSize: 15,
+        marginBottom: 15,
+        textAlign: 'left',
     },
     cardImageBelajar: {
-        width: '135',
-        height: '80',
+        width: 135,
+        height: 80,
         marginLeft: 10,
     },
     cardImageAmbulance: {
-        width: '120',
-        height: '80',
-        marginLeft: 10,
+        width: 120,
+        height: 80,
+        marginLeft:10,
     },
+    textcard: {
+        width:'50%',
+        height: '100%',
+        justifyContent:"center",
+        textAlign:"left",
+    },
+    imagecard: {
+        width:'50%',
+        height: '100%',
+        justifyContent:"center",
+        alignItems:"center",
+    }
 });
 
 export default MenuAwal;
