@@ -26,8 +26,8 @@ export default function Index() {
   })
   return (
     <View>
-      <Quiz />
-      {/* <MenuAwal /> */}
+      {/* <Quiz /> */}
+      <MenuAwal />
     </View>
   );
 }

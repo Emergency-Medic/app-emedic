@@ -8,7 +8,7 @@ import Foundation from '@expo/vector-icons/Foundation';
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 
-const EmergencyCallScreen = () => {
+const Emergency = () => {
   const router = useRouter();
   return(
     <View style={styles.container}> 
@@ -74,7 +74,7 @@ const EmergencyCallScreen = () => {
         Penekanan tombol hanya dipergunakan untuk situasi darurat seperti A, B, C, dan D.
       </Text>
       {/* Cancel Button */}
-      <TouchableOpacity onPress={() => router.back()} style={styles.buttonContainer}>
+      <TouchableOpacity onPress={() => router.push('./MenuAwal')} style={styles.buttonContainer}>
         <Text style={styles.cancelText}> 
           Batal
         </Text>
@@ -98,6 +98,9 @@ const styles = StyleSheet.create({
     // shadowRadius: 2,
     // elevation: 4,
   }, 
+  container: {
+
+  },
   profileSection: {
     flexDirection: 'row', 
     alignItems: 'center',
@@ -229,4 +232,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default EmergencyCallScreen; 
+export default Emergency; 
