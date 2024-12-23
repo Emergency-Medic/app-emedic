@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { Image, View, Text, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
 import Swiper from 'react-native-swiper';
 import { useRouter } from "expo-router";
+
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const OnboardingScreen = () => {
@@ -220,18 +221,19 @@ const styles = StyleSheet.create({
     color: '#fff',
     textAlign: 'center',
     fontSize: 28,
-    fontWeight: 'bold',
+    fontFamily: 'extrabold'
   },
   title: {
     textAlign:'center',
     fontSize: 25,
-    fontWeight: '500',
+    fontFamily: 'bold',
     color: '#fff',
     marginBottom: 10,
   },
   description: {
     textAlign:'center',
     fontSize: 14,
+    fontFamily: 'regular',
     color: '#fff',
     lineHeight: 20,
   },
@@ -242,6 +244,7 @@ const styles = StyleSheet.create({
   },
   skipText: {
     fontSize: 13,
+    fontFamily: 'light',
     color: '#fff',
   },
   dotStyle: {
@@ -309,7 +312,8 @@ const styles = StyleSheet.create({
     textAlign:'center',
     color: '#A8201A',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '900',
+    fontFamily: 'extrabold'
   },
   signUpButton: {
     backgroundColor: '#A8201A', // Warna tombol Sign Up
@@ -327,6 +331,7 @@ const styles = StyleSheet.create({
   },
   buttonTextWhite: {
     color: '#fff',
+    fontFamily: 'bold'
   },
 });
 

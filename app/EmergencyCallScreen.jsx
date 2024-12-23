@@ -5,10 +5,14 @@ import Entypo from '@expo/vector-icons/Entypo';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Foundation from '@expo/vector-icons/Foundation';
+import { useRouter } from "expo-router";
+import { StatusBar } from 'expo-status-bar';
 
 const EmergencyCallScreen = () => {
+  const router = useRouter();
   return(
     <View style={styles.container}> 
+    <StatusBar style='dark'/>
       <View style={styles.header}>
         {/* Profile */}
         <View style={styles.profileSection}>
@@ -54,10 +58,6 @@ const EmergencyCallScreen = () => {
         <TouchableOpacity style={styles.emergencyButton}> 
           <View style={styles.circle}> 
             <Foundation name="telephone" size={100} color="#FFFFFF" style={styles.callIcon} />
-            {/* <Image 
-              source={require('@/Users/jelvi/OneDrive/Documents/GitHub/app-emedic/assets/images/Group 98.png')} 
-              style={styles.Image}/ 
-            > */}
           </View>
         </TouchableOpacity>
       </View>
@@ -74,7 +74,7 @@ const EmergencyCallScreen = () => {
         Penekanan tombol hanya dipergunakan untuk situasi darurat seperti A, B, C, dan D.
       </Text>
       {/* Cancel Button */}
-      <TouchableOpacity style={styles.buttonContainer}>
+      <TouchableOpacity onPress={() => router.push('./MenuAwal')} style={styles.buttonContainer}>
         <Text style={styles.cancelText}> 
           Batal
         </Text>
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   },
   role: {
     fontSize: 12,
-    fontWeight: 'light',
+    fontFamily: 'light',
     color: '#29335C',
   },
   locationSection: {
@@ -136,12 +136,12 @@ const styles = StyleSheet.create({
   },
   location: {
     fontSize: 16, 
-    fontStyle: 'italic',
+    fontFamily: 'italic',
     color: '#A8201A',
   },
   locationInfo: {
     fontSize: 12,
-    fontWeight: 'light',
+    fontFamily: 'light',
     color: '#29335C',
     textAlign: 'right',
   },
@@ -151,12 +151,12 @@ const styles = StyleSheet.create({
   },
   emergencyText: {
     fontSize: 30, 
-    fontWeight: 'bold', 
+    fontFamily: 'bold', 
     color: 'Black',
     padding: 9, 
   },
   emergencySubtitle: {
-    fontStyle: 'italic',
+    fontFamily: 'italic',
     color: '#6C6C6C', 
     marginBottom: 42,
   },
@@ -201,11 +201,11 @@ const styles = StyleSheet.create({
   warningText: {
     color: '#A8201A',
     fontSize: 14,
-    fontWeight: 'semibold',
+    fontFamily: 'semibold',
   },
   description: {
     color: '#29335C',
-    fontWeight: 'semibold', 
+    fontFamily: 'semibold',
     fontSize: 12, 
     marginLeft: 25, 
     marginRight: 25, 
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
   cancelText:{
     color: '#FFF', 
     fontSize: 16, 
-    fontWeight: 'bold', 
+    fontFamily: 'bold', 
   }
 });
 

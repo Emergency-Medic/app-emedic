@@ -1,5 +1,9 @@
 import React, { useState } from 'react'
+import { useRouter } from "expo-router";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native'
+import BackButton from '@/components/BackButton'
+import { StatusBar } from 'expo-status-bar';
+import { Colors } from '@/constants/Colors';
 
 export default function RegisterScreen() {
     const [namaDepan, setNamaDepan] = useState('')
@@ -8,10 +12,13 @@ export default function RegisterScreen() {
     const [phonenum, setPhonenum] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const router = useRouter();
 
     return (
         <ScrollView style={styles.allwrap}>
+            <StatusBar backgroundColor={Colors.red} translucent={false}/>
             <View style={styles.container}>
+                <BackButton color='white'/>
                 <Text style={styles.title}>Daftar</Text>
             </View>
             <View style={styles.wrapper}>
@@ -93,7 +100,7 @@ export default function RegisterScreen() {
                         <Text style={styles.belumAda}>
                             Sudah punya akun? {" "}
                         </Text>
-                        <TouchableOpacity onPress={() => console.log("Pindah ke register page")}>
+                        <TouchableOpacity onPress={() => router.push("./SignInScreen")}>
                             <Text style={styles.daftarskrg} >Masuk</Text>
                         </TouchableOpacity>
                     </View>
@@ -191,7 +198,7 @@ const styles = StyleSheet.create({
   buttonText: {
       color: '#FFFFFF',
       fontSize: 20,
-      fontWeight: 'semibold'
+      fontFamily: 'semibold'
   },
   belumwrap: {
       width: '100%',
