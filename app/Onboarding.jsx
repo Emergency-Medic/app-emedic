@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
     textAlign:'center',
     color: '#A8201A',
     fontSize: 16,
-    fontWeight: '900',
+    fontWeight: 'bold',
   },
   signUpButton: {
     backgroundColor: '#A8201A', // Warna tombol Sign Up
