@@ -1,23 +1,18 @@
-import React, {useState} from "react";
-import {Alert, Modal, View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native'; 
-import { useRouter } from "expo-router";
+import React from "react";
+import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native'; 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Foundation from '@expo/vector-icons/Foundation';
-<<<<<<< HEAD
-
-=======
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
->>>>>>> 5f110342f95b7bd4d33859b4af58dfbaefe8d65f
 
-const EmergencyCallScreen = () => {
+const Emergency = () => {
   const router = useRouter();
   return(
     <View style={styles.container}> 
-    <StatusBar style='dark' translucent={true}/>
+    <StatusBar style='dark'/>
       <View style={styles.header}>
         {/* Profile */}
         <View style={styles.profileSection}>
@@ -79,7 +74,7 @@ const EmergencyCallScreen = () => {
         Penekanan tombol hanya dipergunakan untuk situasi darurat seperti A, B, C, dan D.
       </Text>
       {/* Cancel Button */}
-      <TouchableOpacity onPress={() => router.back()} style={styles.buttonContainer}>
+      <TouchableOpacity onPress={() => router.push('./MenuAwal')} style={styles.buttonContainer}>
         <Text style={styles.cancelText}> 
           Batal
         </Text>
@@ -89,12 +84,6 @@ const EmergencyCallScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  conitainer: {
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    backgroundColor: '#FFFFFF',
-  },
   header : {
     marginTop: 20, 
     flexDirection: 'row',
@@ -109,6 +98,9 @@ const styles = StyleSheet.create({
     // shadowRadius: 2,
     // elevation: 4,
   }, 
+  container: {
+
+  },
   profileSection: {
     flexDirection: 'row', 
     alignItems: 'center',
@@ -199,10 +191,10 @@ const styles = StyleSheet.create({
   },
   warningContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center', 
+    alignItems: 'left',
+    justifyContent: 'left', 
     textAlign: 'left',
-    marginLeft:30, 
+    marginLeft: 25, 
     marginBottom: 8, 
     padding: 8,
   },
@@ -218,16 +210,20 @@ const styles = StyleSheet.create({
     color: '#29335C',
     fontFamily: 'semibold',
     fontSize: 12, 
-    marginLeft: 35, 
-    marginRight: 35, 
+    marginLeft: 25, 
+    marginRight: 25, 
     marginBottom: 70,
-    gap: 35,
   },
-  buttonContainer: { 
-    width: 300, 
+  buttonContainer: {
+    width: 350, 
     height: 48, 
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 30, 
-    backgroundColor: '#A8201A',  
+    backgroundColor: '#A8201A', 
+    marginLeft: 25,  
+    marginRight: 25,  
   }, 
   cancelText:{
     color: '#FFF', 
@@ -236,4 +232,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default EmergencyCallScreen; 
+export default Emergency; 

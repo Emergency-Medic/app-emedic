@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { useRouter } from "expo-router";
+import { StatusBar } from 'expo-status-bar';
 import { Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
 const MenuAwal = () => {
     const router = useRouter();
     return (
         <View style={styles.container}>
+            <StatusBar style='dark'/>
             <TouchableOpacity style={styles.touchOpacityLogo}>
               <View style={styles.containerlogo}>
                     <Image
@@ -22,7 +24,7 @@ const MenuAwal = () => {
             <TouchableOpacity onPress={() => router.push("./Onboarding")} style={[styles.card, styles.cardBelajar]}>
                 <View style={styles.cardcontent}>
                     <View style={styles.textcard}>
-                        <Text style={styles.textcontentatas}>BELAJAR</Text>
+                        <Text style={styles.textcontentatas}>Belajar</Text>
                         <Text style={styles.textcontentbawah}>Klik disini untuk belajar mengatasi situasi darurat</Text>
                     </View>
                     <View style={styles.imagecard}>
@@ -38,7 +40,7 @@ const MenuAwal = () => {
             <TouchableOpacity onPress={() => router.push("./EmergencyCallScreen")} style={[styles.card, styles.cardEmergency]}>
                 <View style={styles.cardcontent}>
                     <View style={styles.textcard}>
-                        <Text style={styles.textcontentatas}>DARURAT</Text>
+                        <Text style={styles.textcontentatas}>Darurat</Text>
                         <Text style={styles.textcontentbawah}>Klik disini untuk menghubungi 112</Text>
                     </View>
                     <View style={styles.imagecard}>
@@ -92,8 +94,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#B71C1C', // Warna merah
     },
     textWelcome: {
-        fontFamily:'regular',
-        fontWeight: 'bold',
+        fontFamily:'bold',
         fontSize: 24,
         color: '#B71C1C',
         marginBottom:30,
@@ -133,13 +134,14 @@ const styles = StyleSheet.create({
         fontSize: 20,
         marginBottom: 15,
         textAlign: 'left',
-        fontWeight:'bold',
+        fontFamily: 'bold'
     },
     textcontentbawah: {
         color: '#FFFFFF',
         fontSize: 15,
         marginBottom: 15,
         textAlign: 'left',
+        fontFamily: 'light'
     },
     cardImageBelajar: {
         width: 135,

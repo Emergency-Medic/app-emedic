@@ -93,7 +93,7 @@ export default function RegisterScreen() {
                     </View>
                 </View>
                 <View>
-                    <TouchableOpacity style={styles.submit} onPress={() => console.log("submit")}>
+                    <TouchableOpacity style={styles.submit} onPress={() => router.push('../(tabs)/Home')}>
                         <Text style={styles.buttonText} >Daftar</Text>
                     </TouchableOpacity>
                     <View style={styles.belumwrap}>
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   buttonText: {
       color: '#FFFFFF',
       fontSize: 20,
-      fontWeight: 'semibold'
+      fontFamily: 'semibold'
   },
   belumwrap: {
       width: '100%',
