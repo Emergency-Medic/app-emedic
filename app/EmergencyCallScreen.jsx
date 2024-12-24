@@ -6,12 +6,12 @@ import Entypo from '@expo/vector-icons/Entypo';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Foundation from '@expo/vector-icons/Foundation';
-<<<<<<< HEAD
+// <<<<<<< HEAD
 
-=======
-import { useRouter } from "expo-router";
+// =======
+// import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
->>>>>>> 5f110342f95b7bd4d33859b4af58dfbaefe8d65f
+// >>>>>>> 5f110342f95b7bd4d33859b4af58dfbaefe8d65f
 
 const EmergencyCallScreen = () => {
   const router = useRouter();

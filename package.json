@@ -39,14 +39,6 @@
     "react-native": "^0.76.5",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-neomorph-shadows": "^1.1.2",
-<<<<<<< HEAD
-=======
-<<<<<<< Updated upstream
-    "react-native-otp-entry": "^1.8.2",
-    "react-native-otp-input": "^1.0.12",
-=======
->>>>>>> Stashed changes
->>>>>>> b43d742623c30dd23e69ca636636aa74d91adb54
     "react-native-otp-inputs": "^7.4.0",
     "react-native-paper": "^5.12.5",
     "react-native-progress": "^5.0.1",
@@ -57,7 +49,8 @@
     "react-native-swiper": "^1.6.0",
     "react-native-text-input-otp": "^1.0.7",
     "react-native-web": "~0.19.13",
-    "react-native-webview": "13.12.5"
+    "react-native-webview": "13.12.5",
+    "expo-video": "~2.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

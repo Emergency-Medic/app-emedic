@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Button } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
 import BackButton from '@/components/BackButton'
 import { useRouter } from "expo-router";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-// import YoutubePlayer from 'react-native-youtube-iframe'; // buat video YouTube
-// import Video from 'react-native-video'; // buat video lokal
+// import { useEvent } from 'expo';
+import { useVideoPlayer, VideoView } from 'expo-video';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+// ini sementara dari link dulu yaa, blm nemu videonya
+const videoSource =
+  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
 
 const Articlepage = () => {
     const router = useRouter();
@@ -15,9 +19,15 @@ const Articlepage = () => {
     const handlePress = () => {
       setQuizStarted(true);
     };
+    // video
+    const player = useVideoPlayer(videoSource, player => {
+      player.loop = true;
+      player.play();
+    });
+    // const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
     return (
         <ScrollView style={styles.allwrap}>
-            <StatusBar backgroundColor={Colors.white} translucent={false}/>
+            <StatusBar style='dark' translucent={true}/>
             <View style={styles.header}>
                 <View style={styles.container}>
                     <View>
@@ -26,12 +36,22 @@ const Articlepage = () => {
                     <Text style={styles.title}>Halaman Materi</Text>
                 </View>
             </View>
-
+            {/* video */}
+            <View style={styles.videoContainer}>
+              <VideoView style={styles.video} player={player} allowsFullscreen allowsPictureInPicture />
+              <View style={styles.controlsContainer}>
+              </View>
+            </View>
             <View style={styles.container}>
-                <Text style={styles.sectionTitle}>Henti Jantung</Text>
+                <View style={styles.containerTitle}>
+                    <View style={styles.titleRow}>
+                        <Text style={styles.sectionTitle}>Henti Jantung</Text>
+                        <MaterialIcons name="verified" size={20} color="#007bff" style={styles.verifiedIcon} />
+                    </View>
+                </View>
                 <Text style={styles.verified}>Di verifikasi oleh : 
                   <Text style={styles.verifiedname}>
-                   Dr. Yuan, Dr. Devi
+                   Dr. Deon, Dr. Devi
                   </Text>
                 </Text>
                 <Text style={styles.description}>
@@ -118,6 +138,7 @@ const styles = StyleSheet.create({
       flex: 1
     },
     header: {
+      marginTop:30,
       flexDirection: 'row',
       alignItems: 'center',
       padding: 16,
@@ -131,27 +152,44 @@ const styles = StyleSheet.create({
       color: Colors.blue
     },
     videoContainer: {
-      margin: 16,
-      borderRadius: 10,
-      overflow: 'hidden',
+      marginTop: 15,
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center'
     },
-    localVideo: {
-      width: '100%',
-      height: 200,
+    video: {
+      width: 350,
+      height: 220,
+      borderRadius: 10,
+    },
+    controlsContainer: {
+      margin: 5,
+    },
+    containerTitle: {
+      marginTop: 10,
+      flex: 1,
+      paddingHorizontal: 16,
+    },
+    titleRow: {
+      flexDirection: 'row', 
+      alignItems: 'center', 
     },
     sectionTitle: {
       fontSize: 20,
       fontFamily: 'bold',
-      paddingHorizontal: 16,
-      marginTop: 16,
-      color: Colors.red
+      color: Colors.blue, 
+      marginRight: 10, 
+    },
+    verifiedIcon: {
+      marginTop: 2, 
     },
     verified: {
       fontSize: 14,
       color: '#6C6C6C',
       paddingHorizontal: 16,
       textAlign: 'right',
-      fontFamily: 'regular'
+      fontFamily: 'regular',
+      margin: 5
     },
     verifiedname: {
       fontSize: 14,
@@ -177,13 +215,14 @@ const styles = StyleSheet.create({
     card: {
       backgroundColor: Colors.white,
       borderRadius: 10,
-      margin: 12,
+      marginVertical: 10, 
+      marginHorizontal: 12,
       padding: 16,
-      elevation: 2,
+      elevation: 1.75,
       position: 'relative',
     },
     iconContainer: {
-      position: 'absolute', // Membuat ikon tetap di posisi kiri atas
+      position: 'absolute', 
       top: 5,
       width: 30,
       height: 30,
@@ -200,7 +239,7 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
     },
     textContainer: {
-      marginLeft: 50, // Memberikan jarak cukup besar agar teks tidak overlap dengan ikon
+      marginLeft: 45,
     },
     cardTitle: {
       fontSize: 16,
@@ -246,7 +285,7 @@ const styles = StyleSheet.create({
     resultContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 8, // Gunakan gap untuk memberi jarak antara teks dan ikon jika mendukung
+      gap: 8,
     },
     resultText: {
       color: Colors.white,
@@ -256,9 +295,10 @@ const styles = StyleSheet.create({
     finishButton: {
       backgroundColor: '#A8201A',
       marginHorizontal: 16,
+      marginTop: 20,
       marginBottom: 32,
       padding: 12,
-      borderRadius: 8,
+      borderRadius: 30,
       alignItems: 'center',
     },
     finishButtonText: {
