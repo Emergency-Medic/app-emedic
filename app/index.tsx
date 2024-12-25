@@ -11,6 +11,8 @@ import Onboarding from "./Onboarding"
 import SignInScreen from './(auth)/SignInScreen'
 import RegisterScreen from './(auth)/RegisterScreen'
 import Quiz from "./Quiz"
+import Contactpage from "./Contactpage";
+import Articlepage from "./Articlepage";
 
 const Stack = createStackNavigator(); 
 

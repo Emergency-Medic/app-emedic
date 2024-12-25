@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {Alert, Modal, View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native'; 
 import { useRouter } from "expo-router";
+import { Colors } from '@/constants/Colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -23,7 +24,7 @@ const EmergencyCallScreen = () => {
         <View style={styles.profileSection}>
           {/* Foto */}
           <View style={styles.profileIcon}>
-            <MaterialIcons name="person-outline" size={18} color="#6C6C6C" />
+            <MaterialIcons name="person-outline" size={18} color={Colors.grey} />
           </View>
           {/* Keterangan profile */}
           <View style={styles.profileText}> 
@@ -38,7 +39,7 @@ const EmergencyCallScreen = () => {
         {/* Location */}
         <View style={styles.locationSection}> 
           <View style={styles.locationIcon}> 
-            <Entypo name="location-pin" size={16} color="#A8201A" fontWeight='bold'/>
+            <Entypo name="location-pin" size={16} color={Colors.red} fontWeight='bold'/>
           </View>
           {/* Keterangan Lokasi */}
           <View style={styles.locationText}>
@@ -62,14 +63,14 @@ const EmergencyCallScreen = () => {
         {/* Emergency Button */}
         <TouchableOpacity style={styles.emergencyButton}> 
           <View style={styles.circle}> 
-            <Foundation name="telephone" size={100} color="#FFFFFF" style={styles.callIcon} />
+            <Foundation name="telephone" size={100} color={Colors.white} style={styles.callIcon} />
           </View>
         </TouchableOpacity>
       </View>
       {/* Warning Section*/}
       <View style={styles.warningContainer}> 
         <View style ={styles.warningIcon}>
-          <AntDesign name="warning" size={16} color="#A8201A" />
+          <AntDesign name="warning" size={16} color={Colors.red} />
         </View>
         <Text style={styles.warningText}>
           Peringatan
@@ -93,21 +94,14 @@ const styles = StyleSheet.create({
     flex: 1, 
     justifyContent: 'center', 
     alignItems: 'center', 
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.white,
   },
   header : {
     marginTop: 20, 
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: 'White',
     alignItems: 'center',
     padding: 32,
-    gap: 20, 
-    // shadowColor: '#000',
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.2,
-    // shadowRadius: 2,
-    // elevation: 4,
   }, 
   profileSection: {
     flexDirection: 'row', 
@@ -117,7 +111,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20, 
-    backgroundColor: '#D9D9D9',
+    backgroundColor: Colors.lightGrey,
     justifyContent: 'center', 
     alignItems: 'center',
   },
@@ -127,12 +121,12 @@ const styles = StyleSheet.create({
   name: {
     fontFamily: 'semibold',
     fontSize: 14,
-    color: '#A8201A',
+    color: Colors.red,
   },
   role: {
     fontSize: 12,
     fontFamily: 'light',
-    color: '#29335C',
+    color: Colors.blue,
   },
   locationSection: {
     flexDirection: 'row', 
@@ -148,12 +142,12 @@ const styles = StyleSheet.create({
   location: {
     fontSize: 16, 
     fontFamily: 'italic',
-    color: '#A8201A',
+    color: Colors.red,
   },
   locationInfo: {
     fontSize: 12,
     fontFamily: 'light',
-    color: '#29335C',
+    color: Colors.blue,
     textAlign: 'right',
   },
   emergencySection: {
@@ -168,19 +162,19 @@ const styles = StyleSheet.create({
   },
   emergencySubtitle: {
     fontFamily: 'italic',
-    color: '#6C6C6C', 
+    color: Colors.grey, 
     marginBottom: 42,
   },
   emergencyButton: {
     width: 250,
     height: 250,
     borderRadius: 360,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.white,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 43,
     elevation: 10,
-    shadowColor: '#000000',
+    shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
@@ -189,7 +183,7 @@ const styles = StyleSheet.create({
     width: 210,
     height: 210,
     borderRadius: 360,
-    backgroundColor: '#A82828',
+    backgroundColor: Colors.red, 
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -200,7 +194,7 @@ const styles = StyleSheet.create({
   warningContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center', 
+    justifyContent: 'flex-start', 
     textAlign: 'left',
     marginLeft:30, 
     marginBottom: 8, 
@@ -210,12 +204,12 @@ const styles = StyleSheet.create({
     marginRight: 10, 
   },
   warningText: {
-    color: '#A8201A',
+    color: Colors.red,
     fontSize: 14,
     fontFamily: 'semibold',
   },
   description: {
-    color: '#29335C',
+    color: Colors.blue,
     fontFamily: 'semibold',
     fontSize: 12, 
     marginLeft: 35, 
@@ -227,10 +221,10 @@ const styles = StyleSheet.create({
     width: 300, 
     height: 48, 
     borderRadius: 30, 
-    backgroundColor: '#A8201A',  
+    backgroundColor: Colors.red,  
   }, 
   cancelText:{
-    color: '#FFF', 
+    color: Colors.white, 
     fontSize: 16, 
     fontFamily: 'bold', 
   }
