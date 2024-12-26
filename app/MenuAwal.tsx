@@ -7,7 +7,7 @@ const MenuAwal = () => {
     const router = useRouter();
     return (
         <View style={styles.container}>
-            <StatusBar style='dark' translucent={false}/>
+            <StatusBar style='dark'/>
             <TouchableOpacity style={styles.touchOpacityLogo}>
               <View style={styles.containerlogo}>
                     <Image

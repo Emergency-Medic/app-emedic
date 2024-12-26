@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-
+import { StatusBar } from 'expo-status-bar';
 import EmergencyCallScreen from "./EmergencyCallScreen";
 import MenuAwal from "./MenuAwal";
 import React from "react";

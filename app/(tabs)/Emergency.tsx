@@ -1,30 +1,24 @@
-import React, {useState} from "react";
-import {Alert, Modal, View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native'; 
-import { useRouter } from "expo-router";
-import { Colors } from '@/constants/Colors';
+import React from "react";
+import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native'; 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Foundation from '@expo/vector-icons/Foundation';
-// <<<<<<< HEAD
-
-// =======
-// import { useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
-// >>>>>>> 5f110342f95b7bd4d33859b4af58dfbaefe8d65f
 
-const EmergencyCallScreen = () => {
+const Emergency = () => {
   const router = useRouter();
   return(
     <View style={styles.container}> 
-    <StatusBar style='dark' translucent={true}/>
+    <StatusBar style='dark'/>
       <View style={styles.header}>
         {/* Profile */}
         <View style={styles.profileSection}>
           {/* Foto */}
           <View style={styles.profileIcon}>
-            <MaterialIcons name="person-outline" size={18} color={Colors.grey} />
+            <MaterialIcons name="person-outline" size={18} color="#6C6C6C" />
           </View>
           {/* Keterangan profile */}
           <View style={styles.profileText}> 
@@ -39,7 +33,7 @@ const EmergencyCallScreen = () => {
         {/* Location */}
         <View style={styles.locationSection}> 
           <View style={styles.locationIcon}> 
-            <Entypo name="location-pin" size={16} color={Colors.red} fontWeight='bold'/>
+            <Entypo name="location-pin" size={16} color="#A8201A" fontWeight='bold'/>
           </View>
           {/* Keterangan Lokasi */}
           <View style={styles.locationText}>
@@ -63,14 +57,14 @@ const EmergencyCallScreen = () => {
         {/* Emergency Button */}
         <TouchableOpacity style={styles.emergencyButton}> 
           <View style={styles.circle}> 
-            <Foundation name="telephone" size={100} color={Colors.white} style={styles.callIcon} />
+            <Foundation name="telephone" size={100} color="#FFFFFF" style={styles.callIcon} />
           </View>
         </TouchableOpacity>
       </View>
       {/* Warning Section*/}
       <View style={styles.warningContainer}> 
         <View style ={styles.warningIcon}>
-          <AntDesign name="warning" size={16} color={Colors.red} />
+          <AntDesign name="warning" size={16} color="#A8201A" />
         </View>
         <Text style={styles.warningText}>
           Peringatan
@@ -80,7 +74,7 @@ const EmergencyCallScreen = () => {
         Penekanan tombol hanya dipergunakan untuk situasi darurat seperti A, B, C, dan D.
       </Text>
       {/* Cancel Button */}
-      <TouchableOpacity onPress={() => router.back()} style={styles.buttonContainer}>
+      <TouchableOpacity onPress={() => router.push('./MenuAwal')} style={styles.buttonContainer}>
         <Text style={styles.cancelText}> 
           Batal
         </Text>
@@ -90,19 +84,23 @@ const EmergencyCallScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  conitainer: {
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    backgroundColor: Colors.white,
-  },
   header : {
     marginTop: 20, 
     flexDirection: 'row',
     justifyContent: 'space-between',
+    backgroundColor: 'White',
     alignItems: 'center',
     padding: 32,
+    gap: 20, 
+    // shadowColor: '#000',
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.2,
+    // shadowRadius: 2,
+    // elevation: 4,
   }, 
+  container: {
+
+  },
   profileSection: {
     flexDirection: 'row', 
     alignItems: 'center',
@@ -111,7 +109,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20, 
-    backgroundColor: Colors.lightGrey,
+    backgroundColor: '#D9D9D9',
     justifyContent: 'center', 
     alignItems: 'center',
   },
@@ -121,12 +119,12 @@ const styles = StyleSheet.create({
   name: {
     fontFamily: 'semibold',
     fontSize: 14,
-    color: Colors.red,
+    color: '#A8201A',
   },
   role: {
     fontSize: 12,
     fontFamily: 'light',
-    color: Colors.blue,
+    color: '#29335C',
   },
   locationSection: {
     flexDirection: 'row', 
@@ -142,12 +140,12 @@ const styles = StyleSheet.create({
   location: {
     fontSize: 16, 
     fontFamily: 'italic',
-    color: Colors.red,
+    color: '#A8201A',
   },
   locationInfo: {
     fontSize: 12,
     fontFamily: 'light',
-    color: Colors.blue,
+    color: '#29335C',
     textAlign: 'right',
   },
   emergencySection: {
@@ -162,19 +160,19 @@ const styles = StyleSheet.create({
   },
   emergencySubtitle: {
     fontFamily: 'italic',
-    color: Colors.grey, 
+    color: '#6C6C6C', 
     marginBottom: 42,
   },
   emergencyButton: {
     width: 250,
     height: 250,
     borderRadius: 360,
-    backgroundColor: Colors.white,
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 43,
     elevation: 10,
-    shadowColor: Colors.black,
+    shadowColor: '#000000',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.1,
     shadowRadius: 10,
@@ -183,7 +181,7 @@ const styles = StyleSheet.create({
     width: 210,
     height: 210,
     borderRadius: 360,
-    backgroundColor: Colors.red, 
+    backgroundColor: '#A82828',
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -193,10 +191,10 @@ const styles = StyleSheet.create({
   },
   warningContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start', 
+    alignItems: 'left',
+    justifyContent: 'left', 
     textAlign: 'left',
-    marginLeft:30, 
+    marginLeft: 25, 
     marginBottom: 8, 
     padding: 8,
   },
@@ -204,30 +202,34 @@ const styles = StyleSheet.create({
     marginRight: 10, 
   },
   warningText: {
-    color: Colors.red,
+    color: '#A8201A',
     fontSize: 14,
     fontFamily: 'semibold',
   },
   description: {
-    color: Colors.blue,
+    color: '#29335C',
     fontFamily: 'semibold',
     fontSize: 12, 
-    marginLeft: 35, 
-    marginRight: 35, 
+    marginLeft: 25, 
+    marginRight: 25, 
     marginBottom: 70,
-    gap: 35,
   },
-  buttonContainer: { 
-    width: 300, 
+  buttonContainer: {
+    width: 350, 
     height: 48, 
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 30, 
-    backgroundColor: Colors.red,  
+    backgroundColor: '#A8201A', 
+    marginLeft: 25,  
+    marginRight: 25,  
   }, 
   cancelText:{
-    color: Colors.white, 
+    color: '#FFF', 
     fontSize: 16, 
     fontFamily: 'bold', 
   }
 });
 
-export default EmergencyCallScreen; 
+export default Emergency; 

@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { Image, View, Text, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
 import Swiper from 'react-native-swiper';
 import { useRouter } from "expo-router";
-
+import { StatusBar } from 'expo-status-bar';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const OnboardingScreen = () => {
@@ -10,6 +10,7 @@ const OnboardingScreen = () => {
   const router = useRouter();
   return (
     <View style={styles.container}>
+      <StatusBar style='light' translucent={true} backgroundColor='transparent'/>
         <Swiper
         autoplay
         autoplayTimeout={7}
