@@ -27,11 +27,11 @@ const Articlepage = () => {
     // const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
     return (
         <ScrollView style={styles.allwrap}>
+                      <BackButton top={45} color={Colors.red}/>
             <StatusBar style='dark' translucent={true}/>
             <View style={styles.header}>
                 <View style={styles.container}>
                     <View>
-                      <BackButton color={Colors.red}/>
                     </View>
                     <Text style={styles.title}>Halaman Materi</Text>
                 </View>

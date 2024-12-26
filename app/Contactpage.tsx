@@ -44,8 +44,8 @@ const Contactpage: React.FC = () => {
     <>
       <StatusBar style="dark" translucent={true} />
       {/* headernya */}
+      <BackButton color={Colors.red} top={44} left={10}/>
       <View style={styles.header}>
-        <BackButton color={Colors.red} />
         <Text style={styles.title}>Halaman Kontak</Text>
       </View>
       {/* jumlah teman */}
