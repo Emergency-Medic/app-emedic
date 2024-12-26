@@ -1,21 +1,19 @@
 import React, {useState} from "react";
 import {Alert, Modal, View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native'; 
 import { useRouter } from "expo-router";
+import { StatusBar } from 'expo-status-bar';
+
 import { Colors } from '@/constants/Colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Foundation from '@expo/vector-icons/Foundation';
-// <<<<<<< HEAD
-
-// =======
-// import { useRouter } from "expo-router";
-import { StatusBar } from 'expo-status-bar';
-// >>>>>>> 5f110342f95b7bd4d33859b4af58dfbaefe8d65f
 
 const EmergencyCallScreen = () => {
   const router = useRouter();
+  const [modalVisible, setModalVisible] = useState(false); 
+  const [modalVisible2, setModalVisible2] = useState(false);
   return(
     <View style={styles.container}> 
     <StatusBar style='dark' translucent={true}/>
@@ -61,7 +59,7 @@ const EmergencyCallScreen = () => {
         </Text>
 
         {/* Emergency Button */}
-        <TouchableOpacity style={styles.emergencyButton}> 
+        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.emergencyButton}> 
           <View style={styles.circle}> 
             <Foundation name="telephone" size={100} color={Colors.white} style={styles.callIcon} />
           </View>
@@ -80,24 +78,84 @@ const EmergencyCallScreen = () => {
         Penekanan tombol hanya dipergunakan untuk situasi darurat seperti A, B, C, dan D.
       </Text>
       {/* Cancel Button */}
-      <TouchableOpacity onPress={() => router.back()} style={styles.buttonContainer}>
-        <Text style={styles.cancelText}> 
-          Batal
-        </Text>
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.button}>
+          <Text style={styles.cancelText}> 
+            Batal
+          </Text>
+        </TouchableOpacity>
+      </View>
+      {/* Modal Section */}
+      <Modal transparent={true} visible={modalVisible} animationType="fade">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalCardContent}> 
+            <View style={styles.modalWarningContainer}>
+              <View style ={styles.modalWarningIcon}>
+                <AntDesign name="warning" size={16} color={Colors.red} />
+              </View>
+              <Text style={styles.modalWarningText}>
+                Peringatan
+              </Text>
+            </View>
+            <Text style={styles.modalWarningQuestion}>
+              Siapa yang berada dalam keadaan darurat saat ini?
+            </Text>
+            <View style={styles.answerContent}> 
+              <TouchableOpacity style={styles.meButton} onPress={() => setModalVisible2(true)}> 
+                <Text style={styles.meText} >
+                  Saya
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.otherButton} onPress={() => setModalVisible2(true)}>
+                <Text style={styles.otherText}>
+                  Orang lain
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      {/* Modal 2 Section */}
+      <Modal transparent={true} visible={modalVisible2} animationType="fade">
+      <View style={styles.modalContainer2}>
+          <View style={styles.modalCardContent2}> 
+            <View style={styles.modalWarningContainer2}>
+              <View style ={styles.modalWarningIcon2}>
+                <AntDesign name="warning" size={16} color={Colors.red} />
+              </View>
+              <Text style={styles.modalWarningText2}>
+                Peringatan
+              </Text>
+            </View>
+            <Text style={styles.modalWarningQuestion2}>
+              Yakin lanjutkan panggilan?
+            </Text>
+            <View style={styles.answerContent2}> 
+              <TouchableOpacity style={styles.meButton2}> 
+                <Text style={styles.yaText} >
+                  Ya
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.otherButton2} onPress={() => router.back()}>
+                <Text style={styles.tidakText}>
+                  Tidak
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  conitainer: {
+  container: {
     flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
     backgroundColor: Colors.white,
   },
   header : {
-    marginTop: 20, 
+    marginTop: 10, 
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -217,17 +275,171 @@ const styles = StyleSheet.create({
     marginBottom: 70,
     gap: 35,
   },
-  buttonContainer: { 
+  buttonContainer: {  
+    flexDirection: 'row',
+    justifyContent: 'center', 
+  }, 
+  button: {
     width: 300, 
     height: 48, 
     borderRadius: 30, 
-    backgroundColor: Colors.red,  
+    backgroundColor: Colors.red,
+    alignItems: 'center',
+    justifyContent: 'center',   
   }, 
   cancelText:{
     color: Colors.white, 
     fontSize: 16, 
     fontFamily: 'bold', 
-  }
+    textAlign: 'center',  
+  }, 
+  modalContainer: {
+    flex: 1,  
+    justifyContent: 'center', 
+    alignItems: 'center',
+    backgroundColor: Colors.transparencyGrey,
+  },
+  modalCardContent: { 
+    width: 342,
+    height: 169,
+    backgroundColor: Colors.white,
+    borderRadius: 20, 
+    textAlign: 'center', 
+    alignItems: 'center', 
+  }, 
+  modalWarningContainer: {
+    flexDirection: 'row', 
+    padding: 22, 
+  }, 
+  modalWarningIcon: {
+    marginRight: 10, 
+  }, 
+  modalWarningText: {
+    color: Colors.red,
+    fontSize: 14,
+    fontFamily: 'semibold',
+  },
+  modalWarningQuestion: {
+    fontFamily: 'semibold', 
+    fontSize: 14,
+    color: Colors.blue,  
+    marginBottom: 21, 
+  },
+  answerContent: {
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    gap: 20, 
+  },
+  meButton: {
+    width: 129, 
+    height: 33, 
+    backgroundColor: Colors.red, 
+    borderRadius: 30, 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    elevation: 10, 
+    shadowColor: Colors.black, 
+    shadowOffset: {width: 0, height: 10},
+    shadowOpacity: 0.1, 
+    shadowRadius: 10, 
+  }, 
+  meText: {
+    color: Colors.white, 
+    fontFamily: 'semibold', 
+    fontSize: 14, 
+  },
+  otherButton: {
+    width: 129, 
+    height: 33, 
+    backgroundColor: Colors.white, 
+    borderRadius: 30, 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    elevation: 10, 
+    shadowColor: Colors.black, 
+    shadowOffset: {width: 0, height: 10},
+    shadowOpacity: 0.1, 
+    shadowRadius: 10,
+  },
+  otherText: {
+    color: Colors.grey, 
+    fontFamily: 'semibold', 
+    fontSize: 14, 
+  },
+  // Moda 2
+  modalContainer2: {
+    flex: 1,  
+    justifyContent: 'center', 
+    alignItems: 'center',
+    backgroundColor: Colors.transparencyGrey,
+  },
+  modalCardContent2: { 
+    width: 342,
+    height: 169,
+    backgroundColor: Colors.white,
+    borderRadius: 20, 
+    textAlign: 'center', 
+    alignItems: 'center', 
+  }, 
+  modalWarningContainer2: {
+    flexDirection: 'row', 
+    padding: 22, 
+  }, 
+  modalWarningIcon2: {
+    marginRight: 10, 
+  }, 
+  modalWarningText2: {
+    color: Colors.red,
+    fontSize: 14,
+    fontFamily: 'semibold',
+  },
+  modalWarningQuestion2: {
+    fontFamily: 'semibold', 
+    fontSize: 14,
+    color: Colors.blue,  
+    marginBottom: 21, 
+  },
+  answerContent2: {
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    gap: 20, 
+  },
+  meButton2: {
+    width: 129, 
+    height: 33, 
+    backgroundColor: Colors.red, 
+    borderRadius: 30, 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    elevation: 10, 
+    shadowColor: Colors.black, 
+    shadowOffset: {width: 0, height: 10},
+    shadowOpacity: 0.1, 
+    shadowRadius: 10, 
+  }, 
+  yaText: {
+    color: Colors.white, 
+    fontFamily: 'semibold', 
+    fontSize: 14, 
+  },
+  otherButton2: {
+    width: 129, 
+    height: 33, 
+    backgroundColor: Colors.white, 
+    borderRadius: 30, 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    elevation: 10, 
+    shadowColor: Colors.black, 
+    shadowOffset: {width: 0, height: 10},
+    shadowOpacity: 0.1, 
+    shadowRadius: 10,
+  },
+  tidakText: {
+    color: Colors.grey, 
+    fontFamily: 'semibold', 
+    fontSize: 14, 
+  },
 });
 
 export default EmergencyCallScreen; 
