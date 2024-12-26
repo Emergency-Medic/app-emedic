@@ -1,14 +1,20 @@
 import React, {useState} from 'react'
+import { useRouter } from "expo-router";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native'
+import BackButton from '@/components/BackButton'
+import { StatusBar } from 'expo-status-bar';
+import { Colors } from '@/constants/Colors';
 
 export default function SignInScreen() {
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-
+    const router = useRouter();
     return (
         <ScrollView style={styles.allwrap}>
+            <StatusBar backgroundColor={Colors.red} translucent={false}/>
             <View style={styles.container}>
+                <BackButton color='white'/>
                 <Text style={styles.title}>Masuk</Text>
             </View>
             <View style={styles.wrapper}>
@@ -34,7 +40,7 @@ export default function SignInScreen() {
                         
                         />
                         <View style={styles.forgotPass}>
-                            <TouchableOpacity onPress={() => console.log("Lupa kata sandi")} >
+                            <TouchableOpacity onPress={() => router.push('./ForgotPass')} >
                                 <Text style={styles.forgotPassTxt}>Lupa Kata Sandi?</Text>
                             </TouchableOpacity>
                         </View>
@@ -48,7 +54,7 @@ export default function SignInScreen() {
                         <Text style={styles.belumAda}>
                             Belum punya akun? {" "}
                         </Text>
-                        <TouchableOpacity onPress={() => console.log("Pindah ke register page")}>
+                        <TouchableOpacity onPress={() => router.push('./RegisterScreen')}>
                             <Text style={styles.daftarskrg} >Daftar sekarang</Text>
                         </TouchableOpacity>
                     </View>
@@ -74,9 +80,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF'
     },
     container: {
+        flexDirection: 'row',
         padding: 20,
         justifyContent: 'center',
-        backgroundColor: '#A8201A',
+        backgroundColor: Colors.red,
         width: '100%',
         alignItems: 'center'
     },
@@ -128,7 +135,7 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#FFFFFF',
         fontSize: 20,
-        fontWeight: 'semibold'
+        fontFamily: 'semibold'
     },
     belumwrap: {
         width: '100%',
