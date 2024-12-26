@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
     fontFamily: 'semibold', 
     fontSize: 14, 
   },
-  // Moda 2
+  // Modal 2
   modalContainer2: {
     flex: 1,  
     justifyContent: 'center', 
