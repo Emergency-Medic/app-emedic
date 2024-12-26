@@ -7,9 +7,10 @@ interface BackButtonProps {
   color?: string; // Warna teks dan ikon (default: "black")
   onPress?: () => void; // Aksi tambahan (opsional)
   top?: number;
+  left?: number
 }
 
-const BackButton: React.FC<BackButtonProps> = ({ color = "black", onPress, top }) => {
+const BackButton: React.FC<BackButtonProps> = ({ color = "black", onPress, top, left = 25 }) => {
   const router = useRouter();
 
   const handlePress = () => {
@@ -26,8 +27,9 @@ const BackButton: React.FC<BackButtonProps> = ({ color = "black", onPress, top }
       style={{
         flexDirection: "row",
         alignItems: "center",
+        zIndex: 100,
         position: 'absolute',
-        left: 25,
+        left,
         top
         // padding: 10,
       }}

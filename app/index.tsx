@@ -30,6 +30,7 @@ export default function Index() {
     <View>
       {/* <Quiz /> */}
       <MenuAwal />
+      {/* <Contactpage /> */}
     </View>
   );
 }
