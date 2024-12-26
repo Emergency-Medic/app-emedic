@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -7,7 +7,6 @@ import Feather from '@expo/vector-icons/Feather';
 import BackButton from '@/components/BackButton';
 import Octicons from '@expo/vector-icons/Octicons';
 
-// definisiin tipe data kontak -- statis
 type Contact = {
   id: string;
   name: string;
@@ -17,17 +16,14 @@ type Contact = {
 const Contactpage: React.FC = () => {
   const contacts: Contact[] = [
     { id: '1', name: 'Orang 1', phone: '+62 812 1565 2273' },
-    { id: '2', name: 'Orang 2', phone: '+62 812 1565 2273' },
-    { id: '3', name: 'Orang 3', phone: '+62 812 1565 2273' },
+    { id: '2', name: 'Orang 2', phone: '+62 813 1566 2272' },
+    { id: '3', name: 'Orang 3', phone: '+62 814 1567 2271' },
   ];
 
   const renderContact = ({ item }: { item: Contact }) => (
     <View style={styles.contactCard}>
       <View style={styles.contactInfo}>
-        <Image
-          source={require('../assets/images/icon.png')} 
-          style={styles.avatar}
-        />
+        <Image source={require('../assets/images/icon.png')} style={styles.avatar} />
         <View>
           <Text style={styles.contactName}>{item.name}</Text>
           <Text style={styles.contactPhone}>{item.phone}</Text>
@@ -44,40 +40,42 @@ const Contactpage: React.FC = () => {
     </View>
   );
 
+  const renderHeader = () => (
+    <>
+      <StatusBar style="dark" translucent={true} />
+      {/* headernya */}
+      <BackButton color={Colors.red} top={44} left={10}/>
+      <View style={styles.header}>
+        <Text style={styles.title}>Halaman Kontak</Text>
+      </View>
+      {/* jumlah teman */}
+      <View style={styles.friendCount}>
+        <Text style={styles.friendCountText}>Jumlah teman</Text>
+        <View style={styles.friendCountBadge}>
+          {/* jumlah temannya udah dinamis, tapi perlu nyesuaiin sesuai backendnya besok (?) */}
+          <Text style={styles.friendCountNumber}>{contacts.length}/10</Text>
+        </View>
+        <TouchableOpacity style={styles.addFriend}>
+          <Octicons name="person-add" size={20} color="#29335C" />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.listTitleWrapper}>
+        <Text style={styles.listTitle}>List Teman</Text>
+      </View>
+    </>
+  );
+  
+
   return (
     <View style={styles.container}>
-      {/* masih bermasalah, list statis sebaiknya ga pake scroll view*/}
-      <ScrollView>
-        <StatusBar style='dark' translucent={true}/>
-        {/* header */}
-        <View style={styles.header}>
-                <View style={styles.container}>
-                    <View>
-                      <BackButton color={Colors.red}/>
-                    </View>
-                    <Text style={styles.title}>Halaman Materi</Text>
-                </View>
-            </View>
-        {/* jumlah Teman */}
-        <View style={styles.friendCount}>
-          <Text style={styles.friendCountText}>Jumlah teman</Text>
-          <View style={styles.friendCountBadge}>
-            <Text style={styles.friendCountNumber}>3/10</Text>
-          </View>
-          <TouchableOpacity style={styles.addFriend}>
-            <Octicons name="person-add" size={20} color="#29335C" />
-          </TouchableOpacity>
-        </View>
-        {/* list Teman */}
-        <FlatList
-          data={contacts}
-          keyExtractor={(item) => item.id}
-          renderItem={renderContact}
-          contentContainerStyle={styles.contactList}
-        />
-      </ScrollView>
-
-      {/* Footer */}
+      <FlatList
+        data={contacts}
+        keyExtractor={(item) => item.id}
+        renderItem={renderContact}
+        ListHeaderComponent={renderHeader}
+        contentContainerStyle={styles.contactList}
+      />
+      {/* footer */}
       <View style={styles.footer}>
         <TouchableOpacity style={styles.footerButtonActive}>
           <Text style={styles.footerButtonTextActive}>Teman</Text>
@@ -94,16 +92,12 @@ const Contactpage: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  allwrap: {
-    height: '100%',
+  container: {
+    flex: 1,
     backgroundColor: Colors.white,
   },
-  container: { 
-    flex: 1, 
-    backgroundColor: '#fff' 
-  },
   header: {
-    marginTop:30,
+    marginTop: 30,
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
@@ -116,31 +110,24 @@ const styles = StyleSheet.create({
     color: Colors.blue,
     fontFamily: 'bold',
   },
-  headerTitle: {
-    fontSize: 18,
-    fontFamily: 'bold',
-    color: '#333',
-    marginLeft: 8,
-  },
   friendCount: {
     flexDirection: 'row',
     alignItems: 'center',
-    margin: 16,
-    padding: 10,
+    margin: 10,
+    padding: 5,
     backgroundColor: Colors.white,
     borderRadius: 8,
     elevation: 2,
     shadowColor: '#000',
   },
-  friendCountText: { 
-    flex: 1, 
-    fontSize: 16, 
+  friendCountText: {
+    flex: 1,
+    fontSize: 16,
     color: Colors.black,
     fontFamily: 'bold',
-    marginLeft: 10
+    marginLeft: 10,
   },
-  friendCountBadge: 
-  {
+  friendCountBadge: {
     backgroundColor: Colors.red,
     borderRadius: 5,
     paddingHorizontal: 12,
@@ -148,46 +135,57 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   addFriend: {
-    margin: 15
+    margin: 15,
   },
-  friendCountNumber: { 
-    color: '#fff', 
-    fontFamily: 'bold' 
+  friendCountNumber: {
+    color: '#fff',
+    fontFamily: 'bold',
   },
-  contactList: { 
-    paddingHorizontal: 16 
+  listTitleWrapper: {
+    paddingHorizontal: 16,
+    marginVertical: 10,
+  },
+  listTitle: {
+    fontFamily: 'bold',
+    fontSize: 16,
+    color: Colors.blue,
+  },
+  contactList: {
+    paddingHorizontal: 16,
+    paddingBottom: 70, 
   },
   contactCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
+    padding: 15,
     borderRadius: 5,
     borderWidth: 1,
     marginBottom: 12,
     borderColor: '#BED1E6',
   },
-  contactInfo: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
+  contactInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
     flex: 1,
   },
-  avatar: { 
-    width: 40, 
-    height: 40, 
-    borderRadius: 20, 
-    marginRight: 12 },
-  contactName: { 
-    fontFamily: 'bold', 
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 12,
+  },
+  contactName: {
+    fontFamily: 'bold',
     fontSize: 16,
-    color: Colors.blue, 
+    color: Colors.blue,
   },
-  contactPhone: { 
+  contactPhone: {
     fontFamily: 'regular',
-    color: Colors.blue, 
-    fontSize: 14 
+    color: Colors.blue,
+    fontSize: 14,
   },
-  actionButtons: { 
-    flexDirection: 'row' 
+  actionButtons: {
+    flexDirection: 'row',
   },
   iconButtonEdit: {
     backgroundColor: '#B8D8FF',
@@ -202,21 +200,30 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
   footer: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-around',
     padding: 12,
     backgroundColor: Colors.white,
     borderRadius: 8,
-    elevation: 4,
-    shadowColor: '#000'
+    elevation: 10, 
+    shadowColor: '#000', 
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.35, 
+    shadowRadius: 6,
+  },  
+  footerButton: {
+    padding: 8,
   },
-  footerButton: { 
-    padding: 8 
-  },
-  footerButtonText: { 
-    fontSize: 14, 
+  footerButtonText: {
+    fontSize: 14,
     fontFamily: 'bold',
-    color: Colors.blue 
+    color: Colors.blue,
   },
   footerButtonActive: {
     backgroundColor: Colors.red,
@@ -225,10 +232,10 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     marginRight: 8,
   },
-  footerButtonTextActive: { 
-    fontSize: 14, 
-    color: Colors.white, 
-    fontFamily: 'bold' 
+  footerButtonTextActive: {
+    fontSize: 14,
+    color: Colors.white,
+    fontFamily: 'bold',
   },
 });
 

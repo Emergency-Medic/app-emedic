@@ -1,6 +1,8 @@
 import React, { useRef, useState } from 'react';
+import { Colors } from '@/constants/Colors';
 import { Image, View, Text, StyleSheet, ImageBackground, TouchableOpacity, FlatList } from 'react-native';
 import Swiper from 'react-native-swiper';
+// import BackButton from '@/components/BackButton';
 import { router, useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
@@ -74,7 +76,7 @@ const Quiz = () => {
     return (
       
       <View style={styles.container}>
-        <StatusBar style='dark'/>
+        {/* <BackButton color={Colors.red} top={45}/> */}
         <Text style={styles.progressText}>
         Soal {currentQuestionIndex + 1} / {totalQuestions}
         </Text>
@@ -87,7 +89,7 @@ const Quiz = () => {
       
       
         <View style={styles.navigationButtons2}>
-            <TouchableOpacity style={styles.skipButton}>
+            <TouchableOpacity onPress={() => router.push("./(auth)/SignInScreen")} style={styles.skipButton}>
                 <Text style={styles.skipText}>Skip {'>'}{'>'}</Text>
             </TouchableOpacity>
         </View>
@@ -129,6 +131,13 @@ const Quiz = () => {
                 </View>
               )}
             </>
+          )}
+          {currentQuestionIndex === totalQuestions - 1 && (
+            <View style={styles.submitButtonEnding}>
+              <TouchableOpacity onPress={() => router.push("./ScoreScreen")} style={styles.submitButton}>
+                <Text style={styles.submitText}>Submit</Text>
+              </TouchableOpacity>
+            </View>
           )}
         </View>
 
@@ -225,7 +234,7 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'space-between',
       margin: 65,
-      width: '60%',
+      width: '80%',
     },
     navButtonText:{
       color: '#fff',
@@ -261,7 +270,27 @@ const styles = StyleSheet.create({
       fontSize: 13,
       marginBottom: 5,
       textAlign: 'left',
-    }
+    },
+    submitButton: {
+      backgroundColor: '#A8201A', // Warna tombol Submit
+      width: 200,
+      height: 50,
+      borderRadius: 25,
+      justifyContent: 'center',
+      alignItems: 'center',
+      textAlign:'center',
+    },
+    submitText: {
+      color: '#fff', // Warna teks Submit
+      fontSize: 16,
+      fontFamily: 'bold', // Gaya teks
+    },
+    submitButtonEnding: {
+      justifyContent:'center',
+      alignItems:'center',
+      textAlign:'center',
+      width:'100%',
+    },
 });
 
 export default Quiz;
