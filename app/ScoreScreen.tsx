@@ -18,7 +18,11 @@ type Props = {
   route: ScoreScreenRouteProp;
 };
 
+<<<<<<< HEAD
 const ScoreScreen: React.FC<Props> = ({ navigation }) => {
+=======
+const ScoreScreen = () => {
+>>>>>>> 8a95fedf9a23babdd9e403dd66e30151a0b28e3d
   return (
     <View style={styles.container}>
       <View style={styles.navigationButtons2}>
@@ -47,7 +51,11 @@ const ScoreScreen: React.FC<Props> = ({ navigation }) => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button}
+<<<<<<< HEAD
           onPress={() => navigation.navigate('AnswerSummary')}
+=======
+          onPress={() => router.push("./Summary")}
+>>>>>>> 8a95fedf9a23babdd9e403dd66e30151a0b28e3d
         >
           <Text style={styles.buttonText}>Lihat Jawaban {'>'}</Text>
       </TouchableOpacity>
@@ -62,7 +70,13 @@ const ScoreScreen: React.FC<Props> = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
+<<<<<<< HEAD
     flex: 1,
+=======
+    height:'100%',
+    width:'100%',
+    // flex: ,
+>>>>>>> 8a95fedf9a23babdd9e403dd66e30151a0b28e3d
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -111,10 +125,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#29335C',
     padding: 50,
     borderRadius: 25,
+<<<<<<< HEAD
     marginTop: 100,
     justifyContent: 'center',
     paddingTop: 30,
     paddingBottom: 30,
+=======
+    marginTop: 0,
+    justifyContent: 'center',
+    paddingTop: 20,
+    paddingBottom: 10,
+>>>>>>> 8a95fedf9a23babdd9e403dd66e30151a0b28e3d
   },
   profileIcon:{
     justifyContent: 'center',
@@ -134,10 +155,17 @@ const styles = StyleSheet.create({
   },
   maskot: {
     position: 'absolute',
+<<<<<<< HEAD
     bottom: 160,
     left: 135,
     height: 90,  // Atur tinggi gambar sesuai kebutuhan
     width: 150,   // Atur lebar gambar sesuai kebutuhan
+=======
+    bottom: 290,
+    left: 5,
+    height: 120,  // Atur tinggi gambar sesuai kebutuhan
+    width: 180,   // Atur lebar gambar sesuai kebutuhan
+>>>>>>> 8a95fedf9a23babdd9e403dd66e30151a0b28e3d
   },
   button: {
     borderRadius: 5,
@@ -153,11 +181,17 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   seeAnswer:{
+<<<<<<< HEAD
     marginTop: 40,
     fontSize: 15,
     fontFamily: 'regular',
     marginBottom: 0,
     padding: 0,
+=======
+    marginTop: 90,
+    fontSize: 15,
+    fontFamily: 'regular',
+>>>>>>> 8a95fedf9a23babdd9e403dd66e30151a0b28e3d
   },
   buttonText: {
     color: '#A8201A',
@@ -185,4 +219,8 @@ const styles = StyleSheet.create({
   },
 });
 
+<<<<<<< HEAD
 export default ScoreScreen;
+=======
+export default ScoreScreen;
+>>>>>>> 8a95fedf9a23babdd9e403dd66e30151a0b28e3d

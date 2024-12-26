@@ -93,7 +93,7 @@ export default function RegisterScreen() {
                     </View>
                 </View>
                 <View>
-                    <TouchableOpacity style={styles.submit} onPress={() => console.log("submit")}>
+                    <TouchableOpacity style={styles.submit} onPress={() => router.push('../(tabs)/Home')}>
                         <Text style={styles.buttonText} >Daftar</Text>
                     </TouchableOpacity>
                     <View style={styles.belumwrap}>
