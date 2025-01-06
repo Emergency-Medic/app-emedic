@@ -18,7 +18,7 @@ type Props = {
   route: ScoreScreenRouteProp;
 };
 
-const Summary: React.FC<Props> = ({ navigation }) => {
+const Summary = () => {
   return (
     <ScrollView style={styles.allwrap}>
     <View style={styles.container}>
@@ -31,10 +31,10 @@ const Summary: React.FC<Props> = ({ navigation }) => {
         <View style={styles.bluebackground}>
             <View style={styles.flexContainer}>
             <View style={styles.profileIcon}>
-                <FontAwesome name="trophy" size={150} color="#FFB636" />
+                <FontAwesome name="trophy" size={100} color="#FFB636" />
             </View>
             <View style={styles.flexbetween}>
-            <Text style={styles.score}>Nilai Anda :</Text>
+            <Text style={styles.score}>Selamat, Nilai Anda :</Text>
             
             <View style={styles.scoreContainer}>
                 <Text style={styles.scoreValue}>80</Text>
@@ -57,135 +57,143 @@ const Summary: React.FC<Props> = ({ navigation }) => {
                 </Text>
             </View>
             <View style={styles.isikotakjawaban}>
-                <Text>
+                <Text style={styles.isitextjawaban}>
                     A. Posisikan tangan di dada korban
                 </Text>
             </View>
-            <View style={styles.isikotakjawaban}>
-                <Text>
+            <View style={styles.isikotakjawabansalah}>
+                <Text style={styles.isitextjawaban}>
                     B. Beri napas buatan ke mulut korban
                 </Text>
             </View>
-            <View style={styles.isikotakjawaban}>
-                <Text>
+            <View style={styles.isikotakjawabanbenar}>
+                <Text style={styles.isitextjawaban}>
                     C. Cek denyut nadi korban
                 </Text>
             </View>
             <View style={styles.isikotakjawaban}>
-                <Text>
+                <Text style={styles.isitextjawaban}>
                     D. Langsung tekan di area dada korban
                 </Text>
             </View>
       </View>
 
       <View style={styles.kotakjawaban}>
-      <View style={styles.textkotakjawaban}>
+            <View style={styles.textkotakjawaban}>
                 <Text style={styles.textjawaban}>
                     Yang harus dilakukan pertama kali ketika ingin melakukan CPR adalah...
                 </Text>
             </View>
             <View style={styles.isikotakjawaban}>
-                <Text>
+                <Text style={styles.isitextjawaban}>
                     A. Posisikan tangan di dada korban
                 </Text>
             </View>
             <View style={styles.isikotakjawaban}>
-                <Text>
+                <Text style={styles.isitextjawaban}>
                     B. Beri napas buatan ke mulut korban
                 </Text>
             </View>
             <View style={styles.isikotakjawaban}>
-                <Text>
+                <Text style={styles.isitextjawaban}>
                     C. Cek denyut nadi korban
                 </Text>
             </View>
             <View style={styles.isikotakjawaban}>
-                <Text>
+                <Text style={styles.isitextjawaban}>
                     D. Langsung tekan di area dada korban
                 </Text>
             </View>
       </View>
+
       <View style={styles.kotakjawaban}>
-      <View style={styles.textkotakjawaban}>
+            <View style={styles.textkotakjawaban}>
                 <Text style={styles.textjawaban}>
                     Yang harus dilakukan pertama kali ketika ingin melakukan CPR adalah...
                 </Text>
             </View>
             <View style={styles.isikotakjawaban}>
-                <Text>
+                <Text style={styles.isitextjawaban}>
                     A. Posisikan tangan di dada korban
                 </Text>
             </View>
             <View style={styles.isikotakjawaban}>
-                <Text>
+                <Text style={styles.isitextjawaban}>
                     B. Beri napas buatan ke mulut korban
                 </Text>
             </View>
             <View style={styles.isikotakjawaban}>
-                <Text>
+                <Text style={styles.isitextjawaban}>
                     C. Cek denyut nadi korban
                 </Text>
             </View>
             <View style={styles.isikotakjawaban}>
-                <Text>
+                <Text style={styles.isitextjawaban}>
                     D. Langsung tekan di area dada korban
                 </Text>
             </View>
       </View>
+
       <View style={styles.kotakjawaban}>
-      <View style={styles.textkotakjawaban}>
+            <View style={styles.textkotakjawaban}>
                 <Text style={styles.textjawaban}>
                     Yang harus dilakukan pertama kali ketika ingin melakukan CPR adalah...
                 </Text>
             </View>
             <View style={styles.isikotakjawaban}>
-                <Text>
+                <Text style={styles.isitextjawaban}>
                     A. Posisikan tangan di dada korban
                 </Text>
             </View>
             <View style={styles.isikotakjawaban}>
-                <Text>
+                <Text style={styles.isitextjawaban}>
                     B. Beri napas buatan ke mulut korban
                 </Text>
             </View>
             <View style={styles.isikotakjawaban}>
-                <Text>
+                <Text style={styles.isitextjawaban}>
                     C. Cek denyut nadi korban
                 </Text>
             </View>
             <View style={styles.isikotakjawaban}>
-                <Text>
+                <Text style={styles.isitextjawaban}>
                     D. Langsung tekan di area dada korban
                 </Text>
             </View>
       </View>
+
       <View style={styles.kotakjawaban}>
-      <View style={styles.textkotakjawaban}>
+            <View style={styles.textkotakjawaban}>
                 <Text style={styles.textjawaban}>
                     Yang harus dilakukan pertama kali ketika ingin melakukan CPR adalah...
                 </Text>
             </View>
-            <View style={styles.isikotakjawaban}>
-                <Text>
+            <View style={styles.isikotakjawabanbenar}>
+                <Text style={styles.isitextjawaban}>
                     A. Posisikan tangan di dada korban
                 </Text>
             </View>
             <View style={styles.isikotakjawaban}>
-                <Text>
+                <Text style={styles.isitextjawaban}>
                     B. Beri napas buatan ke mulut korban
                 </Text>
             </View>
             <View style={styles.isikotakjawaban}>
-                <Text>
+                <Text style={styles.isitextjawaban}>
                     C. Cek denyut nadi korban
                 </Text>
             </View>
             <View style={styles.isikotakjawaban}>
-                <Text>
+                <Text style={styles.isitextjawaban}>
                     D. Langsung tekan di area dada korban
                 </Text>
             </View>
       </View>
+
+    <TouchableOpacity style={styles.DoneButton}>
+              <Text style={styles.buttonTextWhite}>Selesai</Text>
+    </TouchableOpacity>
+      
     </View>
     </ScrollView>
   );
@@ -204,13 +212,13 @@ const styles = StyleSheet.create({
       alignItems: 'center'
   },
   score: {
-    fontSize: 20,
+    fontSize: 15,
     marginVertical: 5,
     color: '#fff',
     fontFamily: 'bold'
   },
   scoreValue: {
-    fontSize: 70,
+    fontSize: 50,
     color: '#fff',
     fontFamily: 'semibold',
   },
@@ -234,12 +242,10 @@ const styles = StyleSheet.create({
   },
   bluebackground:{
     backgroundColor: '#29335C',
-    padding: 30,
-    borderRadius: 25,
-    marginTop: 100,
+   borderRadius: 25,
+    marginTop: 90,
     justifyContent: 'center',
-    paddingTop: 20,
-    paddingBottom: 20,
+    padding:20,
   },
   profileIcon:{
     justifyContent: 'center',
@@ -247,7 +253,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   scoreTotal: {
-    fontSize: 24,
+    fontSize: 20,
     color: '#fff',
     marginLeft: 10,
     fontFamily: 'semibold',
@@ -264,8 +270,8 @@ const styles = StyleSheet.create({
     width: 150,   // Atur lebar gambar sesuai kebutuhan
   },
   seeAnswer:{
-    marginTop: 40,
-    fontSize: 15,
+    marginTop: 20,
+    fontSize: 12,
     fontFamily: 'regular',
     marginBottom: 0,
     padding: 0,
@@ -279,11 +285,11 @@ const styles = StyleSheet.create({
   kotakjawaban:{
     alignItems: 'center',
     textAlign: 'center',
-    marginTop: 20,
+    marginTop: 30,
     height: 350,
-    width: '80%',
+    width: '90%',
     backgroundColor: '#fff',
-    borderRadius: 30,
+    borderRadius: 10,
     justifyContent: 'center',
     shadowColor: '#000',
     shadowRadius: 3.84,
@@ -292,9 +298,39 @@ const styles = StyleSheet.create({
   isikotakjawaban: {
     marginBottom: 20,
     height:'12%',
-    width:'80%',
+    width:'90%',
     backgroundColor: '#fff',
-    borderRadius: 20,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowRadius: 3.84,
+    elevation: 5,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    paddingLeft: 20,
+  },
+  isikotakjawabanbenar: {
+    marginBottom: 20,
+    height:'12%',
+    width:'90%',
+    backgroundColor: '#EEFAE6',
+    borderColor:'#019F01',
+    borderWidth:2,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowRadius: 3.84,
+    elevation: 5,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    paddingLeft: 20,
+  },
+  isikotakjawabansalah: {
+    marginBottom: 20,
+    height:'12%',
+    width:'90%',
+    backgroundColor: '#FFE7E7',
+    borderColor:'#A8201A',
+    borderWidth:2,
+    borderRadius: 10,
     shadowColor: '#000',
     shadowRadius: 3.84,
     elevation: 5,
@@ -304,13 +340,35 @@ const styles = StyleSheet.create({
   },
   textkotakjawaban: {
     paddingBottom: 20,
+    padding:15,
+    textAlign:'justify',
+    justifyContent:"space-between",
+    alignItems:'flex-start'
   },
   textjawaban: {
-    padding:20,
+    padding:5,
     textAlign: 'center',
     fontSize: 15,
+    fontFamily: 'semibold',
+  },
+  isitextjawaban: {
+    fontSize: 12,
+    fontFamily:'reguler',
+  },
+  DoneButton: {
+    backgroundColor: '#A8201A', // Warna tombol Sign Up
+    borderRadius: 25,
+    padding: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 100,
+    marginTop: 50,
+    width: '90%',
+  },
+  buttonTextWhite: {
+    color: '#fff',
     fontFamily: 'semibold'
-  }
+  },
 });
 
 export default Summary;

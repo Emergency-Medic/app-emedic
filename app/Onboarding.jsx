@@ -114,7 +114,7 @@ const OnboardingScreen = () => {
             <View style={styles.contentBottomContainer}>
             <Text style={styles.title}>Asisten Darurat Anda</Text>
             <Text style={styles.description}>
-                Hubungi nomor darurat 112 dan teman-teman Anda melalui aplikasi ini.
+                Hubungi nomor darurat 112 dan teman-teman Anda melalui aplikasi ini.
             </Text>
             </View>
 
@@ -173,13 +173,13 @@ const OnboardingScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-      height:'100%',
-      width:'100%',
-      justifyContent:'center',
-      alignItems:'center',
-      backgroundColor: '#ffffff',
-  },
+    container: {
+        height:'100%',
+        width:'100%',
+        justifyContent:'center',
+        alignItems:'center',
+        backgroundColor: '#ffffff',
+    },
   slide: {
     flex: 1,
     justifyContent: 'center',
@@ -230,7 +230,6 @@ const styles = StyleSheet.create({
     fontFamily: 'bold',
     color: '#fff',
     marginBottom: 10,
-    fontFamily: 'bold'
   },
   description: {
     textAlign:'center',
@@ -238,7 +237,6 @@ const styles = StyleSheet.create({
     fontFamily: 'regular',
     color: '#fff',
     lineHeight: 20,
-    fontFamily: 'regular'
   },
   skipButton: {
     position: 'absolute',
@@ -249,7 +247,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: 'light',
     color: '#fff',
-    fontFamily: 'semibold'
   },
   dotStyle: {
     backgroundColor: '#fff',
@@ -266,6 +263,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   navigationButtons: {
+    
     flexDirection: 'row',
     position: 'absolute',
     bottom: 50,
@@ -334,6 +332,7 @@ const styles = StyleSheet.create({
   },
   buttonTextWhite: {
     color: '#fff',
+    fontFamily: 'bold'
   },
 });
 
