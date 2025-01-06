@@ -36,11 +36,11 @@ const EmergencyCallScreen = () => {
         </View>
         {/* Location */}
         <View style={styles.locationSection}> 
-          <View style={styles.locationIcon}> 
+          <View> 
             <Entypo name="location-pin" size={16} color={Colors.red}/>
           </View>
           {/* Keterangan Lokasi */}
-          <View style={styles.locationText}>
+          <View>
               <Text style={styles.location}>
                 Sentul Circuit
               </Text>
@@ -207,14 +207,8 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',
     textAlign: 'right',
     gap: 7,
-    // flex: 1
   },
-  // locationIcon: {
-  //   marginRight: 7,
-  // },
-  // locationText: {
-  //   marginRight: 16, 
-  // },
+
   location: {
     fontSize: 14, 
     fontFamily: 'italic',
@@ -346,7 +340,6 @@ const styles = StyleSheet.create({
     fontFamily: 'semibold', 
     fontSize: 14,
     color: Colors.blue,  
-    marginBottom: 21, 
     paddingHorizontal: 30,
     textAlign: 'center',  
     marginTop: 12,
@@ -433,7 +426,6 @@ const styles = StyleSheet.create({
     fontFamily: 'semibold', 
     fontSize: 14,
     color: Colors.blue,  
-    marginBottom: 21, 
     paddingHorizontal: 30,
     textAlign: 'center',  
     marginTop: 23,
