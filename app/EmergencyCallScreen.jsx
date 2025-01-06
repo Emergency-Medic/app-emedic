@@ -11,7 +11,6 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Foundation from '@expo/vector-icons/Foundation';
 
-
 const EmergencyCallScreen = () => {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
