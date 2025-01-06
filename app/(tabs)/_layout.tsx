@@ -45,6 +45,7 @@ export default function TabLayout() {
                 tabBarIcon: ({ color }) => (
                     <Feather name="phone" size={24} color={color} />
                 ),
+                headerShown: false,
             }}
         />
         <Tabs.Screen 
