@@ -14,6 +14,7 @@ import Foundation from '@expo/vector-icons/Foundation';
 const EmergencyCallScreen = () => {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible2, setModalVisible2] = useState(false);
 
   const makePhoneCall = () => {
     const args = {
@@ -97,10 +98,43 @@ const EmergencyCallScreen = () => {
           </Text>
         </TouchableOpacity>
       </View>
-      
-      {/* Modal 2 Section */}
+      {/* Modal Section */}
       <Modal transparent={true} visible={modalVisible} animationType="fade" onRequestClose={() => setModalVisible(false)}>
         <TouchableWithoutFeedback onPressOut={() => setModalVisible(false)}>
+          <View style={styles.modalContainer}>
+            <TouchableWithoutFeedback>
+              <View style={styles.modalCardContent}>
+                <View style={styles.modalWarningContainer}>
+                  <View style={styles.modalWarningIcon}>
+                    <AntDesign name="warning" size={16} color={Colors.red} />
+                  </View>
+                  <Text style={styles.modalWarningText}>
+                    Peringatan
+                  </Text>
+                </View>
+                <Text style={styles.modalWarningQuestion}>
+                  Siapa yang berada dalam keadaan darurat saat ini?
+                </Text>
+                <View style={styles.answerContent}>
+                  <TouchableOpacity style={styles.meButton} onPress={() => setModalVisible2(true)}>
+                    <Text style={styles.meText} >
+                      Saya
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.otherButton} onPress={() => setModalVisible2(true)}>
+                    <Text style={styles.otherText}>
+                      Orang lain
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+      {/* Modal 2 Section */}
+      <Modal transparent={true} visible={modalVisible2} animationType="fade" onRequestClose={() => setModalVisible2(false)}>
+        <TouchableWithoutFeedback onPressOut={() => setModalVisible2(false)}>
           <View style={styles.modalContainer2}>
             <TouchableWithoutFeedback>
               <View style={styles.modalCardContent2}>
@@ -121,7 +155,7 @@ const EmergencyCallScreen = () => {
                       Ya
                     </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.otherButton2} onPress={() => setModalVisible(false)}>
+                  <TouchableOpacity style={styles.otherButton2} onPress={() => setModalVisible2(false)}>
                     <Text style={styles.tidakText}>
                       Tidak
                     </Text>

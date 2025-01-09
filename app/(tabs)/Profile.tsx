@@ -1,7 +1,11 @@
-import { Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 
-export default function Profile() {
-  return (
-    <Text>Profile</Text>
-  )
-}
+const Profile = () =>{
+}; 
+
+const styles = StyleSheet.create({
+
+}); 
+
+export default Profile;
