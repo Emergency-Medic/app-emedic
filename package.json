@@ -49,6 +49,7 @@
     "react-native-screens": "~4.1.0",
     "react-native-shadow-2": "^7.1.1",
     "react-native-svg": "^15.10.1",
+    "react-native-swipeable": "^0.6.0",
     "react-native-swiper": "^1.6.0",
     "react-native-text-input-otp": "^1.0.7",
     "react-native-web": "~0.19.13",
