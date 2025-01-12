@@ -1,7 +1,8 @@
-import React, {useState} from "react";
-import {Alert, Modal, View, Text, StyleSheet, TouchableOpacity, Image, TouchableWithoutFeedback} from 'react-native'; 
+import React, { useState } from "react";
+import { Modal, View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
+import call from 'react-native-phone-call'; 
 
 import { Colors } from '@/constants/Colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -12,11 +13,23 @@ import Foundation from '@expo/vector-icons/Foundation';
 
 const EmergencyCallScreen = () => {
   const router = useRouter();
-  const [modalVisible, setModalVisible] = useState(false); 
+  const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
-  return(
-    <View style={styles.container}> 
-    <StatusBar style='dark' translucent={true}/>
+
+  const makePhoneCall = () => {
+    const args = {
+      number: '112',
+      prompt: false,
+      skipCanOpen: true
+    }
+
+    call(args).catch(console.error);
+  };
+
+
+  return (
+    <View style={styles.container}>
+      <StatusBar style='dark' translucent={true} />
       <View style={styles.header}>
         {/* Profile */}
         <View style={styles.profileSection}>
@@ -25,32 +38,32 @@ const EmergencyCallScreen = () => {
             <MaterialIcons name="person-outline" size={18} color={Colors.grey} />
           </View>
           {/* Keterangan profile */}
-          <View style={styles.profileText}> 
+          <View style={styles.profileText}>
             <Text style={styles.name}>
               Natasya Fernanda
             </Text>
             <Text style={styles.role}>
               Pemilik
-            </Text>          
-          </View>  
+            </Text>
+          </View>
         </View>
         {/* Location */}
-        <View style={styles.locationSection}> 
-          <View> 
-            <Entypo name="location-pin" size={16} color={Colors.red}/>
+        <View style={styles.locationSection}>
+          <View style={styles.locationIcon}>
+            <Entypo name="location-pin" size={16} color={Colors.red} fontWeight='bold' />
           </View>
           {/* Keterangan Lokasi */}
-          <View>
-              <Text style={styles.location}>
-                Sentul Circuit
-              </Text>
-              <Text style={styles.locationInfo}>
-                Lokasi terkini
-              </Text>
-            </View>
+          <View style={styles.locationText}>
+            <Text style={styles.location}>
+              Sentul Circuit
+            </Text>
+            <Text style={styles.locationInfo}>
+              Lokasi terkini
+            </Text>
+          </View>
         </View>
       </View>
-      
+
       {/* Emergency Call Section */}
       <View style={styles.emergencySection}>
         <Text style={styles.emergencyText}>Panggilan Darurat</Text>
@@ -59,15 +72,15 @@ const EmergencyCallScreen = () => {
         </Text>
 
         {/* Emergency Button */}
-        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.emergencyButton}> 
-          <View style={styles.circle}> 
+        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.emergencyButton}>
+          <View style={styles.circle}>
             <Foundation name="telephone" size={100} color={Colors.white} style={styles.callIcon} />
           </View>
         </TouchableOpacity>
       </View>
       {/* Warning Section*/}
-      <View style={styles.warningContainer}> 
-        <View style ={styles.warningIcon}>
+      <View style={styles.warningContainer}>
+        <View style={styles.warningIcon}>
           <AntDesign name="warning" size={16} color={Colors.red} />
         </View>
         <Text style={styles.warningText}>
@@ -80,7 +93,7 @@ const EmergencyCallScreen = () => {
       {/* Cancel Button */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={() => router.back()} style={styles.button}>
-          <Text style={styles.cancelText}> 
+          <Text style={styles.cancelText}>
             Batal
           </Text>
         </TouchableOpacity>
@@ -90,9 +103,9 @@ const EmergencyCallScreen = () => {
         <TouchableWithoutFeedback onPressOut={() => setModalVisible(false)}>
           <View style={styles.modalContainer}>
             <TouchableWithoutFeedback>
-              <View style={styles.modalCardContent}> 
+              <View style={styles.modalCardContent}>
                 <View style={styles.modalWarningContainer}>
-                  <View style ={styles.modalWarningIcon}>
+                  <View style={styles.modalWarningIcon}>
                     <AntDesign name="warning" size={16} color={Colors.red} />
                   </View>
                   <Text style={styles.modalWarningText}>
@@ -102,8 +115,8 @@ const EmergencyCallScreen = () => {
                 <Text style={styles.modalWarningQuestion}>
                   Siapa yang berada dalam keadaan darurat saat ini?
                 </Text>
-                <View style={styles.answerContent}> 
-                  <TouchableOpacity style={styles.meButton} onPress={() => setModalVisible2(true)}> 
+                <View style={styles.answerContent}>
+                  <TouchableOpacity style={styles.meButton} onPress={() => setModalVisible2(true)}>
                     <Text style={styles.meText} >
                       Saya
                     </Text>
@@ -123,34 +136,34 @@ const EmergencyCallScreen = () => {
       <Modal transparent={true} visible={modalVisible2} animationType="fade" onRequestClose={() => setModalVisible2(false)}>
         <TouchableWithoutFeedback onPressOut={() => setModalVisible2(false)}>
           <View style={styles.modalContainer2}>
-              <TouchableWithoutFeedback>
-                <View style={styles.modalCardContent2}> 
-                  <View style={styles.modalWarningContainer2}>
-                    <View style ={styles.modalWarningIcon2}>
-                      <AntDesign name="warning" size={16} color={Colors.red} />
-                    </View>
-                    <Text style={styles.modalWarningText2}>
-                      Peringatan
-                    </Text>
+            <TouchableWithoutFeedback>
+              <View style={styles.modalCardContent2}>
+                <View style={styles.modalWarningContainer2}>
+                  <View style={styles.modalWarningIcon2}>
+                    <AntDesign name="warning" size={16} color={Colors.red} />
                   </View>
-                  <Text style={styles.modalWarningQuestion2}>
-                    Yakin lanjutkan panggilan?
+                  <Text style={styles.modalWarningText2}>
+                    Peringatan
                   </Text>
-                  <View style={styles.answerContent2}> 
-                    <TouchableOpacity style={styles.meButton2}> 
-                      <Text style={styles.yaText} >
-                        Ya
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.otherButton2} onPress={() => setModalVisible2(false)}>
-                      <Text style={styles.tidakText}>
-                        Tidak
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
                 </View>
-              </TouchableWithoutFeedback>
-            </View>
+                <Text style={styles.modalWarningQuestion2}>
+                  Yakin lanjutkan panggilan?
+                </Text>
+                <View style={styles.answerContent2}>
+                  <TouchableOpacity style={styles.meButton2} onPress={makePhoneCall}>
+                    <Text style={styles.yaText}>
+                      Ya
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.otherButton2} onPress={() => setModalVisible2(false)}>
+                    <Text style={styles.tidakText}>
+                      Tidak
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
         </TouchableWithoutFeedback>
       </Modal>
     </View>
@@ -159,40 +172,32 @@ const EmergencyCallScreen = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, 
-    // paddingHorizontal: 25,
+    flex: 1,
     backgroundColor: Colors.white,
-    width: '100%',
-    alignContent: 'center',
-    // alignContent: 'center'
   },
-  header : {
-    marginTop: 20, 
+  header: {
+    marginTop: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%', 
     alignItems: 'center',
-    // gap: 30,
     padding: 32,
-  }, 
+  },
   profileSection: {
-    flexDirection: 'row', 
+    flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
   },
   profileIcon: {
     width: 40,
     height: 40,
-    borderRadius: 20, 
+    borderRadius: 20,
     backgroundColor: Colors.lightGrey,
-    justifyContent: 'center', 
+    justifyContent: 'center',
     alignItems: 'center',
   },
   profileText: {
     marginLeft: 16,
   },
   name: {
-    flexWrap: 'wrap',
     fontFamily: 'semibold',
     fontSize: 14,
     color: Colors.red,
@@ -203,14 +208,18 @@ const styles = StyleSheet.create({
     color: Colors.blue,
   },
   locationSection: {
-    flexDirection: 'row', 
+    flexDirection: 'row',
     alignItems: 'baseline',
     textAlign: 'right',
-    gap: 7,
   },
-
+  locationIcon: {
+    marginRight: 7,
+  },
+  locationText: {
+    marginRight: 16,
+  },
   location: {
-    fontSize: 14, 
+    fontSize: 16,
     fontFamily: 'italic',
     color: Colors.red,
   },
@@ -222,17 +231,17 @@ const styles = StyleSheet.create({
   },
   emergencySection: {
     alignItems: 'center',
-    marginTop: 32, 
+    marginTop: 32,
   },
   emergencyText: {
-    fontSize: 30, 
-    fontFamily: 'bold', 
+    fontSize: 30,
+    fontFamily: 'bold',
     color: 'Black',
-    padding: 9, 
+    padding: 9,
   },
   emergencySubtitle: {
     fontFamily: 'italic',
-    color: Colors.grey, 
+    color: Colors.grey,
     marginBottom: 42,
   },
   emergencyButton: {
@@ -253,25 +262,25 @@ const styles = StyleSheet.create({
     width: 210,
     height: 210,
     borderRadius: 360,
-    backgroundColor: Colors.red, 
+    backgroundColor: Colors.red,
     justifyContent: 'center',
     alignItems: 'center'
   },
-  callIcon: { 
-    alignItems: 'center', 
+  callIcon: {
+    alignItems: 'center',
     justifyContent: 'center',
   },
   warningContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start', 
+    justifyContent: 'flex-start',
     textAlign: 'left',
-    marginLeft:30, 
-    marginBottom: 8, 
+    marginLeft: 30,
+    marginBottom: 8,
     padding: 8,
   },
   warningIcon: {
-    marginRight: 10, 
+    marginRight: 10,
   },
   warningText: {
     color: Colors.red,
@@ -281,201 +290,190 @@ const styles = StyleSheet.create({
   description: {
     color: Colors.blue,
     fontFamily: 'semibold',
-    fontSize: 12, 
-    marginLeft: 35, 
-    marginRight: 35, 
+    fontSize: 12,
+    marginLeft: 35,
+    marginRight: 35,
     marginBottom: 70,
     gap: 35,
   },
-  buttonContainer: {  
+  buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'center', 
-  }, 
+    justifyContent: 'center',
+  },
   button: {
-    // width: 300, 
-    marginHorizontal: 25,
-    flex: 1,
-    height: 48, 
-    borderRadius: 30, 
+    width: 300,
+    height: 48,
+    borderRadius: 30,
     backgroundColor: Colors.red,
     alignItems: 'center',
-    justifyContent: 'center',   
-  }, 
-  cancelText:{
-    color: Colors.white, 
-    fontSize: 16, 
-    fontFamily: 'bold', 
-    textAlign: 'center',  
-  }, 
+    justifyContent: 'center',
+  },
+  cancelText: {
+    color: Colors.white,
+    fontSize: 16,
+    fontFamily: 'bold',
+    textAlign: 'center',
+  },
   modalContainer: {
-    flex: 1,  
-    justifyContent: 'center', 
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: Colors.transparencyGrey,
   },
-  modalCardContent: { 
+  modalCardContent: {
     width: '85%',
     paddingHorizontal: 37,
     paddingVertical: 12,
     backgroundColor: Colors.white,
-    borderRadius: 20, 
-    textAlign: 'center', 
-    alignItems: 'center', 
-  }, 
+    borderRadius: 20,
+    textAlign: 'center',
+    alignItems: 'center',
+  },
   modalWarningContainer: {
-    flexDirection: 'row', 
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 12, 
-  }, 
+    padding: 12,
+  },
   modalWarningIcon: {
-    marginRight: 10, 
-  }, 
+    marginRight: 10,
+  },
   modalWarningText: {
     color: Colors.red,
     fontSize: 14,
     fontFamily: 'semibold',
   },
   modalWarningQuestion: {
-    fontFamily: 'semibold', 
+    fontFamily: 'semibold',
     fontSize: 14,
-    color: Colors.blue,  
+    color: Colors.blue,
     paddingHorizontal: 30,
-    textAlign: 'center',  
+    textAlign: 'center',
     marginTop: 12,
     marginBottom: 22
   },
   answerContent: {
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    gap: 20, 
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 20,
     paddingHorizontal: 34,
     marginBottom: 4
   },
   meButton: {
-    // width: 129, 
-    // height: 33, 
     paddingHorizontal: 34,
     paddingVertical: 7,
-    backgroundColor: Colors.red, 
-    borderRadius: 30, 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    elevation: 10, 
-    shadowColor: Colors.black, 
-    shadowOffset: {width: 0, height: 10},
-    shadowOpacity: 0.1, 
-    shadowRadius: 10, 
-  }, 
+    backgroundColor: Colors.red,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 10,
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+  },
   meText: {
-    color: Colors.white, 
-    fontFamily: 'semibold', 
-    fontSize: 14, 
+    color: Colors.white,
+    fontFamily: 'semibold',
+    fontSize: 14,
   },
   otherButton: {
-    width: 129, 
-    height: 33, 
+    width: 129,
+    height: 33,
     paddingVertical: 7,
-    backgroundColor: Colors.white, 
-    borderRadius: 30, 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    elevation: 10, 
-    shadowColor: Colors.black, 
-    shadowOffset: {width: 0, height: 10},
-    shadowOpacity: 0.1, 
+    backgroundColor: Colors.white,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 10,
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
     shadowRadius: 10,
   },
   otherText: {
-    color: Colors.grey, 
-    fontFamily: 'semibold', 
-    fontSize: 14, 
+    color: Colors.grey,
+    fontFamily: 'semibold',
+    fontSize: 14,
   },
-  // Modal 2
   modalContainer2: {
-    flex: 1,  
-    justifyContent: 'center', 
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: Colors.transparencyGrey,
   },
-  modalCardContent2: { 
-    // width: 342,
-    // height: 169,
+  modalCardContent2: {
     paddingHorizontal: 37,
     paddingVertical: 12,
     backgroundColor: Colors.white,
-    borderRadius: 20, 
-    textAlign: 'center', 
-    alignItems: 'center', 
-  }, 
+    borderRadius: 20,
+    textAlign: 'center',
+    alignItems: 'center',
+  },
   modalWarningContainer2: {
-    flexDirection: 'row', 
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 12, 
-  }, 
+    padding: 12,
+  },
   modalWarningIcon2: {
-    marginRight: 10, 
-  }, 
+    marginRight: 10,
+  },
   modalWarningText2: {
     color: Colors.red,
     fontSize: 14,
     fontFamily: 'semibold',
   },
   modalWarningQuestion2: {
-    fontFamily: 'semibold', 
+    fontFamily: 'semibold',
     fontSize: 14,
-    color: Colors.blue,  
+    color: Colors.blue,
     paddingHorizontal: 30,
-    textAlign: 'center',  
+    textAlign: 'center',
     marginTop: 23,
     marginBottom: 33
   },
   answerContent2: {
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    gap: 20, 
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 20,
     marginBottom: 4
   },
   meButton2: {
-    // width: 129, 
-    // height: 33, 
     paddingHorizontal: 34,
     paddingVertical: 7,
-    backgroundColor: Colors.red, 
-    borderRadius: 30, 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    elevation: 10, 
-    shadowColor: Colors.black, 
-    shadowOffset: {width: 0, height: 10},
-    shadowOpacity: 0.1, 
-    shadowRadius: 10, 
-  }, 
+    backgroundColor: Colors.red,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 10,
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+  },
   yaText: {
-    color: Colors.white, 
-    fontFamily: 'semibold', 
-    fontSize: 14, 
+    color: Colors.white,
+    fontFamily: 'semibold',
+    fontSize: 14,
   },
   otherButton2: {
-    // width: 129, 
-    // height: 33, 
     paddingHorizontal: 34,
     paddingVertical: 7,
-    backgroundColor: Colors.white, 
-    borderRadius: 30, 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    elevation: 10, 
-    shadowColor: Colors.black, 
-    shadowOffset: {width: 0, height: 10},
-    shadowOpacity: 0.1, 
+    backgroundColor: Colors.white,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 10,
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
     shadowRadius: 10,
   },
   tidakText: {
-    color: Colors.grey, 
-    fontFamily: 'semibold', 
-    fontSize: 14, 
+    color: Colors.grey,
+    fontFamily: 'semibold',
+    fontSize: 14,
   },
 });
 
