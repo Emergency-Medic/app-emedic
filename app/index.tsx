@@ -14,6 +14,8 @@ import Quiz from "./Quiz"
 import Summary from "./Summary";
 import ScoreScreen from "./ScoreScreen";
 import Flashcard from "./FlashCard";
+import Homepagelayanan from "./Homepagelayanan";
+import SearchPage from "./SearchPage"
 
 const Stack = createStackNavigator(); 
 
@@ -23,13 +25,16 @@ export default function Index() {
     'italic': require('.././assets/fonts/Nunito-Italic.ttf'),
     'light': require('.././assets/fonts/Nunito-Light.ttf'),
     'semibold': require('.././assets/fonts/Nunito-SemiBold.ttf'),
+    'medium': require('.././assets/fonts/Nunito-Medium.ttf'),
     'bold': require('.././assets/fonts/Nunito-Bold.ttf'),
     'extrabold': require('.././assets/fonts/Nunito-ExtraBold.ttf'),
     'black': require('.././assets/fonts/Nunito-Black.ttf'),
   })
   return (
     <View>
-      <Quiz />
+      <SearchPage />
+      {/* <Homepagelayanan /> */}
+      {/* <Quiz /> */}
       {/* <MenuAwal /> */}
       {/* <Contactpage /> */}
     </View>
