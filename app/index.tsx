@@ -14,6 +14,7 @@ import Quiz from "./Quiz"
 import Summary from "./Summary";
 import ScoreScreen from "./ScoreScreen";
 import Flashcard from "./FlashCard";
+import Home from "./(tabs)/Home";
 
 const Stack = createStackNavigator(); 
 
