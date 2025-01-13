@@ -38,6 +38,7 @@ const MenuAwal = () => {
             </TouchableOpacity>
             {/* Card 2 */}
             <TouchableOpacity onPress={() => router.push("./EmergencyCallScreen")} style={[styles.card, styles.cardEmergency]}>
+            {/* <TouchableOpacity onPress={() => router.push("./screens/profile/EditProfile")} style={[styles.card, styles.cardEmergency]}> */}
                 <View style={styles.cardcontent}>
                     <View style={styles.textcard}>
                         <Text style={styles.textcontentatas}>Darurat</Text>
