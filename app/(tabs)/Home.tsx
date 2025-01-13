@@ -6,8 +6,48 @@ import { Colors } from '@/constants/Colors';
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
+const data = {  
+  kategori1: [  
+    {  
+      id: 1,  
+      title: "Penanganan penderita epilepsi",  
+      keywords: "Henti, Jantung, Pernapasan, CPR",  
+      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+      image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
+    },  
+    {  
+      id: 1,  
+      title: "Penanganan penderita epilepsi",  
+      keywords: "Henti, Jantung, Pernapasan, CPR",  
+      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+      image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
+    },  
+  ],  
+  kategori2: [  
+    {  
+      id: 2,  
+      title: "Penanganan henti jantung",  
+      keywords: "CPR, Pertolongan Pertama",  
+      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+      image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
+    },  
+    // Tambahkan lebih banyak item jika perlu  
+  ],  
+  kategori3: [  
+    {  
+      id: 3,  
+      title: "Penanganan pernapasan",  
+      keywords: "Asma, Sesak Napas",  
+      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+      image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
+    },  
+    // Tambahkan lebih banyak item jika perlu  
+  ],  
+};  
+
 export default function Home() {
   const router = useRouter();
+  const [selectedCategory, setSelectedCategory] = useState('kategori1');
 
   return (
     <ScrollView style={styles.container}>
@@ -40,17 +80,18 @@ export default function Home() {
           <TouchableOpacity onPress={() => router.push('../screens/MetodePenangan')}>
             <Text style={styles.lihatSemua}> Lihat Semua</Text>
           </TouchableOpacity>
+          
         </View>
         <View style={styles.kategoriSection}> 
-          <View style={styles.section}> 
+          <TouchableOpacity style={styles.section}> 
             <Text style={styles.keterangan}>Kategori 1</Text> 
-          </View>
-          <View style={styles.section}> 
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.section}> 
             <Text style={styles.keterangan}>Kategori 2</Text> 
-          </View>
-          <View style={styles.section}> 
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.section}> 
             <Text style={styles.keterangan}>Kategori 3</Text> 
-          </View>
+          </TouchableOpacity>
         </View>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.cartContainer}>
           <View style={styles.cart}> 
