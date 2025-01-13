@@ -23,6 +23,7 @@ export default function Index() {
     'regular': require('.././assets/fonts/Nunito-Regular.ttf'),
     'italic': require('.././assets/fonts/Nunito-Italic.ttf'),
     'light': require('.././assets/fonts/Nunito-Light.ttf'),
+    'medium': require('.././assets/fonts/Nunito-Medium.ttf'),
     'semibold': require('.././assets/fonts/Nunito-SemiBold.ttf'),
     'bold': require('.././assets/fonts/Nunito-Bold.ttf'),
     'extrabold': require('.././assets/fonts/Nunito-ExtraBold.ttf'),

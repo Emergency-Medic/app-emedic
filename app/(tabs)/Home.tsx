@@ -7,7 +7,7 @@ import { Colors } from '@/constants/Colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 export default function Home() {
-  const [modalVisible, setModalVisible] = useState(false); 
+  const router = useRouter();
 
   return (
     <ScrollView style={styles.container}>
@@ -37,7 +37,7 @@ export default function Home() {
         {/* Rekomendasi Pembelajaran */}
         <View style={styles.rekomendasiPembelajaranTitle}>
           <Text style={styles.titleText}>Rekomendasi Pembelajaran</Text>
-          <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <TouchableOpacity onPress={() => router.push('../screens/MetodePenangan')}>
             <Text style={styles.lihatSemua}> Lihat Semua</Text>
           </TouchableOpacity>
         </View>

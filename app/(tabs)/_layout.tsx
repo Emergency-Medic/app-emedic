@@ -5,10 +5,9 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';  
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';  
 import { useState } from 'react';  
-import { TouchableOpacity } from 'react-native'; // Impor TouchableOpacity  
+import { TouchableOpacity } from 'react-native'; 
+import Profile from './Profile'; 
 
-import Profile from './Profile'; // Pastikan path ini sesuai  
-  
 export default function TabLayout() {  
   const [modalVisible, setModalVisible] = useState(false);  
   
@@ -71,7 +70,7 @@ export default function TabLayout() {
       </Tabs>  
   
       {/* Modal untuk Profile */}  
-      <Profile modalVisible={modalVisible} setModalVisible={setModalVisible} />  
+      <Profile modalVisible={modalVisible} setModalVisible={setModalVisible} /> 
     </>  
   );  
 }  
