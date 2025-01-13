@@ -54,6 +54,7 @@ export default function TabLayout() {
                 tabBarIcon: ({ color }) => (
                     <MaterialIcons name="menu" size={24} color={color} />
                 ),
+                headerShown: false,
             }}
         />
     </Tabs>
