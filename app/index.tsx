@@ -14,7 +14,8 @@ import Quiz from "./Quiz"
 import Summary from "./Summary";
 import ScoreScreen from "./ScoreScreen";
 import Flashcard from "./FlashCard";
-import Home from "./(tabs)/Home";
+import Homepagelayanan from "./Homepagelayanan";
+import SearchPage from "./SearchPage"
 
 const Stack = createStackNavigator(); 
 
@@ -31,8 +32,10 @@ export default function Index() {
   })
   return (
     <View>
+      <SearchPage />
+      {/* <Homepagelayanan /> */}
       {/* <Quiz /> */}
-      <MenuAwal />
+      {/* <MenuAwal /> */}
       {/* <Contactpage /> */}
     </View>
   );
