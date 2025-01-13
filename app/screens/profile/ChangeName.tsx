@@ -3,51 +3,38 @@ import { Colors } from '@/constants/Colors';
 import React, { useState } from 'react'
 import BackButton from '@/components/BackButton'
 import { useRouter } from "expo-router";
-import Feather from '@expo/vector-icons/Feather';
 
-export default function NewPass() {
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-
-  const [showNewPass, setShowNewPass] = useState(false)  
-  const [showConfPass, setShowConfPass] = useState(false)  
-
+export default function ChangeName() {
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
   const router = useRouter();
   return (
     <View style={styles.allwrap}>
         <BackButton color={Colors.red} top={45}/>
-        <Text style={styles.title}>Buat Kata Sandi Baru</Text>
+        <Text style={styles.title}>Ubah Nama Lengkap</Text>
         <Text style={styles.par}>
-          Buat kata sandi baru yang kuat, aman, namun dapat diingat oleh Anda
+        Ubah nama depan dan nama belakang Anda
         </Text>
         <View style={styles.wrapform}>
-          <Text style={styles.titleName}>Kata Sandi Baru</Text>
+          <Text style={styles.titleName}>Nama Depan</Text>
           <TextInput
-            placeholder='Isi dengan password baru'
-            value={password}
-            onChangeText={setPassword}
+            placeholder='Isi dengan nama depan baru Anda'
+            value={firstName}
+            onChangeText={setFirstName}
             style={styles.input}
-            secureTextEntry={!showNewPass}
             />
-            <TouchableOpacity onPress={() => setShowNewPass(!showNewPass)} style={styles.eyeIcon}>
-              <Feather name={showNewPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
-            </TouchableOpacity>
         </View>
         <View style={styles.wrapform}>
-          <Text style={styles.titleName}>Konfirmasi Kata Sandi Baru</Text>
+          <Text style={styles.titleName}>Nama Belakang</Text>
           <TextInput
-            placeholder='Konfirmasi password baru'
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
+            placeholder='Isi dengan nama belakang baru Anda'
+            value={lastName}
+            onChangeText={setLastName}
             style={styles.input}
-            secureTextEntry={!showConfPass}
             />
-            <TouchableOpacity onPress={() => setShowConfPass(!showConfPass)} style={styles.eyeIcon}>
-              <Feather name={showConfPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
-            </TouchableOpacity>
-        </View>
-        <TouchableOpacity style={styles.submit} onPress={() => router.push('./SignInScreen')}>
-          <Text style={styles.buttonText} >Konfirmasi</Text>
+        </ View>
+        <TouchableOpacity style={styles.submit} onPress={() => router.back()}>
+          <Text style={styles.buttonText}>Konfirmasi</Text>
         </TouchableOpacity>
     </View>
   )
@@ -75,18 +62,12 @@ const styles = StyleSheet.create({
       fontFamily: 'regular'
     },
 
-    eyeIcon: {
-      position: 'absolute',
-      left: 300,
-      top: 35
-    },
-
     wrapform: {
       marginBottom: 18,
       marginHorizontal: 25
     },
     titleName: {
-      color: Colors.grey,
+      color: Colors.red,
       fontSize: 12,
       fontFamily: 'bold',
       marginBottom: 5
@@ -98,7 +79,7 @@ const styles = StyleSheet.create({
       borderWidth: .3,
       borderRadius: 30,
       fontSize: 14,
-      borderColor: Colors.grey
+      borderColor: Colors.red
     },
 
     submit: {
@@ -109,10 +90,10 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       marginTop: 70,
-  },
+    },
     buttonText: {
       color: '#FFFFFF',
       fontSize: 20,
       fontFamily: 'semibold'
-  },
+    },
 })
