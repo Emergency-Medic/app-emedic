@@ -5,10 +5,12 @@ import BackButton from '@/components/BackButton'
 import { useRouter } from "expo-router";
 import Feather from '@expo/vector-icons/Feather';
 
-export default function NewPass() {
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+export default function ChangePass() {
+  const [oldPass, setOldPass] = useState('')
+  const [newPass, setnewPass] = useState('')
+  const [confNewPass, setConfNewPass] = useState('')
 
+  const [showOldPass, setShowOldPass] = useState(false)  
   const [showNewPass, setShowNewPass] = useState(false)  
   const [showConfPass, setShowConfPass] = useState(false)  
 
@@ -16,38 +18,51 @@ export default function NewPass() {
   return (
     <View style={styles.allwrap}>
         <BackButton color={Colors.red} top={45}/>
-        <Text style={styles.title}>Buat Kata Sandi Baru</Text>
+        <Text style={styles.title}>Ubah Kata Sandi</Text>
         <Text style={styles.par}>
-          Buat kata sandi baru yang kuat, aman, namun dapat diingat oleh Anda
+        Ubah kata sandi yang kuat, aman, namun dapat diingat oleh Anda
         </Text>
+        <View style={styles.wrapform}>
+          <Text style={styles.titleName}>Kata Sandi Lama</Text>
+          <TextInput
+            secureTextEntry={!showOldPass}
+            placeholder='Isi dengan kata sandi lama Anda'
+            value={oldPass}
+            onChangeText={setOldPass}
+            style={styles.input}
+            />
+            <TouchableOpacity onPress={() => setShowOldPass(!showOldPass)} style={styles.eyeIcon}>
+              <Feather name={showOldPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
+            </TouchableOpacity>
+        </View>
         <View style={styles.wrapform}>
           <Text style={styles.titleName}>Kata Sandi Baru</Text>
           <TextInput
-            placeholder='Isi dengan password baru'
-            value={password}
-            onChangeText={setPassword}
-            style={styles.input}
             secureTextEntry={!showNewPass}
+            placeholder='Isi dengan kata sandi baru Anda'
+            value={newPass}
+            onChangeText={setnewPass}
+            style={styles.input}
             />
             <TouchableOpacity onPress={() => setShowNewPass(!showNewPass)} style={styles.eyeIcon}>
               <Feather name={showNewPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
             </TouchableOpacity>
-        </View>
+        </ View>
         <View style={styles.wrapform}>
           <Text style={styles.titleName}>Konfirmasi Kata Sandi Baru</Text>
           <TextInput
-            placeholder='Konfirmasi password baru'
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            style={styles.input}
             secureTextEntry={!showConfPass}
+            placeholder='Konfirmasi kata sandi baru Anda'
+            value={confNewPass}
+            onChangeText={setConfNewPass}
+            style={styles.input}
             />
             <TouchableOpacity onPress={() => setShowConfPass(!showConfPass)} style={styles.eyeIcon}>
               <Feather name={showConfPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
             </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.submit} onPress={() => router.push('./SignInScreen')}>
-          <Text style={styles.buttonText} >Konfirmasi</Text>
+        <TouchableOpacity style={styles.submit} onPress={() => router.back()}>
+          <Text style={styles.buttonText}>Konfirmasi</Text>
         </TouchableOpacity>
     </View>
   )
@@ -75,18 +90,12 @@ const styles = StyleSheet.create({
       fontFamily: 'regular'
     },
 
-    eyeIcon: {
-      position: 'absolute',
-      left: 300,
-      top: 35
-    },
-
     wrapform: {
       marginBottom: 18,
       marginHorizontal: 25
     },
     titleName: {
-      color: Colors.grey,
+      color: Colors.red,
       fontSize: 12,
       fontFamily: 'bold',
       marginBottom: 5
@@ -98,7 +107,13 @@ const styles = StyleSheet.create({
       borderWidth: .3,
       borderRadius: 30,
       fontSize: 14,
-      borderColor: Colors.grey
+      borderColor: Colors.red
+    },
+
+    eyeIcon: {
+      position: 'absolute',
+      left: 300,
+      top: 35
     },
 
     submit: {
@@ -109,10 +124,10 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       marginTop: 70,
-  },
+    },
     buttonText: {
       color: '#FFFFFF',
       fontSize: 20,
       fontFamily: 'semibold'
-  },
+    },
 })

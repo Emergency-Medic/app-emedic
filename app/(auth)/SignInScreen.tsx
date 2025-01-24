@@ -4,11 +4,14 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView 
 import BackButton from '@/components/BackButton'
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
+import Feather from '@expo/vector-icons/Feather';
 
 export default function SignInScreen() {
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+
+    const [showPass, setShowPass] = useState(false)  
     const router = useRouter();
     return (
         <ScrollView style={styles.allwrap}>
@@ -33,12 +36,15 @@ export default function SignInScreen() {
                         <Text style={styles.titleName}>Kata Sandi</Text>
                         <TextInput
                         placeholder='Isi dengan kata sandi Anda'
-                        secureTextEntry={true}
+                        secureTextEntry={!showPass}
                         value={password}
                         onChangeText={setPassword} 
                         style={styles.input}
                         
                         />
+                        <TouchableOpacity onPress={() => setShowPass(!showPass)} style={styles.eyeIcon}>
+                            <Feather name={showPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
+                        </TouchableOpacity>
                         <View style={styles.forgotPass}>
                             <TouchableOpacity onPress={() => router.push('./ForgotPass')} >
                                 <Text style={styles.forgotPassTxt}>Lupa Kata Sandi?</Text>
@@ -112,6 +118,13 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         fontSize: 14,
     },
+
+    eyeIcon: {
+        position: 'absolute',
+        left: 310,
+        top: 34
+    },
+    
     forgotPass: {
         // width: '100%'
         flexDirection: 'row',

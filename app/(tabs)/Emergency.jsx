@@ -3,8 +3,8 @@ import { Modal, View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedba
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import call from 'react-native-phone-call'; 
-
 import { Colors } from '@/constants/Colors';
+
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 import Ionicons from '@expo/vector-icons/Ionicons';
