@@ -14,6 +14,7 @@ import Quiz from "./Quiz"
 import Summary from "./Summary";
 import ScoreScreen from "./ScoreScreen";
 import Flashcard from "./FlashCard";
+import TahapAwal from "./TahapAwal";
 
 const Stack = createStackNavigator(); 
 
@@ -30,7 +31,7 @@ export default function Index() {
   return (
     <View>
       {/* <Quiz /> */}
-      <MenuAwal />
+      <TahapAwal />
       {/* <Contactpage /> */}
     </View>
   );
