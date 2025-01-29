@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Colors } from '@/constants/Colors';
-import { Image, View, Text, StyleSheet, ImageBackground, TouchableOpacity, FlatList } from 'react-native';
+import { Image, View, Text, StyleSheet, ImageBackground, TouchableOpacity, FlatList , ScrollView} from 'react-native';
 import Swiper from 'react-native-swiper';
 // import BackButton from '@/components/BackButton';
 import { router, useRouter } from "expo-router";
@@ -74,7 +74,7 @@ const Quiz = () => {
   };
 
     return (
-      
+      <ScrollView style={styles.allwrap}>
       <View style={styles.container}>
         {/* <BackButton color={Colors.red} top={45}/> */}
         <Text style={styles.progressText}>
@@ -160,16 +160,20 @@ const Quiz = () => {
         </View> */}
 
       </View>
+      </ScrollView>
     )
 };
 
 const styles = StyleSheet.create({
+  allwrap: {
+    height: '100%',
+    backgroundColor: '#fff'
+},
     container:{
       paddingTop:'30%',
       // justifyContent:"center",
       alignItems:"center",
       textAlign:'center',
-      height:"100%",
       width:"100%",
       backgroundColor:'#fff'
     },

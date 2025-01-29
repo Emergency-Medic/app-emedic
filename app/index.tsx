@@ -14,6 +14,8 @@ import Quiz from "./Quiz"
 import Summary from "./Summary";
 import ScoreScreen from "./ScoreScreen";
 import Flashcard from "./FlashCard";
+import Homepagelayanan from "./Homepagelayanan";
+import SearchPage from "./SearchPage"
 import { auth, db } from '@/firebaseConfig';
 import { useRouter } from "expo-router";
 
@@ -39,8 +41,10 @@ export default function Index() {
   }, [router]);
   return (
     <View>
+      <SearchPage />
+      {/* <Homepagelayanan /> */}
       {/* <Quiz /> */}
-      <MenuAwal />
+      {/* <MenuAwal /> */}
       {/* <Contactpage /> */}
     </View>
   );
