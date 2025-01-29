@@ -1,10 +1,16 @@
-import * as React from 'react';
+import {useEffect} from 'react';
 import { useRouter } from "expo-router";
+import { auth, db } from '@/firebaseConfig';
 import { StatusBar } from 'expo-status-bar';
 import { Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
 const MenuAwal = () => {
     const router = useRouter();
+    useEffect(() => {
+        if (auth.currentUser) {
+            router.replace("./(tabs)/Home"); // Arahkan ke halaman Home jika sudah login
+        }
+      }, [router]);
     return (
         <View style={styles.container}>
             <StatusBar style='dark'/>

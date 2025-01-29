@@ -6,7 +6,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { StatusBar } from 'expo-status-bar';
 import EmergencyCallScreen from "./EmergencyCallScreen";
 import MenuAwal from "./MenuAwal";
-import React from "react";
+import React, {useEffect} from "react";
 import Onboarding from "./Onboarding"
 import SignInScreen from './(auth)/SignInScreen'
 import RegisterScreen from './(auth)/RegisterScreen'
@@ -14,6 +14,8 @@ import Quiz from "./Quiz"
 import Summary from "./Summary";
 import ScoreScreen from "./ScoreScreen";
 import Flashcard from "./FlashCard";
+import { auth, db } from '@/firebaseConfig';
+import { useRouter } from "expo-router";
 
 const Stack = createStackNavigator(); 
 
@@ -28,6 +30,13 @@ export default function Index() {
     'extrabold': require('.././assets/fonts/Nunito-ExtraBold.ttf'),
     'black': require('.././assets/fonts/Nunito-Black.ttf'),
   })
+
+  const router = useRouter();
+  useEffect(() => {
+    if (auth.currentUser) {
+        router.replace("./(tabs)/Home"); // Arahkan ke halaman Home jika sudah login
+    }
+  }, [router]);
   return (
     <View>
       {/* <Quiz /> */}

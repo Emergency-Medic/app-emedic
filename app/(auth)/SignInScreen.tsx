@@ -1,18 +1,82 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { useRouter } from "expo-router";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView, Alert } from 'react-native'
 import BackButton from '@/components/BackButton'
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
 import Feather from '@expo/vector-icons/Feather';
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebaseConfig";
+import { FirebaseError } from "firebase/app";
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 
 export default function SignInScreen() {
 
-    const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-
     const [showPass, setShowPass] = useState(false)  
+    const [emailFocused, setEmailFocused] = useState(false);
+    const [passFocused, setPassFocused] = useState(false);
     const router = useRouter();
+
+    const signInUser = async (email: string, password: string) => {
+        try {
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+          console.log("Signed in successfully:", user);
+      
+        } catch (error) {
+          // Tangani error
+          console.error("Sign In Error:", error);
+          throw error;
+        }
+      };
+
+      const handleSignIn = async () => {
+        try {
+            await signInUser(email, password)
+            Alert.alert("Success", "User signed in successfully!");
+            router.replace('../(tabs)/Home')
+        } catch (error) {
+            Alert.alert("Error", (error as Error).message);
+        }
+      }
+
+      useEffect(() => {
+        if (auth.currentUser) {
+            router.replace("../(tabs)/Home"); // Arahkan ke halaman Home jika sudah login
+        }
+      }, [router]);
+
+    // const isEmail = (input: string) => {
+    //     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    //     return emailRegex.test(input);
+    //   };
+    
+    //   const isPhoneNumber = (input: string) => {
+    //     const phoneRegex = /^(\+?\d{1,3})?0?\d{9,15}$/;
+    //     return phoneRegex.test(input);
+    //   };
+
+    //   const handleLogin = () => {
+    //     if (isEmail(input)) {
+    //       Alert.alert('Deteksi Input', 'Input terdeteksi sebagai Email');
+    //       // Lakukan login dengan email
+    //       console.log('Login dengan email:', input);
+    //     } else if (isPhoneNumber(input)) {
+    //       Alert.alert('Deteksi Input', 'Input terdeteksi sebagai Nomor Telepon');
+    //       // Format nomor telepon ke E.164 jika perlu
+    //       let formattedPhone = input;
+    //       if (input.startsWith('0')) {
+    //         formattedPhone = `+62${input.slice(1)}`;
+    //       }
+    //       console.log('Login dengan nomor telepon:', formattedPhone);
+    //     } else {
+    //       Alert.alert('Kesalahan', 'Input tidak valid. Masukkan email atau nomor telepon yang benar.');
+    //     }
+    //   };
+    
+
     return (
         <ScrollView style={styles.allwrap}>
             <StatusBar backgroundColor={Colors.red} translucent={false}/>
@@ -24,23 +88,52 @@ export default function SignInScreen() {
 
                 <View>
                     <View style={styles.username}>
-                        <Text style={styles.titleName}>Username</Text>
+                        <Text style={[
+                            styles.titleName,
+                            emailFocused && {
+                            color: Colors.red,
+                            fontFamily: 'regular'
+                            }
+                        ]}>
+                           Email
+                        </Text>
                         <TextInput
-                        placeholder='Isi dengan username Anda'
-                        value={username}
-                        onChangeText={setUsername}
-                        style={styles.input}
+                        placeholder='Isi dengan email Anda'
+                        onFocus={() => setEmailFocused(true)}
+                        onBlur={() => setEmailFocused(false)} 
+                        value={email}
+                        onChangeText={setEmail}
+                        style={[
+                            styles.input,
+                            emailFocused && {
+                            borderColor: Colors.red,
+                            }
+                        ]}
                         />
                     </View>
                     <View>
-                        <Text style={styles.titleName}>Kata Sandi</Text>
+                        <Text style={[
+                            styles.titleName,
+                            passFocused && {
+                            color: Colors.red,
+                            fontFamily: 'regular'
+                            }
+                        ]}>
+                            Kata Sandi
+                        </Text>
                         <TextInput
                         placeholder='Isi dengan kata sandi Anda'
                         secureTextEntry={!showPass}
                         value={password}
                         onChangeText={setPassword} 
-                        style={styles.input}
-                        
+                        style={[
+                            styles.input,
+                            passFocused && {
+                            borderColor: Colors.red,
+                            }
+                        ]}
+                        onFocus={() => setPassFocused(true)}
+                        onBlur={() => setPassFocused(false)} 
                         />
                         <TouchableOpacity onPress={() => setShowPass(!showPass)} style={styles.eyeIcon}>
                             <Feather name={showPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
@@ -53,7 +146,7 @@ export default function SignInScreen() {
                     </View>
                 </View>
                 <View>
-                    <TouchableOpacity style={styles.submit} onPress={() => router.push('../(tabs)/Home')}>
+                    <TouchableOpacity style={styles.submit} onPress={handleSignIn}>
                         <Text style={styles.buttonText} >Masuk</Text>
                     </TouchableOpacity>
                     <View style={styles.belumwrap}>
