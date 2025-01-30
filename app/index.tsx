@@ -38,6 +38,7 @@ export default function Index() {
       {/* <Quiz /> */}
       <Slider />
       {/* <Contactpage /> */}
+      <MenuAwal />
     </View>
   );
 }

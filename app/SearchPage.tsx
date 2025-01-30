@@ -69,11 +69,11 @@ const SearchPage = () => {
             <View style={[styles.card, { backgroundColor: item.color }]}>
               <View style={styles.containercardgambartext}>
                 {/* <View style={styles.containergambar}> */}
-                  <Image
+                  {/* <Image
                     source={require('@/assets/images/Injured.png')}
                     style={styles.cardImageInjured}
                     resizeMode='contain'
-                  />
+                  /> */}
                 {/* </View> */}
                 <View style={styles.cardContent}>
                   <Text style={styles.cardTitle}>{item.title}</Text>
