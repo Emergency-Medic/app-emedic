@@ -36,7 +36,7 @@ export default function Index() {
     <View>
       {/* <Homepagelayanan /> */}
       {/* <Quiz /> */}
-      <MakeSchedule />
+      <Slider />
       {/* <Contactpage /> */}
       {/* <MenuAwal /> */}
     </View>
