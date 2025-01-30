@@ -7,11 +7,134 @@ import { Colors } from '@/constants/Colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
+const data = {  
+	semuaKategori: [
+		{
+			id: 1,  
+			title: "Penanganan penderita epilepsi",  
+			keywords: "Henti, Jantung, Pernapasan, CPR",  
+			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+			image: require('../../assets/images/undraw_injured_9757 1.png'),  
+		},  
+		  
+		{  
+			id: 2,  
+			title: "Penanganan penderita epilepsi",  
+			keywords: "Henti, Jantung, Pernapasan, CPR",  
+			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+			image: require('../../assets/images/undraw_injured_9757 1.png'),  
+		},  
+		
+		{  
+			id: 3,  
+			title: "Penanganan henti jantung",  
+			keywords: "CPR, Pertolongan Pertama",  
+			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+			image: require('../../assets/images/undraw_injured_9757 1.png'),  
+		},  
+	  
+		{  
+			id: 4,  
+			title: "Penanganan penderita epilepsi",  
+			keywords: "Henti, Jantung, Pernapasan, CPR",  
+			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+			image: require('../../assets/images/undraw_injured_9757 1.png'),  
+		},  
+	],
+
+	kategori1: [  
+	  {  
+		id: 1,  
+		title: "Penanganan penderita epilepsi",  
+		keywords: "Henti, Jantung, Pernapasan, CPR",  
+		description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+		image: require('../../assets/images/undraw_injured_9757 1.png'),  
+	  },  
+	  
+	  {  
+		id: 2,  
+		title: "Penanganan penderita epilepsi",  
+		keywords: "Henti, Jantung, Pernapasan, CPR",  
+		description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+		image: require('../../assets/images/undraw_injured_9757 1.png'),  
+	  },  
+	],  
+
+	kategori2: [  
+	  {  
+		id: 3,  
+		title: "Penanganan henti jantung",  
+		keywords: "CPR, Pertolongan Pertama",  
+		description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+		image: require('../../assets/images/undraw_injured_9757 1.png'),  
+	  },  
+  
+	  {  
+		id: 4,  
+		title: "Penanganan penderita epilepsi",  
+		keywords: "Henti, Jantung, Pernapasan, CPR",  
+		description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+		image: require('../../assets/images/undraw_injured_9757 1.png'),  
+	  },  
+	],  
+	
+	kategori3: [  
+	  {  
+	  
+		id: 5,  
+		title: "Penanganan pernapasan",  
+		keywords: "Asma, Sesak Napas",  
+		description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+		image: require('../../assets/images/undraw_injured_9757 1.png'),  
+	  },
+	  
+	  {  
+		id: 6,  
+		title: "Penanganan penderita epilepsi",  
+		keywords: "Henti, Jantung, Pernapasan, CPR",  
+		description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+		image: require('../../assets/images/undraw_injured_9757 1.png'),  
+	  },  
+	],  
+};  
+
 export default function MetodePenangan(){
 	const router = useRouter();
+	const [selectedCategory, setSelectedCategory] = useState('kategori1');
+
+	const renderCategoryInfo = () => {
+		return data[selectedCategory].map((item)=> (
+		  <View style={styles.cart} key={item.id}> 
+			<View style={styles.pictureSection}>
+			  <MaterialIcons name="verified" size={14} color={Colors.white} />
+			  <Image source={item.image} style={styles.image}/>
+			</View>
+			<View style={styles.textSection}>
+			  <Text style={styles.judul}> 
+				{item.title} 
+			  </Text>
+			  <Text style={styles.kataKunci}>
+				Kata Kunci: {item.keywords}
+			  </Text>
+			  <Text style={styles.deskripsi}>
+				{item.description} 
+			  </Text>
+	
+			  <TouchableOpacity style={styles.pelajariSection}> 
+				<Text style={styles.pelajariText}> 
+				  Pelajari
+				</Text>
+				<View style={styles.pelajariIcon}> 
+				  <MaterialIcons name="article" size={10} color="black" />
+				</View>
+			  </TouchableOpacity>
+			</View>  
+		  </View>
+		)); 
+	  }; 
 
 	return(
-		<ScrollView style={styles.container}>  
+		<View style={styles.container}>  
 			<StatusBar style='dark' translucent={true} /> 
 			<TouchableOpacity style={styles.headerIcon} onPress={() => router.push('../(tabs)/Home')}> 
 				<Ionicons name="arrow-back-circle-sharp" size={22} color={Colors.red} />
@@ -21,21 +144,24 @@ export default function MetodePenangan(){
         	</View>
         	
 			<ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.kategoriSection}> 
-				<View style={styles.sectionBerada}> 
+				<TouchableOpacity style={styles.sectionBerada}> 
         		    <Text style={styles.keteranganBerada}>Semua</Text> 
-          		</View>
-         		 <View style={styles.section}> 
+          		</TouchableOpacity>
+         		 <TouchableOpacity style={styles.section}> 
         		    <Text style={styles.keterangan}>Kategori 1</Text> 
-          		</View>
-          		<View style={styles.section}> 
+          		</TouchableOpacity>
+          		<TouchableOpacity style={styles.section}> 
             		<Text style={styles.keterangan}>Kategori 2</Text> 
-          		</View>
-         	 	<View style={styles.section}> 
+          		</TouchableOpacity>
+         	 	<TouchableOpacity style={styles.section}> 
             		<Text style={styles.keterangan}>Kategori 3</Text> 
-          		</View>
+          		</TouchableOpacity>
 	        </ScrollView>
         	
 			<ScrollView style={styles.cartContainer}>
+<<<<<<< HEAD
+          		
+=======
           		<View style={styles.cart}> 
             		<View style={styles.pictureSection}>
 						<MaterialIcons name="verified" size={14} color={Colors.white} />
@@ -249,8 +375,9 @@ export default function MetodePenangan(){
               			</View>
             		</View>
           		</View>
+>>>>>>> e1aba5769659c38028ace166a1265cdf681aa1a0
         	</ScrollView>  
-	  </ScrollView>  
+	  </View>  
 	);  
   };  
 	
