@@ -15,7 +15,6 @@ import Summary from "./Summary";
 import ScoreScreen from "./ScoreScreen";
 import Flashcard from "./FlashCard";
 import Homepagelayanan from "./Homepagelayanan";
-import SearchPage from "./SearchPage"
 
 const Stack = createStackNavigator(); 
 
