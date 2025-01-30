@@ -13,41 +13,88 @@ const data = {
       title: "Penanganan penderita epilepsi",  
       keywords: "Henti, Jantung, Pernapasan, CPR",  
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
+      image: require('../../assets/images/undraw_injured_9757 1.png'),  
     },  
+    
     {  
-      id: 1,  
+      id: 2,  
       title: "Penanganan penderita epilepsi",  
       keywords: "Henti, Jantung, Pernapasan, CPR",  
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
+      image: require('../../assets/images/undraw_injured_9757 1.png'),  
     },  
   ],  
   kategori2: [  
     {  
-      id: 2,  
+      id: 3,  
       title: "Penanganan henti jantung",  
       keywords: "CPR, Pertolongan Pertama",  
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
+      image: require('../../assets/images/undraw_injured_9757 1.png'),  
     },  
-    // Tambahkan lebih banyak item jika perlu  
+
+    {  
+      id: 4,  
+      title: "Penanganan penderita epilepsi",  
+      keywords: "Henti, Jantung, Pernapasan, CPR",  
+      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+      image: require('../../assets/images/undraw_injured_9757 1.png'),  
+    },  
   ],  
   kategori3: [  
     {  
-      id: 3,  
+    
+      id: 5,  
       title: "Penanganan pernapasan",  
       keywords: "Asma, Sesak Napas",  
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
+      image: require('../../assets/images/undraw_injured_9757 1.png'),  
+    },
+    
+    {  
+      id: 6,  
+      title: "Penanganan penderita epilepsi",  
+      keywords: "Henti, Jantung, Pernapasan, CPR",  
+      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+      image: require('../../assets/images/undraw_injured_9757 1.png'),  
     },  
-    // Tambahkan lebih banyak item jika perlu  
   ],  
 };  
 
 export default function Home() {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('kategori1');
+
+  const renderCategoryInfo = () => {
+    return data[selectedCategory].map((item)=> (
+      <View style={styles.cart} key={item.id}> 
+        <View style={styles.pictureSection}>
+          <MaterialIcons name="verified" size={14} color={Colors.white} />
+          <Image source={item.image} style={styles.image}/>
+        </View>
+        <View style={styles.textSection}>
+          <Text style={styles.judul}> 
+            {item.title} 
+          </Text>
+          <Text style={styles.kataKunci}>
+            Kata Kunci: {item.keywords}
+          </Text>
+          <Text style={styles.deskripsi}>
+            {item.description} 
+          </Text>
+
+          <TouchableOpacity style={styles.pelajariSection}> 
+            <Text style={styles.pelajariText}> 
+              Pelajari
+            </Text>
+            <View style={styles.pelajariIcon}> 
+              <MaterialIcons name="article" size={10} color="black" />
+            </View>
+          </TouchableOpacity>
+        </View>  
+      </View>
+    )); 
+  }; 
 
   return (
     <ScrollView style={styles.container}>
@@ -83,70 +130,20 @@ export default function Home() {
           
         </View>
         <View style={styles.kategoriSection}> 
-          <TouchableOpacity style={styles.section}> 
+          <TouchableOpacity style={styles.section} onPress={()=> setSelectedCategory('kategori1')}> 
             <Text style={styles.keterangan}>Kategori 1</Text> 
           </TouchableOpacity>
-          <TouchableOpacity style={styles.section}> 
+          <TouchableOpacity style={styles.section} onPress={()=> setSelectedCategory('kategori2')}> 
             <Text style={styles.keterangan}>Kategori 2</Text> 
           </TouchableOpacity>
-          <TouchableOpacity style={styles.section}> 
+          <TouchableOpacity style={styles.section} onPress={()=> setSelectedCategory('kategori3')}> 
             <Text style={styles.keterangan}>Kategori 3</Text> 
           </TouchableOpacity>
         </View>
+        
+        {/* Cart */}  
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.cartContainer}>
-          <View style={styles.cart}> 
-            <View style={styles.pictureSection}>
-              <MaterialIcons name="verified" size={14} color={Colors.white} />
-              <Image source={require( 'C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
-            </View>
-            <View style={styles.textSection}>
-              <Text style={styles.judul}> 
-                Penanganan penderita epilepsi 
-              </Text>
-              <Text style={styles.kataKunci}>
-                Kata Kunci: Henti, Jantung, Pernapasan, CPR
-              </Text>
-              <Text style={styles.deskripsi}>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-              </Text>
-
-              <View style={styles.pelajariSection}> 
-                <Text style={styles.pelajariText}> 
-                  Pelajari
-                </Text>
-                <View style={styles.pelajariIcon}> 
-                  <MaterialIcons name="article" size={10} color="black" />
-                </View>
-              </View>
-            </View>  
-          </View>
-
-          <View style={styles.cart2}> 
-            <View style={styles.pictureSection}>
-              <MaterialIcons name="verified" size={14} color={Colors.white} />
-              <Image source={require( 'C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
-            </View>
-            <View style={styles.textSection}>
-              <Text style={styles.judul}> 
-                Penanganan penderita epilepsi 
-              </Text>
-              <Text style={styles.kataKunci}>
-                Kata Kunci: Henti, Jantung, Pernapasan, CPR
-              </Text>
-              <Text style={styles.deskripsi}>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-              </Text>
-
-              <View style={styles.pelajariSection}> 
-                <Text style={styles.pelajariText}> 
-                  Pelajari
-                </Text>
-                <View style={styles.pelajariIcon}> 
-                  <MaterialIcons name="article" size={10} color="black" />
-                </View>
-              </View>
-            </View>
-          </View>
+          {renderCategoryInfo()}
         </ScrollView>
 
     </ScrollView>
@@ -229,10 +226,10 @@ const styles = StyleSheet.create({
     fontSize: 9, 
   },
   cartContainer: {
-    marginTop: 10, 
-    marginLeft: 32, 
-    marginRight: 32,
-    borderRadius: 20,  
+    marginTop: 15, 
+    marginLeft: 30, 
+    marginRight: 30,
+    borderRadius: 20,
   },
   cart: {
     width: 248, 
@@ -242,6 +239,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', 
     alignContent: 'center', 
     justifyContent: 'center', 
+    marginLeft: 10, 
   }, 
   pictureSection: {
     flexDirection: 'column',  
@@ -298,15 +296,4 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     justifyContent: 'center', 
   },
-  cart2: {
-    width: 248, 
-    height: 94, 
-    backgroundColor: Colors.red,
-    borderRadius: 20, 
-    flexDirection: 'row', 
-    alignContent: 'center', 
-    justifyContent: 'center', 
-    marginLeft: 10, 
-  },
-  
 }); 
