@@ -13,14 +13,14 @@ const data = {
       title: "Penanganan penderita epilepsi",  
       keywords: "Henti, Jantung, Pernapasan, CPR",  
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
+      // image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
     },  
     {  
       id: 1,  
       title: "Penanganan penderita epilepsi",  
       keywords: "Henti, Jantung, Pernapasan, CPR",  
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
+      // image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
     },  
   ],  
   kategori2: [  
@@ -29,7 +29,7 @@ const data = {
       title: "Penanganan henti jantung",  
       keywords: "CPR, Pertolongan Pertama",  
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
+      // image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
     },  
     // Tambahkan lebih banyak item jika perlu  
   ],  
@@ -39,7 +39,7 @@ const data = {
       title: "Penanganan pernapasan",  
       keywords: "Asma, Sesak Napas",  
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
+      // image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
     },  
     // Tambahkan lebih banyak item jika perlu  
   ],  
@@ -97,7 +97,7 @@ export default function Home() {
           <View style={styles.cart}> 
             <View style={styles.pictureSection}>
               <MaterialIcons name="verified" size={14} color={Colors.white} />
-              <Image source={require( 'C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
+              {/* <Image source={require( 'C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image> */}
             </View>
             <View style={styles.textSection}>
               <Text style={styles.judul}> 
@@ -124,7 +124,7 @@ export default function Home() {
           <View style={styles.cart2}> 
             <View style={styles.pictureSection}>
               <MaterialIcons name="verified" size={14} color={Colors.white} />
-              <Image source={require( 'C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
+              {/* <Image source={require( 'C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image> */}
             </View>
             <View style={styles.textSection}>
               <Text style={styles.judul}> 

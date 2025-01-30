@@ -15,6 +15,9 @@ import Summary from "./Summary";
 import ScoreScreen from "./ScoreScreen";
 import Flashcard from "./FlashCard";
 import TahapAwal from "./TahapAwal";
+import MakeSchedule from "./MakeSchedule";
+import EditSchedule from "./EditSchedule";
+import Slider from "./Slider";
 
 const Stack = createStackNavigator(); 
 
@@ -33,7 +36,7 @@ export default function Index() {
     <View>
       {/* <Homepagelayanan /> */}
       {/* <Quiz /> */}
-      <TahapAwal />
+      <Slider />
       {/* <Contactpage /> */}
     </View>
   );
