@@ -7,7 +7,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 const TahapAwal = () => {
-  const swiperRef = useRef(null);
+  const swiperRef = useRef<Swiper | null>(null);
   const router = useRouter();
 
   return (
@@ -108,13 +108,13 @@ const TahapAwal = () => {
       <View style={styles.navigationButtons}>
         <TouchableOpacity
           style={styles.prevButton}
-          onPress={() => swiperRef.current.scrollBy(-1)}
+          onPress={() => swiperRef.current?.scrollBy(-1)}
         >
           <Text style={styles.buttonText}>{'<'}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.nextButton}
-          onPress={() => swiperRef.current.scrollBy(1)}
+          onPress={() => swiperRef.current?.scrollBy(1)}
         >
           <Text style={styles.buttonText}>{'>'}</Text>
         </TouchableOpacity>

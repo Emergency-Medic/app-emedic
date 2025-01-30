@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { ImageBackground, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { ImageBackground, View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import Swiper from 'react-native-swiper';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -7,8 +7,8 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 const Slider = () => {
-  const swiperRef = useRef(null);
-  const router = useRouter();
+    const swiperRef = useRef<Swiper | null>(null);
+    const router = useRouter();
 
   return (
     <View style={styles.container}>
@@ -26,81 +26,62 @@ const Slider = () => {
         
         {/* Slide 1 */}
         <View style={styles.slide}>
-          <ImageBackground
-            source={{
-              uri: 'https://images.unsplash.com/photo-1649260257620-3fd04e1952e5?q=80&w=2187&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-            }}
-            style={styles.backgroundImage}
-            blurRadius={0.5}
-            borderRadius={10}
-          />
-          {/* <Text style={styles.headerText}>Tahap Awal Penanganan</Text> */}
+          
           <View style={styles.contentBottomContainer}>
+          <Image
+            source={{ uri: 'https://images.unsplash.com/photo-1649260257620-3fd04e1952e5?q=80&w=2187&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }}
+            style={styles.imageSlider}
+            resizeMode="cover"
+            />
             <View>
               <Text style={styles.title}>Heading 1</Text>
               <Text style={styles.description}>
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.
               </Text>
             </View>
-            <TouchableOpacity style={styles.nextButtonTap}>
-              <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
-            </TouchableOpacity>
+            
           </View>
-          <View style={styles.verifiedIcon}>
-            <MaterialIcons name="verified" size={24} color="white" />
-        </View>
+          
         </View>
 
         {/* Slide 2 */}
         <View style={styles.slide}>
-          <ImageBackground
-            source={{
-              uri: 'https://images.unsplash.com/photo-1624638760852-8ede1666ab07?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-            }}
-            style={styles.backgroundImage}
-            blurRadius={0.5}
-            borderRadius={10}
-          />
+          
           <View style={styles.contentBottomContainer}>
+          <Image
+            source={{ uri: 'https://images.unsplash.com/photo-1649260257620-3fd04e1952e5?q=80&w=2187&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }}
+            style={styles.imageSlider}
+            resizeMode="cover"
+            />
             <View>
               <Text style={styles.title}>Heading 2</Text>
               <Text style={styles.description}>
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.
               </Text>
             </View>
-            <TouchableOpacity style={styles.nextButtonTap}>
-              <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
-            </TouchableOpacity>
+            
           </View>
-          <View style={styles.verifiedIcon}>
-            <MaterialIcons name="verified" size={24} color="white" />
-        </View>
+          
         </View>
 
         {/* Slide 3 */}
         <View style={styles.slide}>
-          <ImageBackground
-            source={{
-              uri: 'https://images.unsplash.com/photo-1624638760852-8ede1666ab07?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-            }}
-            style={styles.backgroundImage}
-            blurRadius={0.5}
-            borderRadius={10}
-          />
+          
           <View style={styles.contentBottomContainer}>
+          <Image
+            source={{ uri: 'https://images.unsplash.com/photo-1649260257620-3fd04e1952e5?q=80&w=2187&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }}
+            style={styles.imageSlider}
+            resizeMode="cover"
+            />
             <View>
               <Text style={styles.title}>Heading 3</Text>
               <Text style={styles.description}>
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.
               </Text>
             </View>
-            <TouchableOpacity style={styles.nextButtonTap}>
-              <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
-            </TouchableOpacity>
+            
           </View>
-          <View style={styles.verifiedIcon}>
-            <MaterialIcons name="verified" size={24} color="white" />
-        </View>
+         
         </View>
       </Swiper>
 
@@ -108,13 +89,13 @@ const Slider = () => {
       <View style={styles.navigationButtons}>
         <TouchableOpacity
           style={styles.prevButton}
-          onPress={() => swiperRef.current.scrollBy(-1)}
+          onPress={() => swiperRef.current?.scrollBy(-1)}
         >
           <Text style={styles.buttonText}>{'<'}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.nextButton}
-          onPress={() => swiperRef.current.scrollBy(1)}
+          onPress={() => swiperRef.current?.scrollBy(1)}
         >
           <Text style={styles.buttonText}>{'>'}</Text>
         </TouchableOpacity>
@@ -132,11 +113,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   slide: {
-    height: '100%',
-    justifyContent: 'center',
+    height: '40%',
     alignItems: 'center',
     backgroundColor: '#fff',
     margin: 30,
+    marginTop: 100,
     borderRadius: 10, // Opsional, agar shadow lebih smooth
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -144,23 +125,13 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5, // Untuk Android
 },
-  backgroundImage: {
-    // flex: 1,
-    width: '100%',
-    height: '85%',
-    margin: '30%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 160,
-    
-  },
   contentBottomContainer: {
     position: 'absolute',
     left: 10,
     right: 10,
     opacity: 0.8,
     borderRadius: 10,
-    flexDirection: 'row',
+    flexDirection: 'column',
     flex: 1,
     paddingHorizontal: 15,
     paddingVertical: 5,
@@ -169,7 +140,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontSize: 25,
     fontFamily: 'bold',
-    color: '#fff',
+    color: '#000',
     marginBottom: 10,
     marginTop: 5,
   },
@@ -177,7 +148,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontSize: 14,
     fontFamily: 'regular',
-    color: '#fff',
+    color: '#000',
     lineHeight: 20,
     paddingBottom: 10,
   },
@@ -189,7 +160,7 @@ const styles = StyleSheet.create({
   },
   paginationStyle: {
     position: 'absolute',
-    top: -180,
+    top: -280,
     left: 0,
     right: 0,
     justifyContent: 'center',
@@ -197,11 +168,12 @@ const styles = StyleSheet.create({
   },
   navigationButtons: {
     position: 'absolute',
-    top: 340,
+    top: 750,
     left: 30,
     right: 30,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    margin: 10,
   },
   prevButton: {
     padding: 10,
@@ -238,13 +210,11 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: 'semibold',
   },
-  verifiedIcon: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    top: 80,
-    color: '#fff',
-    right: 10,
+  imageSlider: {
+    height: '200%',
+    width: '100%',
+    marginBottom: 20,
+    marginTop: 50,
   }
 //   headerText: {
 //     color: '#000',

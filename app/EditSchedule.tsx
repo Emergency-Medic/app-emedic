@@ -9,7 +9,7 @@ import { Picker } from "@react-native-picker/picker";
 import Checkbox from 'expo-checkbox';
 
 
-const EditSchedule = () => {
+const MakeSchedule = () => {
     const [medName, setMedName] = useState('Obat XX');
     const [dose, setDose] = useState(1);
     const [frequency, setFrequency] = useState(2);
@@ -85,6 +85,7 @@ const EditSchedule = () => {
                     <TouchableOpacity onPress={() => setDose(dose + 1)} style={styles.doseButton}><Text style={styles.white}>+</Text></TouchableOpacity>
                 </View>
                 
+                <Text style={styles.frequencyText2}>sdm</Text>
                 <View style={styles.choice}>
                     <Picker
                         selectedValue={selectedValue}
@@ -204,6 +205,7 @@ const styles = StyleSheet.create({
         fontFamily: 'bold',
         marginTop: 20,
         color: '#29335C',
+        marginBottom: 5,
     },
     input: {
         borderWidth: 1,
@@ -229,7 +231,8 @@ const styles = StyleSheet.create({
     doseContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 5,
+        marginTop: -85,
+        marginBottom: -85,
     },
     upDownContainer:{
         backgroundColor: '#A8201A',
@@ -282,7 +285,7 @@ const styles = StyleSheet.create({
     dateContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 5,
+        marginTop: 10,
     },
     dateInput: {
         borderWidth: 1,
@@ -310,9 +313,10 @@ const styles = StyleSheet.create({
     saveButton: {
         backgroundColor: '#A8201A',
         padding: 15,
-        borderRadius: 10,
+        borderRadius: 15,
         alignItems: 'center',
-        marginTop: 20,
+        marginTop: 30,
+        marginBottom: 30,
     },
     saveButtonText: {
         color: '#fff',
@@ -359,4 +363,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditSchedule;
+export default MakeSchedule;

@@ -36,9 +36,9 @@ export default function Index() {
     <View>
       {/* <Homepagelayanan /> */}
       {/* <Quiz /> */}
-      <Slider />
+      <MakeSchedule />
       {/* <Contactpage /> */}
-      <MenuAwal />
+      {/* <MenuAwal /> */}
     </View>
   );
 }
