@@ -31,10 +31,9 @@ export default function Index() {
   })
   return (
     <View>
-      {/* <SearchPage /> */}
       {/* <Homepagelayanan /> */}
       {/* <Quiz /> */}
-      {/* <MenuAwal /> */}
+      <Slider />
       {/* <Contactpage /> */}
       <MenuAwal />
     </View>
