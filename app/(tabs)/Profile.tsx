@@ -51,8 +51,8 @@ const Profile: React.FC<ProfileProps> = ({ modalVisible, setModalVisible }) => {
 						
 						{/* Bookmark  */}
 						<View style={styles.bookmarkContainer}> 
-							<Image source={require( 'C:/Project/app-emedic/assets/images/Rectangle 151.png')} style={styles.image}></Image>
-							<Image source={require( 'C:/Project/app-emedic/assets/images/Rectangle 151.png')} style={styles.image}></Image>
+							<Image source={require( '@/assets/images/Rectangle 151.png')} style={styles.image}></Image>
+							<Image source={require( '@/assets/images/Rectangle 151.png')} style={styles.image}></Image>
 						</View> 
 						{/* Friend */}
 						<View style={styles.friendSection}>

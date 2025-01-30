@@ -34,6 +34,7 @@ export default function Home() {
         </View>
 
         {/* Content */}
+        
         {/* Rekomendasi Pembelajaran */}
         <View style={styles.rekomendasiPembelajaranTitle}>
           <Text style={styles.titleText}>Rekomendasi Pembelajaran</Text>
@@ -56,7 +57,7 @@ export default function Home() {
           <View style={styles.cart}> 
             <View style={styles.pictureSection}>
               <MaterialIcons name="verified" size={14} color={Colors.white} />
-              <Image source={require( 'C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
+              <Image source={require( '@/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
             </View>
             <View style={styles.textSection}>
               <Text style={styles.judul}> 
@@ -83,7 +84,7 @@ export default function Home() {
           <View style={styles.cart2}> 
             <View style={styles.pictureSection}>
               <MaterialIcons name="verified" size={14} color={Colors.white} />
-              <Image source={require( 'C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
+              <Image source={require( '@/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
             </View>
             <View style={styles.textSection}>
               <Text style={styles.judul}> 

@@ -32,11 +32,12 @@ export default function Index() {
   })
   return (
     <View>
-      <SearchPage />
+      {/* <SearchPage /> */}
       {/* <Homepagelayanan /> */}
       {/* <Quiz /> */}
       {/* <MenuAwal /> */}
       {/* <Contactpage /> */}
+      <MenuAwal />
     </View>
   );
 }
