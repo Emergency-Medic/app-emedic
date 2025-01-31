@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   slide: {
-    height: '40%',
+    height: '67%',
     alignItems: 'center',
     backgroundColor: '#fff',
     margin: 30,
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   },
   paginationStyle: {
     position: 'absolute',
-    top: -280,
+    top: 665,
     left: 0,
     right: 0,
     justifyContent: 'center',

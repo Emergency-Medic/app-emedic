@@ -36,7 +36,7 @@ export default function Index() {
       {/* <SearchPage /> */}
       {/* <Homepagelayanan /> */}
       {/* <Quiz /> */}
-      {/* <MenuAwal /> */}
+      {/* <MakeSchedule /> */}
       {/* <Contactpage /> */}
       <Location />
     </View>
