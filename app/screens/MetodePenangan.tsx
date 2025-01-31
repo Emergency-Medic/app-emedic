@@ -245,25 +245,28 @@ export default function MetodePenangan() {
 	const [selectedCategory, setSelectedCategory] = useState('semuaKategori');
 
 	const renderCategoryInfo = () => {
-		return data[selectedCategory].map((item) => (
-			<View style={styles.cart} key={item.id}> 
-				<View style={styles.pictureSection}>
-					<MaterialIcons name="verified" size={14} color={Colors.white} />
-					<Image source={item.image} style={styles.image} />
+		return data[selectedCategory].map((item) => {
+			const backgroundColor = item.id % 2 === 0 ? Colors.blue : Colors.red;
+			return ( 
+				<View style={[styles.cart, { backgroundColor }]} key={item.id}> 
+					<View style={styles.pictureSection}>
+						<MaterialIcons name="verified" size={14} color={Colors.white} />
+						<Image source={item.image} style={styles.image} />
+					</View>
+					<View style={styles.textSection}>
+						<Text style={styles.judul}>{item.title}</Text>
+						<Text style={styles.kataKunci}>Kata Kunci: {item.keywords}</Text>
+						<Text style={styles.deskripsi}>{item.description}</Text>
+						<TouchableOpacity style={styles.pelajariSection}>
+							<Text style={styles.pelajariText}>Pelajari</Text>
+							<View style={styles.pelajariIcon}>
+								<MaterialIcons name="article" size={10} color="black" />
+							</View>
+						</TouchableOpacity>
+					</View>  
 				</View>
-				<View style={styles.textSection}>
-					<Text style={styles.judul}>{item.title}</Text>
-					<Text style={styles.kataKunci}>Kata Kunci: {item.keywords}</Text>
-					<Text style={styles.deskripsi}>{item.description}</Text>
-					<TouchableOpacity style={styles.pelajariSection}>
-						<Text style={styles.pelajariText}>Pelajari</Text>
-						<View style={styles.pelajariIcon}>
-							<MaterialIcons name="article" size={10} color="black" />
-						</View>
-					</TouchableOpacity>
-				</View>  
-			</View>
-		)); 
+			);
+	}); 
 	}; 
 
 	return (
@@ -374,7 +377,6 @@ const styles = StyleSheet.create({
 	cart: {
 		width: '100%', 
 		height: 94, 
-		backgroundColor: Colors.blue,
 		borderRadius: 20, 
 		flexDirection: 'row', 
 		alignItems: 'center', 

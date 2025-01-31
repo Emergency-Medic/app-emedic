@@ -24,12 +24,7 @@ export default function Location() {
 				showsUserLocation 
 				showsMyLocationButton
 			/>
-
-			<View> 
-				<View>
-					
-				</View>
-			</View>
+			
 		</View>
 	); 
 }

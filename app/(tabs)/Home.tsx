@@ -66,34 +66,37 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState('kategori1');
 
   const renderCategoryInfo = () => {
-    return data[selectedCategory].map((item)=> (
-      <View style={styles.cart} key={item.id}> 
-        <View style={styles.pictureSection}>
-          <MaterialIcons name="verified" size={14} color={Colors.white} />
-          <Image source={item.image} style={styles.image}/>
-        </View>
-        <View style={styles.textSection}>
-          <Text style={styles.judul}> 
-            {item.title} 
-          </Text>
-          <Text style={styles.kataKunci}>
-            Kata Kunci: {item.keywords}
-          </Text>
-          <Text style={styles.deskripsi}>
-            {item.description} 
-          </Text>
-
-          <TouchableOpacity style={styles.pelajariSection}> 
-            <Text style={styles.pelajariText}> 
-              Pelajari
+    return data[selectedCategory].map((item)=> {
+      const backgroundColor = item.id % 2 === 0 ? Colors.blue : Colors.red;
+      return (
+        <View style={[styles.cart, { backgroundColor }]} key={item.id}> 
+          <View style={styles.pictureSection}>
+            <MaterialIcons name="verified" size={14} color={Colors.white} />
+            <Image source={item.image} style={styles.image}/>
+          </View>
+          <View style={styles.textSection}>
+            <Text style={styles.judul}> 
+              {item.title} 
             </Text>
-            <View style={styles.pelajariIcon}> 
-              <MaterialIcons name="article" size={10} color="black" />
-            </View>
-          </TouchableOpacity>
-        </View>  
-      </View>
-    )); 
+            <Text style={styles.kataKunci}>
+              Kata Kunci: {item.keywords}
+            </Text>
+            <Text style={styles.deskripsi}>
+              {item.description} 
+            </Text>
+
+            <TouchableOpacity style={styles.pelajariSection}> 
+              <Text style={styles.pelajariText}> 
+                Pelajari
+              </Text>
+              <View style={styles.pelajariIcon}> 
+                <MaterialIcons name="article" size={10} color="black" />
+              </View>
+            </TouchableOpacity>
+          </View>  
+        </View>
+      );
+    }); 
   }; 
 
   return (
