@@ -14,16 +14,9 @@ import Quiz from "./Quiz"
 import Summary from "./Summary";
 import ScoreScreen from "./ScoreScreen";
 import Flashcard from "./FlashCard";
-<<<<<<< HEAD
 import Homepagelayanan from "./Homepagelayanan";
 import SearchPage from "./SearchPage"; 
 import Location from "./Location";
-=======
-import TahapAwal from "./TahapAwal";
-import MakeSchedule from "./MakeSchedule";
-import EditSchedule from "./EditSchedule";
-import Slider from "./Slider";
->>>>>>> e1aba5769659c38028ace166a1265cdf681aa1a0
 
 const Stack = createStackNavigator(); 
 
@@ -40,19 +33,12 @@ export default function Index() {
   })
   return (
     <View>
-<<<<<<< HEAD
       {/* <SearchPage /> */}
-=======
->>>>>>> e1aba5769659c38028ace166a1265cdf681aa1a0
       {/* <Homepagelayanan /> */}
       {/* <Quiz /> */}
-      <MakeSchedule />
-      {/* <Contactpage /> */}
-<<<<<<< HEAD
-      <Location />
-=======
       {/* <MenuAwal /> */}
->>>>>>> e1aba5769659c38028ace166a1265cdf681aa1a0
+      {/* <Contactpage /> */}
+      <Location />
     </View>
   );
 }

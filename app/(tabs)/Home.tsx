@@ -13,11 +13,7 @@ const data = {
       title: "Penanganan penderita epilepsi",  
       keywords: "Henti, Jantung, Pernapasan, CPR",  
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-<<<<<<< HEAD
       image: require('../../assets/images/undraw_injured_9757 1.png'),  
-=======
-      // image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
->>>>>>> e1aba5769659c38028ace166a1265cdf681aa1a0
     },  
     
     {  
@@ -25,11 +21,7 @@ const data = {
       title: "Penanganan penderita epilepsi",  
       keywords: "Henti, Jantung, Pernapasan, CPR",  
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-<<<<<<< HEAD
       image: require('../../assets/images/undraw_injured_9757 1.png'),  
-=======
-      // image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
->>>>>>> e1aba5769659c38028ace166a1265cdf681aa1a0
     },  
   ],  
   kategori2: [  
@@ -38,7 +30,6 @@ const data = {
       title: "Penanganan henti jantung",  
       keywords: "CPR, Pertolongan Pertama",  
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-<<<<<<< HEAD
       image: require('../../assets/images/undraw_injured_9757 1.png'),  
     },  
 
@@ -48,9 +39,6 @@ const data = {
       keywords: "Henti, Jantung, Pernapasan, CPR",  
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
       image: require('../../assets/images/undraw_injured_9757 1.png'),  
-=======
-      // image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
->>>>>>> e1aba5769659c38028ace166a1265cdf681aa1a0
     },  
   ],  
   kategori3: [  
@@ -60,7 +48,6 @@ const data = {
       title: "Penanganan pernapasan",  
       keywords: "Asma, Sesak Napas",  
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-<<<<<<< HEAD
       image: require('../../assets/images/undraw_injured_9757 1.png'),  
     },
     
@@ -70,9 +57,6 @@ const data = {
       keywords: "Henti, Jantung, Pernapasan, CPR",  
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
       image: require('../../assets/images/undraw_injured_9757 1.png'),  
-=======
-      // image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
->>>>>>> e1aba5769659c38028ace166a1265cdf681aa1a0
     },  
   ],  
 };  
@@ -137,7 +121,6 @@ export default function Home() {
         </View>
 
         {/* Content */}
-        
         {/* Rekomendasi Pembelajaran */}
         <View style={styles.rekomendasiPembelajaranTitle}>
           <Text style={styles.titleText}>Rekomendasi Pembelajaran</Text>
@@ -160,63 +143,7 @@ export default function Home() {
         
         {/* Cart */}  
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.cartContainer}>
-<<<<<<< HEAD
           {renderCategoryInfo()}
-=======
-          <View style={styles.cart}> 
-            <View style={styles.pictureSection}>
-              <MaterialIcons name="verified" size={14} color={Colors.white} />
-              {/* <Image source={require( '@/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image> */}
-            </View>
-            <View style={styles.textSection}>
-              <Text style={styles.judul}> 
-                Penanganan penderita epilepsi 
-              </Text>
-              <Text style={styles.kataKunci}>
-                Kata Kunci: Henti, Jantung, Pernapasan, CPR
-              </Text>
-              <Text style={styles.deskripsi}>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-              </Text>
-
-              <View style={styles.pelajariSection}> 
-                <Text style={styles.pelajariText}> 
-                  Pelajari
-                </Text>
-                <View style={styles.pelajariIcon}> 
-                  <MaterialIcons name="article" size={10} color="black" />
-                </View>
-              </View>
-            </View>  
-          </View>
-
-          <View style={styles.cart2}> 
-            <View style={styles.pictureSection}>
-              <MaterialIcons name="verified" size={14} color={Colors.white} />
-              {/* <Image source={require( 'C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image> */}
-            </View>
-            <View style={styles.textSection}>
-              <Text style={styles.judul}> 
-                Penanganan penderita epilepsi 
-              </Text>
-              <Text style={styles.kataKunci}>
-                Kata Kunci: Henti, Jantung, Pernapasan, CPR
-              </Text>
-              <Text style={styles.deskripsi}>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-              </Text>
-
-              <View style={styles.pelajariSection}> 
-                <Text style={styles.pelajariText}> 
-                  Pelajari
-                </Text>
-                <View style={styles.pelajariIcon}> 
-                  <MaterialIcons name="article" size={10} color="black" />
-                </View>
-              </View>
-            </View>
-          </View>
->>>>>>> e1aba5769659c38028ace166a1265cdf681aa1a0
         </ScrollView>
 
     </ScrollView>
