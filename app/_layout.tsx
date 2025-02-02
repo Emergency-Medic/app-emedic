@@ -15,6 +15,7 @@ export default function RootLayout() {
       <Stack.Screen name="contact/Contactpage" options={{ headerShown: false }} />
       <Stack.Screen name="contact/ApproveFriend" options={{ headerShown: false }} />
       <Stack.Screen name="contact/SendRequest" options={{ headerShown: false }} />
+      <Stack.Screen name="screens/reminder/MainReminder" options={{ headerShown: false }} />
     </Stack>
   );
 }
