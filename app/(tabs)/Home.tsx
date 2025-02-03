@@ -1,3 +1,5 @@
+import {usePreventBackToSignIn} from '../../hooks/usePreventBackToSignIn'
+import { useEffect } from "react";
 import React, { useState } from "react";
 import { Modal, ScrollView, View, Image ,  Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { useRouter } from "expo-router";
@@ -6,48 +8,51 @@ import { Colors } from '@/constants/Colors';
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
-const data = {  
-  kategori1: [  
-    {  
-      id: 1,  
-      title: "Penanganan penderita epilepsi",  
-      keywords: "Henti, Jantung, Pernapasan, CPR",  
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
-    },  
-    {  
-      id: 1,  
-      title: "Penanganan penderita epilepsi",  
-      keywords: "Henti, Jantung, Pernapasan, CPR",  
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
-    },  
-  ],  
-  kategori2: [  
-    {  
-      id: 2,  
-      title: "Penanganan henti jantung",  
-      keywords: "CPR, Pertolongan Pertama",  
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
-    },  
-    // Tambahkan lebih banyak item jika perlu  
-  ],  
-  kategori3: [  
-    {  
-      id: 3,  
-      title: "Penanganan pernapasan",  
-      keywords: "Asma, Sesak Napas",  
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png'),  
-    },  
-    // Tambahkan lebih banyak item jika perlu  
-  ],  
-};  
-import {usePreventBackToSignIn} from '../../hooks/usePreventBackToSignIn'
-import { useEffect } from "react";
-
 export default function Home() {
+  
+    const router = useRouter();
+    const [selectedCategory, setSelectedCategory] = useState('kategori1');
+    usePreventBackToSignIn()
+  
+  const data = {  
+    kategori1: [  
+      {  
+        id: 1,  
+        title: "Penanganan penderita epilepsi",  
+        keywords: "Henti, Jantung, Pernapasan, CPR",  
+        description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+        image: require('../../assets/images/undraw_injured_9757 1.png'),  
+      },  
+      {  
+        id: 1,  
+        title: "Penanganan penderita epilepsi",  
+        keywords: "Henti, Jantung, Pernapasan, CPR",  
+        description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+        image: require('../../assets/images/undraw_injured_9757 1.png'),  
+      },  
+    ],  
+    kategori2: [  
+      {  
+        id: 2,  
+        title: "Penanganan henti jantung",  
+        keywords: "CPR, Pertolongan Pertama",  
+        description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+        image: require('../../assets/images/undraw_injured_9757 1.png'),  
+      },  
+      // Tambahkan lebih banyak item jika perlu  
+    ],  
+    kategori3: [  
+      {  
+        id: 3,  
+        title: "Penanganan pernapasan",  
+        keywords: "Asma, Sesak Napas",  
+        description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+        image: require('../../assets/images/undraw_injured_9757 1.png'),  
+      },  
+      // Tambahkan lebih banyak item jika perlu  
+    ],  
+  };  
+
   return (
     <ScrollView style={styles.container}>
         <StatusBar style='dark' translucent={true} />
@@ -96,7 +101,7 @@ export default function Home() {
           <View style={styles.cart}> 
             <View style={styles.pictureSection}>
               <MaterialIcons name="verified" size={14} color={Colors.white} />
-              <Image source={require( 'C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
+              <Image source={require( '../../assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
             </View>
             <View style={styles.textSection}>
               <Text style={styles.judul}> 
@@ -123,7 +128,7 @@ export default function Home() {
           <View style={styles.cart2}> 
             <View style={styles.pictureSection}>
               <MaterialIcons name="verified" size={14} color={Colors.white} />
-              <Image source={require( 'C:/Project/app-emedic/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
+              <Image source={require( '../../assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
             </View>
             <View style={styles.textSection}>
               <Text style={styles.judul}> 

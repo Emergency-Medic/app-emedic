@@ -10,9 +10,7 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import { doc, setDoc, collection, addDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebaseConfig';
-import { useForm, Controller } from 'react-hook-form';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { signInWithGoogle, handleGoogleSignIn, signInUser } from "../services/authService";
 
 
 export default function RegisterScreen() {
@@ -35,57 +33,96 @@ export default function RegisterScreen() {
 
     const router = useRouter();
 
-    const schema = yup.object().shape({
-        namaDepan: yup.string().required("Nama depan wajib diisi"),
-        namaBelakang: yup.string().required("Nama belakang wajib diisi"),
-        phonenum: yup.string().matches(/^[0-9]+$/, "Nomor telepon hanya boleh berisi angka").required("Nomor telepon wajib diisi"),
-        email: yup.string().email("Format email tidak valid").required("Email wajib diisi"),
-        password: yup.string().min(6, "Password minimal 6 karakter").required("Password wajib diisi"),
-        confPass: yup.string().oneOf([yup.ref('password')], "Konfirmasi password tidak cocok").required("Konfirmasi password wajib diisi"),
-      });
+    const [errors, setErrors] = useState({});
 
-      const { control, handleSubmit, formState: { errors } } = useForm({
-        resolver: yupResolver(schema),
-      });
+    useEffect(() => {
+            handleGoogleSignIn();
+          }, []);
+        
+        const handleGSignIn = async () => {
+            try {
+              await signInWithGoogle();
+            } catch (error) {
+              Alert.alert("Login Error", error.message);
+            }
+        };
+
+    const formatPhoneNumber = (phone) => {
+        if (phone.startsWith('0')) {
+          return `+62${phone.slice(1)}`;
+        }
+        return phone; // Jika sudah dalam format internasional (+62), tidak perlu diubah
+      };
+
+    const validateForm = () => {
+        setErrors({})
+        let errors = {};
+        if (!namaDepan.trim()) errors.namaDepan = "Nama depan wajib diisi";
+        if (!namaBelakang.trim()) errors.namaBelakang = "Nama belakang wajib diisi";
+        if (!phonenum.trim()) {
+            errors.phonenum = "Nomor telepon wajib diisi";
+        } else if (!/^(?:\+62|0)8[1-9][0-9]{6,10}$/.test(phonenum)) {
+            errors.phonenum = "Nomor telepon harus dimulai dari +62 atau 0 dan memiliki panjang 8-12 digit";
+        }
+        if (!email.trim()) {
+            errors.email = "Email wajib diisi";
+        } else if (!/\S+@\S+\.\S+/.test(email)) {
+            errors.email = "Format email tidak valid";
+        }
+        if (!password.trim()) {
+            errors.password = "Kata sandi wajib diisi";
+        } else if (password.length < 6) {
+            errors.password = "Kata sandi minimal 6 karakter";
+        }
+        if (confPass !== password) {
+            errors.confPass = "Konfirmasi kata sandi tidak cocok";
+        }
+
+        setErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
             
 
-    const registerUser = async (firstName: string, lastName: string, phone: string, email: string, password: string) => {
+    const registerUser = async (firstName, lastName, phone, email, password) => {
         try {
           // Buat user di Firebase Authentication
           const userCredential = await createUserWithEmailAndPassword(auth, email, password);
           const user = userCredential.user;
-      
-          // Simpan data tambahan user ke Firestore
-        //   await setDoc(doc(db, "users", user.uid), {
-        //     firstName: firstName,
-        //     lastName: lastName,
-        //     phone: phone,
-        //     email: email,
-        //     createdAt: new Date().toISOString(),
-        //   });
 
           const docRef = await addDoc(collection(db, "users"), {
             firstName: firstName,
             lastName: lastName,
-            phone: phone,
+            phone: formatPhoneNumber(phone),
             email: email,
             createdAt: new Date().toISOString(),
           });
           
           console.log('User registered successfully!',  userCredential.user);
         } catch (error) {
-          console.error("Error registering user:", (error as Error).message);
+          console.error("Error registering user:", error.message);
           throw error;
         }
       };
 
     const handleRegister = async () => {
+        if (!validateForm()) {
+            return; // Jika validasi gagal, hentikan eksekusi
+        }
+        
         try {
           await registerUser(namaDepan, namaBelakang, phonenum, email, password);
-          Alert.alert("Success", "User registered successfully!");
+        //   Alert.alert("Success", "User registered successfully!");
           router.replace('../(tabs)/Home')
         } catch (error) {
-          Alert.alert("Error", (error as Error).message);
+        //   Alert.alert("Error", error.message);
+            if (error.code === 'auth/email-already-in-use') {
+                setErrors((prevErrors) => ({
+                ...prevErrors,
+                email: 'Email sudah terdaftar di akun lain. Gunakan email lain',
+                }));
+            } else {
+                console.error("Error registering user:", error.message);
+            }
         }
       };
 
@@ -105,8 +142,6 @@ export default function RegisterScreen() {
             <View style={styles.wrapper}>
                 <View>
                     <View style={styles.wrapnama}>
-                        <Controller control={control} 
-                        />
                         <View style={styles.wrapdalam}>
                             <Text style={[
                                 styles.titleName, 
@@ -130,6 +165,7 @@ export default function RegisterScreen() {
                                 }
                             ]}
                             />
+                            {errors.namaDepan && <Text style={styles.errorText}>{errors.namaDepan}</Text>}
                         </View>
                         <View style={styles.wrapdalam}>
                             <Text style={[
@@ -154,6 +190,7 @@ export default function RegisterScreen() {
                                 }
                             ]}
                             />
+                            {errors.namaBelakang && <Text style={styles.errorText}>{errors.namaBelakang}</Text>}
                         </View>
                     </View>
                     <View style={styles.wrapform}>
@@ -180,6 +217,7 @@ export default function RegisterScreen() {
                             }
                         ]}
                         />
+                        {errors.phonenum && <Text style={styles.errorText}>{errors.phonenum}</Text>}
                     </View>
                     <View style={styles.wrapform}>
                         <Text style={[
@@ -204,6 +242,7 @@ export default function RegisterScreen() {
                             }
                         ]}
                         />
+                        {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
                     </View>
                     <View style={styles.wrapform}>
                         <Text style={[
@@ -229,6 +268,7 @@ export default function RegisterScreen() {
                         onFocus={() => setPassFocused(true)}
                         onBlur={() => setPassFocused(false)} 
                         />
+                        {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
                         <TouchableOpacity onPress={() => setShowPass(!showPass)} style={styles.eyeIcon}>
                             <Feather name={showPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
                         </TouchableOpacity>
@@ -257,6 +297,7 @@ export default function RegisterScreen() {
                             }
                         ]}
                         />
+                        {errors.confPass && <Text style={styles.errorText}>{errors.confPass}</Text>}
                         <TouchableOpacity onPress={() => setShowConfPass(!showConfPass)} style={styles.eyeIcon}>
                             <Feather name={showConfPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
                         </TouchableOpacity>
@@ -278,7 +319,7 @@ export default function RegisterScreen() {
 
                 <View>
                     <Text style= {styles.atau}>atau</Text>
-                    <TouchableOpacity style={styles.google} onPress={() => console.log("Masuk dengan Google")}>
+                    <TouchableOpacity style={styles.google} onPress={handleGSignIn}>
                         
                         <Image source={require('../../assets/images/sign in/google.png')} style={styles.googleImg}></Image>
                         
@@ -435,6 +476,11 @@ const styles = StyleSheet.create({
       fontSize: 16,
       color: '#13070C',
       fontFamily: 'regular'
+  },
+  errorText: {
+    color: Colors.red,
+    fontSize: 10,
+    fontFamily: 'light'
   }
 })
 

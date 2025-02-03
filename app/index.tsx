@@ -6,7 +6,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { StatusBar } from 'expo-status-bar';
 import EmergencyCallScreen from "./EmergencyCallScreen";
 import MenuAwal from "./MenuAwal";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import Onboarding from "./Onboarding"
 import SignInScreen from './(auth)/SignInScreen'
 import RegisterScreen from './(auth)/RegisterScreen'
@@ -15,6 +15,7 @@ import Summary from "./Summary";
 import ScoreScreen from "./ScoreScreen";
 import Flashcard from "./FlashCard";
 import Homepagelayanan from "./Homepagelayanan";
+import Home from "./(tabs)/Home";
 import SearchPage from "./SearchPage"
 import { auth, db } from '@/firebaseConfig';
 import { useRouter } from "expo-router";
@@ -34,17 +35,35 @@ export default function Index() {
   })
 
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true); // Track if loading or checking auth state
+  const [user, setUser] = useState<any>(null); // Track the authenticated user
+
   useEffect(() => {
-    if (auth.currentUser) {
-        router.replace("./(tabs)/Home"); // Arahkan ke halaman Home jika sudah login
-    }
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setIsLoading(false); // Stop loading once auth state is checked
+      setUser(user); // Set the current user if logged in
+      if (user) {
+        // If the user is logged in, navigate to Home
+        router.replace("./(tabs)/Home");
+      } else {
+        // If no user, stay on MenuAwal
+        router.replace("./MenuAwal");
+      }
+    });
+
+    // Cleanup the listener when the component unmounts
+    return () => unsubscribe();
   }, [router]);
+
+  // if (isLoading) {
+  //   return <LoadingScreen />; // You can use a placeholder or loading spinner here
+  // }
   return (
     <View>
-      <SearchPage />
+      {/* <SearchPage /> */}
       {/* <Homepagelayanan /> */}
       {/* <Quiz /> */}
-      {/* <MenuAwal /> */}
+      {user ? <Home /> : <MenuAwal />}
       {/* <Contactpage /> */}
     </View>
   );

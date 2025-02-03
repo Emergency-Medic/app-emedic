@@ -7,8 +7,7 @@ import { Colors } from '@/constants/Colors';
 import Feather from '@expo/vector-icons/Feather';
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebaseConfig";
-import { FirebaseError } from "firebase/app";
-import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import { signInWithGoogle, handleGoogleSignIn, signInUser } from "../services/authService";
 
 export default function SignInScreen() {
 
@@ -19,7 +18,39 @@ export default function SignInScreen() {
     const [passFocused, setPassFocused] = useState(false);
     const router = useRouter();
 
-    const signInUser = async (email: string, password: string) => {
+    const [errors, setErrors] = useState({});
+
+    useEffect(() => {
+        handleGoogleSignIn();
+      }, []);
+    
+    const handleGSignIn = async () => {
+        try {
+          await signInWithGoogle();
+        } catch (error) {
+          Alert.alert("Login Error", error.message);
+        }
+    };
+
+    const validateForm = () => {
+        let errors = {};
+
+        if (!email.trim()) {
+            errors.email = "Email wajib diisi";
+        } else if (!/\S+@\S+\.\S+/.test(email)) {
+            errors.email = "Format email tidak valid";
+        }
+        if (!password.trim()) {
+            errors.password = "Kata sandi wajib diisi";
+        } else if (password.length < 6) {
+            errors.password = "Kata sandi minimal 6 karakter";
+        }
+
+        setErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
+    const signInUser = async (email, password) => {
         try {
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
           const user = userCredential.user;
@@ -33,12 +64,23 @@ export default function SignInScreen() {
       };
 
       const handleSignIn = async () => {
+        if (!validateForm()) {
+            return; // Jika validasi gagal, hentikan eksekusi
+        }
         try {
             await signInUser(email, password)
-            Alert.alert("Success", "User signed in successfully!");
+            // Alert.alert("Success", "User signed in successfully!");
             router.replace('../(tabs)/Home')
         } catch (error) {
-            Alert.alert("Error", (error as Error).message);
+            // Alert.alert("Error", error.message);
+            if (error.code === 'auth/invalid-credential') {
+                setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  password: 'Email atau password salah. Silakan coba lagi',
+                }));
+              } else {
+                console.error("Error registering user:", error.message);
+              }
         }
       }
 
@@ -47,35 +89,6 @@ export default function SignInScreen() {
             router.replace("../(tabs)/Home"); // Arahkan ke halaman Home jika sudah login
         }
       }, [router]);
-
-    // const isEmail = (input: string) => {
-    //     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    //     return emailRegex.test(input);
-    //   };
-    
-    //   const isPhoneNumber = (input: string) => {
-    //     const phoneRegex = /^(\+?\d{1,3})?0?\d{9,15}$/;
-    //     return phoneRegex.test(input);
-    //   };
-
-    //   const handleLogin = () => {
-    //     if (isEmail(input)) {
-    //       Alert.alert('Deteksi Input', 'Input terdeteksi sebagai Email');
-    //       // Lakukan login dengan email
-    //       console.log('Login dengan email:', input);
-    //     } else if (isPhoneNumber(input)) {
-    //       Alert.alert('Deteksi Input', 'Input terdeteksi sebagai Nomor Telepon');
-    //       // Format nomor telepon ke E.164 jika perlu
-    //       let formattedPhone = input;
-    //       if (input.startsWith('0')) {
-    //         formattedPhone = `+62${input.slice(1)}`;
-    //       }
-    //       console.log('Login dengan nomor telepon:', formattedPhone);
-    //     } else {
-    //       Alert.alert('Kesalahan', 'Input tidak valid. Masukkan email atau nomor telepon yang benar.');
-    //     }
-    //   };
-    
 
     return (
         <ScrollView style={styles.allwrap}>
@@ -110,6 +123,7 @@ export default function SignInScreen() {
                             }
                         ]}
                         />
+                        {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
                     </View>
                     <View>
                         <Text style={[
@@ -135,6 +149,7 @@ export default function SignInScreen() {
                         onFocus={() => setPassFocused(true)}
                         onBlur={() => setPassFocused(false)} 
                         />
+                        {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
                         <TouchableOpacity onPress={() => setShowPass(!showPass)} style={styles.eyeIcon}>
                             <Feather name={showPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
                         </TouchableOpacity>
@@ -161,7 +176,7 @@ export default function SignInScreen() {
 
                 <View>
                     <Text style= {styles.atau}>atau</Text>
-                    <TouchableOpacity style={styles.google} onPress={() => console.log("Masuk dengan Google")}>
+                    <TouchableOpacity style={styles.google} onPress={handleGSignIn}>
                         
                         <Image source={require('../../assets/images/sign in/google.png')} style={styles.googleImg}></Image>
                         
@@ -300,6 +315,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#13070C',
         fontFamily: 'regular'
-    }
+    },
+    errorText: {
+        color: Colors.red,
+        fontSize: 10,
+        fontFamily: 'light'
+      }
 })
 

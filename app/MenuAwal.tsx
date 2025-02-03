@@ -63,6 +63,10 @@ const MenuAwal = () => {
     );
 };
 
+MenuAwal.options = {
+    headerShown: false
+};
+
 const CircleInCenter = () => {
     return (
       <View style={styles.container}>
