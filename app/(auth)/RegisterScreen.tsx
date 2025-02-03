@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import { useRouter } from "expo-router";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native'
 import BackButton from '@/components/BackButton'
-import { StatusBar } from 'expo-status-bar';
-import { Colors } from '@/constants/Colors';
+import { StatusBar } from 'expo-status-bar'
+import { Colors } from '@/constants/Colors'
+import Feather from '@expo/vector-icons/Feather'
 
 export default function RegisterScreen() {
     const [namaDepan, setNamaDepan] = useState('')
@@ -12,6 +13,11 @@ export default function RegisterScreen() {
     const [phonenum, setPhonenum] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [confPass, setConfPass] = useState('')
+
+    const [showPass, setShowPass] = useState(false)  
+    const [showConfPass, setShowConfPass] = useState(false)  
+
     const router = useRouter();
 
     return (
@@ -75,21 +81,27 @@ export default function RegisterScreen() {
                         <Text style={styles.titleName}>Kata Sandi</Text>
                         <TextInput
                         placeholder='Isi dengan kata sandi Anda'
-                        secureTextEntry={true}
+                        secureTextEntry={!showPass}
                         value={password}
                         onChangeText={setPassword} 
                         style={styles.input}
                         />
+                        <TouchableOpacity onPress={() => setShowPass(!showPass)} style={styles.eyeIcon}>
+                            <Feather name={showPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
+                        </TouchableOpacity>
                     </View>
                     <View style={styles.wrapform}>
                         <Text style={styles.titleName}>Konfirmasi Kata Sandi</Text>
                         <TextInput
                         placeholder='Isi dengan kata sandi Anda'
-                        secureTextEntry={true}
-                        value={password}
-                        onChangeText={setPassword} 
+                        secureTextEntry={!showConfPass}
+                        value={confPass}
+                        onChangeText={setConfPass} 
                         style={styles.input}
                         />
+                        <TouchableOpacity onPress={() => setShowConfPass(!showConfPass)} style={styles.eyeIcon}>
+                            <Feather name={showConfPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
+                        </TouchableOpacity>
                     </View>
                 </View>
                 <View>
@@ -175,6 +187,13 @@ const styles = StyleSheet.create({
       borderRadius: 30,
       fontSize: 14,
   },
+
+  eyeIcon: {
+    position: 'absolute',
+    left: 310,
+    top: 34
+},
+
   forgotPass: {
       // width: '100%'
       flexDirection: 'row',

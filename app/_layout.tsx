@@ -12,6 +12,7 @@ export default function RootLayout() {
       <Stack.Screen name="Articlepage" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="screens" options={{ headerShown: false }} />
       <Stack.Screen name="contact/Contactpage" options={{ headerShown: false }} />
       <Stack.Screen name="contact/ApproveFriend" options={{ headerShown: false }} />
       <Stack.Screen name="contact/SendRequest" options={{ headerShown: false }} />

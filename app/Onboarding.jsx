@@ -114,7 +114,7 @@ const OnboardingScreen = () => {
             <View style={styles.contentBottomContainer}>
             <Text style={styles.title}>Asisten Darurat Anda</Text>
             <Text style={styles.description}>
-                Hubungi nomor darurat 112 dan teman-teman Anda melalui aplikasi ini.
+                Hubungi nomor darurat 112 dan teman-teman Anda melalui aplikasi ini.
             </Text>
             </View>
 
