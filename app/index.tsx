@@ -33,7 +33,7 @@ export default function Index() {
     <View>
       {/* <Homepagelayanan /> */}
       {/* <Quiz /> */}
-      <Slider />
+      {/* <Slider /> */}
       {/* <Contactpage /> */}
       <MenuAwal />
     </View>
