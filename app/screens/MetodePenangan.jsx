@@ -67,32 +67,32 @@ const data = {
 	kategori1: [  
 		{  
 			id: 1,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},
-		{  
-			id: 2,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		}, 
-		{  
-			id: 3,  
 			title: "Penanganan henti jantung",  
 			keywords: "CPR, Pertolongan Pertama",  
 			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
 			image: require('../../assets/images/undraw_injured_9757 1.png'),  
 		},  
 		{  
+			id: 2,  
+			title: "Penanganan penderita epilepsi",  
+			keywords: "Henti, Jantung, Pernapasan, CPR",  
+			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+			image: require('../../assets/images/undraw_injured_9757 1.png'),  
+		},
+		{  
+			id: 3,  
+			title: "Penanganan penderita epilepsi",  
+			keywords: "Henti, Jantung, Pernapasan, CPR",  
+			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+			image: require('../../assets/images/undraw_injured_9757 1.png'),  
+		},
+		{  
 			id: 4,  
 			title: "Penanganan penderita epilepsi",  
 			keywords: "Henti, Jantung, Pernapasan, CPR",  
 			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
 			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},  
+		}, 
 		{  
 			id: 5,  
 			title: "Penanganan pernapasan",  
@@ -183,32 +183,32 @@ const data = {
 	kategori3: [  
 		{  
 			id: 1,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},
-		{  
-			id: 2,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		}, 
-		{  
-			id: 3,  
 			title: "Penanganan henti jantung",  
 			keywords: "CPR, Pertolongan Pertama",  
 			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
 			image: require('../../assets/images/undraw_injured_9757 1.png'),  
 		},  
 		{  
+			id: 2,  
+			title: "Penanganan penderita epilepsi",  
+			keywords: "Henti, Jantung, Pernapasan, CPR",  
+			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+			image: require('../../assets/images/undraw_injured_9757 1.png'),  
+		},
+		{  
+			id: 3,  
+			title: "Penanganan penderita epilepsi",  
+			keywords: "Henti, Jantung, Pernapasan, CPR",  
+			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+			image: require('../../assets/images/undraw_injured_9757 1.png'),  
+		},
+		{  
 			id: 4,  
 			title: "Penanganan penderita epilepsi",  
 			keywords: "Henti, Jantung, Pernapasan, CPR",  
 			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
 			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},  
+		}, 
 		{  
 			id: 5,  
 			title: "Penanganan pernapasan",  
@@ -236,7 +236,7 @@ const data = {
 			keywords: "Henti, Jantung, Pernapasan, CPR",  
 			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
 			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},  
+		}, 
 	],  
 };  
 

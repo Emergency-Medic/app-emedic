@@ -15,38 +15,53 @@ const data = {
       title: "Penanganan penderita epilepsi",  
       keywords: "Henti, Jantung, Pernapasan, CPR",  
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('@/assets/images/undraw_injured_9757 1.png'),  
+      image: require('../../assets/images/undraw_injured_9757 1.png'),  
     },  
+    
     {  
-      id: 1,  
+      id: 2,  
       title: "Penanganan penderita epilepsi",  
       keywords: "Henti, Jantung, Pernapasan, CPR",  
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('@/assets/images/undraw_injured_9757 1.png'),  
+      image: require('../../assets/images/undraw_injured_9757 1.png'),  
     },  
   ],  
   kategori2: [  
     {  
-      id: 2,  
+      id: 3,  
       title: "Penanganan henti jantung",  
       keywords: "CPR, Pertolongan Pertama",  
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('@/assets/images/undraw_injured_9757 1.png'),  
+      image: require('../../assets/images/undraw_injured_9757 1.png'),  
     },  
-    // Tambahkan lebih banyak item jika perlu  
+
+    {  
+      id: 4,  
+      title: "Penanganan penderita epilepsi",  
+      keywords: "Henti, Jantung, Pernapasan, CPR",  
+      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+      image: require('../../assets/images/undraw_injured_9757 1.png'),  
+    },  
   ],  
   kategori3: [  
     {  
-      id: 3,  
+    
+      id: 5,  
       title: "Penanganan pernapasan",  
       keywords: "Asma, Sesak Napas",  
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('@/assets/images/undraw_injured_9757 1.png'),  
+      image: require('../../assets/images/undraw_injured_9757 1.png'),  
+    },
+    
+    {  
+      id: 6,  
+      title: "Penanganan penderita epilepsi",  
+      keywords: "Henti, Jantung, Pernapasan, CPR",  
+      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
+      image: require('../../assets/images/undraw_injured_9757 1.png'),  
     },  
-    // Tambahkan lebih banyak item jika perlu  
   ],  
 };  
-
 
 export default function Home() {
 
@@ -83,6 +98,40 @@ export default function Home() {
               }
           },
       });
+
+      const renderCategoryInfo = () => {
+        return data[selectedCategory].map((item)=> {
+          const backgroundColor = item.id % 2 === 0 ? Colors.blue : Colors.red;
+          return (
+            <View style={[styles.cart, { backgroundColor }]} key={item.id}> 
+              <View style={styles.pictureSection}>
+                <MaterialIcons name="verified" size={14} color={Colors.white} />
+                <Image source={item.image} style={styles.image}/>
+              </View>
+              <View style={styles.textSection}>
+                <Text style={styles.judul}> 
+                  {item.title} 
+                </Text>
+                <Text style={styles.kataKunci}>
+                  Kata Kunci: {item.keywords}
+                </Text>
+                <Text style={styles.deskripsi}>
+                  {item.description} 
+                </Text>
+    
+                <TouchableOpacity style={styles.pelajariSection}> 
+                  <Text style={styles.pelajariText}> 
+                    Pelajari
+                  </Text>
+                  <View style={styles.pelajariIcon}> 
+                    <MaterialIcons name="article" size={10} color="black" />
+                  </View>
+                </TouchableOpacity>
+              </View>  
+            </View>
+          );
+        }); 
+      }; 
 
         return (
       <ScrollView contentContainerStyle={styles.container}>
@@ -220,6 +269,7 @@ export default function Home() {
         </View>
 
 
+        {/* Content */}
         {/* Rekomendasi Pembelajaran */}
         <View style={styles.rekomendasiPembelajaranTitle}>
           <Text style={styles.titleText}>Rekomendasi Pembelajaran</Text>
@@ -228,75 +278,21 @@ export default function Home() {
           </TouchableOpacity>
           
         </View>
-        <View style={styles.kategoriSection}> 
-          <TouchableOpacity style={styles.section}> 
-            <Text style={styles.keterangan}>Kategori 1</Text> 
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.kategoriSection} contentContainerStyle={styles.kategoriContent}> 
+          <TouchableOpacity style={selectedCategory === 'kategori1' ? styles.sectionBerada : styles.section} onPress={() => setSelectedCategory('kategori1')}> 
+            <Text style={selectedCategory === 'kategori1' ? styles.keteranganBerada : styles.keterangan}>Kategori 1</Text> 
           </TouchableOpacity>
-          <TouchableOpacity style={styles.section}> 
-            <Text style={styles.keterangan}>Kategori 2</Text> 
+          <TouchableOpacity style={selectedCategory === 'kategori2' ? styles.sectionBerada : styles.section} onPress={() => setSelectedCategory('kategori2')}> 
+            <Text style={selectedCategory === 'kategori2' ? styles.keteranganBerada : styles.keterangan}>Kategori 2</Text> 
           </TouchableOpacity>
-          <TouchableOpacity style={styles.section}> 
-            <Text style={styles.keterangan}>Kategori 3</Text> 
+          <TouchableOpacity style={selectedCategory === 'kategori3' ? styles.sectionBerada : styles.section} onPress={() => setSelectedCategory('kategori3')}> 
+            <Text style={selectedCategory === 'kategori3' ? styles.keteranganBerada : styles.keterangan}>Kategori 3</Text> 
           </TouchableOpacity>
-        </View>
-
+        </ScrollView>
+        
+        {/* Cart */}  
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.cartContainer}>
-          <View style={styles.containerkeseluruhan}>
-            <View style={styles.cart}> 
-              <View style={styles.pictureSection}>
-                <MaterialIcons name="verified" size={14} color={Colors.white} />
-                <Image source={require( '@/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
-              </View>
-              <View style={styles.textSection}>
-                <Text style={styles.judul}> 
-                  Penanganan penderita epilepsi 
-                </Text>
-                <Text style={styles.kataKunci}>
-                  Kata Kunci: Henti, Jantung, Pernapasan, CPR
-                </Text>
-                <Text style={styles.deskripsi}>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                </Text>
-
-                <View style={styles.pelajariSection}> 
-                  <Text style={styles.pelajariText}> 
-                    Pelajari
-                  </Text>
-                  <View style={styles.pelajariIcon}> 
-                    <MaterialIcons name="article" size={10} color="black" />
-                  </View>
-                </View>
-              </View>  
-            </View>
-            
-
-            <View style={styles.cart2}> 
-              <View style={styles.pictureSection}>
-                <MaterialIcons name="verified" size={14} color={Colors.white} />
-                <Image source={require( '@/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
-              </View>
-              <View style={styles.textSection}>
-                <Text style={styles.judul}> 
-                  Penanganan penderita epilepsi 
-                </Text>
-                <Text style={styles.kataKunci}>
-                  Kata Kunci: Henti, Jantung, Pernapasan, CPR
-                </Text>
-                <Text style={styles.deskripsi}>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                </Text>
-
-                <View style={styles.pelajariSection}> 
-                  <Text style={styles.pelajariText}> 
-                    Pelajari
-                  </Text>
-                  <View style={styles.pelajariIcon}> 
-                    <MaterialIcons name="article" size={10} color="black" />
-                  </View>
-                </View>
-              </View>
-            </View>
-          </View>
+          {renderCategoryInfo()}
         </ScrollView>
 
         {/* Layanan */}
@@ -420,7 +416,6 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
   }, 
   rekomendasiPembelajaranTitle: {
-    // marginTop:5,
     marginLeft: 32,
     marginRight: 32,  
     flexDirection: 'row', 
@@ -437,41 +432,59 @@ const styles = StyleSheet.create({
     color: Colors.red,
   }, 
   kategoriSection: {
-    marginLeft: 32, 
-    flexDirection: 'row', 
-  },
-  section:{
-    width: 69, 
-    height: 23, 
-    backgroundColor: '#EDEDED',
-    borderRadius: 5,
-    alignItems: 'center', 
-    justifyContent: 'center',
-    marginTop: 10,  
-    marginRight: 10, 
-  },
-  keterangan: {
-    fontSize: 9, 
-  },
+		marginLeft: 20,
+		marginRight: 20,
+		borderRadius: 5,  
+		flexDirection: 'row',
+	},
+	kategoriContent: {
+    padding: 10,  
+	},
+	sectionBerada: {
+		width: 69, 
+		height: 23, 
+		backgroundColor: Colors.red,
+		borderRadius: 5,
+		alignItems: 'center', 
+		justifyContent: 'center',
+		marginTop: 10,  
+		marginRight: 10, 
+	},
+	section: {
+		width: 69, 
+		height: 23, 
+		backgroundColor: '#EDEDED',
+		borderRadius: 5,
+		alignItems: 'center', 
+		justifyContent: 'center',
+		marginTop: 10,  
+		marginRight: 10, 
+	},
+	keteranganBerada: {	
+		fontSize: 9, 
+		fontFamily: 'regular', 
+		color: Colors.white,
+	}, 
+	keterangan: {
+		fontSize: 9, 
+		fontFamily: 'regular', 
+		color: '#ACACAC',
+	},
   cartContainer: {
-    // height:0,
     marginTop: 10, 
-    marginLeft: 32, 
-    marginRight: 32,
-    borderRadius: 10,  
-  },
-  containerkeseluruhan: {
-    // height:300,
-    flexDirection:'row',
+    marginLeft: 25, 
+    marginRight: 30,
+    borderRadius: 20,
   },
   cart: {
-    width: 250, 
-    height: 100, 
+    width: 248, 
+    height: 94, 
     backgroundColor: Colors.blue,
-    borderRadius: 10, 
+    borderRadius: 20, 
     flexDirection: 'row', 
     alignContent: 'center', 
     justifyContent: 'center', 
+    marginLeft: 10, 
   }, 
   pictureSection: {
     flexDirection: 'column',  
@@ -527,16 +540,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white, 
     alignItems: 'center', 
     justifyContent: 'center', 
-  },
-  cart2: {
-    width: 250, 
-    height: 100, 
-    backgroundColor: Colors.red,
-    borderRadius: 10, 
-    flexDirection: 'row', 
-    alignContent: 'center', 
-    justifyContent: 'center', 
-    marginLeft: 10, 
   },
   containerlayanan: {
     justifyContent: 'center',
