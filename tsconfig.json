@@ -13,9 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-<<<<<<< HEAD
-, "app/(tabs)/Emergency.jsx", "app/EmergencyCallScreen.jsx", "app/Homepagelayanan.jsx", "app/(tabs)/Home.jsx"  ]
-=======
 , "app/(tabs)/Emergency.jsx", "app/EmergencyCallScreen.jsx", "app/Homepagelayanan.jsx", "app/viewModels/registerUser.js", "app/(auth)/RegisterScreen.jsx", "app/(auth)/SignInScreen.jsx"  ]
->>>>>>> 75ec8ac61091da38bf6398f984fe70c5a0d354f7
 }
