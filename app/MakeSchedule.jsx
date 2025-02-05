@@ -237,8 +237,8 @@ const styles = StyleSheet.create({
     doseContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: -85,
-        marginBottom: -85,
+        // marginTop: -85,
+        // marginBottom: -85,
     },
     upDownContainer:{
         backgroundColor: '#A8201A',
@@ -318,17 +318,18 @@ const styles = StyleSheet.create({
         fontFamily: 'regular',
     },
     saveButton: {
+        marginHorizontal: 25,
         backgroundColor: '#A8201A',
-        padding: 15,
-        borderRadius: 15,
+        borderRadius: 30,
+        padding: 12,
+        justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 30,
-        marginBottom: 30,
+        marginTop: 70,
     },
     saveButtonText: {
         color: '#fff',
-        fontSize: 16,
-        fontWeight: 'bold',
+        fontSize: 20,
+        fontWeight: 'semibold',
     },
     or: {
         fontSize: 12,
