@@ -21,7 +21,6 @@ export default function Location() {
 				style={StyleSheet.absoluteFill}  
 				provider={PROVIDER_GOOGLE} 
 				initialRegion={INITIAL_REGION}
-				
 			/>
 		</View>
 	); 
