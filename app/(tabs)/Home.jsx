@@ -7,6 +7,8 @@ import call from 'react-native-phone-call';
 import Swiper from 'react-native-swiper';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Slider from '../screens/artikel/awal/Slider'
+import MetodePenangan from "../screens/MetodePenangan";
 
 const data = {  
   kategori1: [  
@@ -104,30 +106,32 @@ export default function Home() {
           const backgroundColor = item.id % 2 === 0 ? Colors.blue : Colors.red;
           return (
             <View style={[styles.cart, { backgroundColor }]} key={item.id}> 
-              <View style={styles.pictureSection}>
-                <MaterialIcons name="verified" size={14} color={Colors.white} />
-                <Image source={item.image} style={styles.image}/>
-              </View>
-              <View style={styles.textSection}>
-                <Text style={styles.judul}> 
-                  {item.title} 
-                </Text>
-                <Text style={styles.kataKunci}>
-                  Kata Kunci: {item.keywords}
-                </Text>
-                <Text style={styles.deskripsi}>
-                  {item.description} 
-                </Text>
-    
-                <TouchableOpacity style={styles.pelajariSection}> 
-                  <Text style={styles.pelajariText}> 
-                    Pelajari
+              <View style={styles.contain}>
+                <View style={styles.pictureSection}>
+                  <MaterialIcons name="verified" size={14} color={Colors.white} />
+                  <Image source={item.image} style={styles.image}/>
+                </View>
+                <View style={styles.textSection}>
+                  <Text style={styles.judul}> 
+                    {item.title} 
                   </Text>
-                  <View style={styles.pelajariIcon}> 
-                    <MaterialIcons name="article" size={10} color="black" />
-                  </View>
-                </TouchableOpacity>
-              </View>  
+                  <Text style={styles.kataKunci}>
+                    Kata Kunci: {item.keywords}
+                  </Text>
+                  <Text style={styles.deskripsi}>
+                    {item.description} 
+                  </Text>
+      
+                  <TouchableOpacity style={styles.pelajariSection} onPress={() => router.push('/screens/artikel/Articlepage')}> 
+                    <Text style={styles.pelajariText}> 
+                      Pelajari
+                    </Text>
+                    <View style={styles.pelajariIcon}> 
+                      <MaterialIcons name="article" size={10} color="black" />
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
           );
         }); 
@@ -139,9 +143,9 @@ export default function Home() {
         {/* Hello, (name) */}
         <View style={styles.header}> 
           <View style={styles.profileSection}> 
-            <View style={styles.profileIcon}>
+            <TouchableOpacity style={styles.profileIcon}>
               <MaterialIcons name="person-outline" size={18} color={Colors.grey} />
-            </View>
+            </TouchableOpacity>
             {/* Greating Section */}
             <View style={styles.greatingSection}>
               <Text style={styles.halo}>
@@ -152,9 +156,9 @@ export default function Home() {
               </Text>
             </View>
           </View> 
-          <View style={styles.alarmIcon}> 
+          {/* <View style={styles.alarmIcon}> 
             <MaterialIcons name="alarm" size={20} color= {Colors.blue} />
-          </View>
+          </View> */}
         </View>
 
         {/* Content */}
@@ -189,7 +193,7 @@ export default function Home() {
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.
               </Text>
             </View>
-            <TouchableOpacity style={styles.nextButtonTap}>
+            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/Slider")} style={styles.nextButtonTap}>
               <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
             </TouchableOpacity>
           </View>
@@ -215,7 +219,7 @@ export default function Home() {
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.
               </Text>
             </View>
-            <TouchableOpacity style={styles.nextButtonTap}>
+            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/Slider")} style={styles.nextButtonTap}>
               <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
             </TouchableOpacity>
           </View>
@@ -241,7 +245,7 @@ export default function Home() {
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.
               </Text>
             </View>
-            <TouchableOpacity style={styles.nextButtonTap}>
+            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/Slider")} style={styles.nextButtonTap}>
               <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
             </TouchableOpacity>
           </View>
@@ -420,6 +424,7 @@ const styles = StyleSheet.create({
     marginRight: 32,  
     flexDirection: 'row', 
     justifyContent: 'space-between', 
+    alignItems: 'center'
   }, 
   titleText: {
     fontFamily: 'bold', 
@@ -471,26 +476,32 @@ const styles = StyleSheet.create({
 		color: '#ACACAC',
 	},
   cartContainer: {
-    marginTop: 10, 
+    marginTop: 10,  
     marginLeft: 25, 
     marginRight: 30,
     borderRadius: 20,
   },
   cart: {
-    width: 248, 
-    height: 94, 
+    // width: '50%', 
+    // height: 110, 
     backgroundColor: Colors.blue,
     borderRadius: 20, 
-    flexDirection: 'row', 
+    marginLeft: 10, 
+  }, 
+  contain: {
+    flexDirection: 'row',
     alignContent: 'center', 
     justifyContent: 'center', 
-    marginLeft: 10, 
+    paddingHorizontal: 20, 
+    paddingVertical: 10,
+    marginLeft: 10,
+    gap: 10
   }, 
   pictureSection: {
     flexDirection: 'column',  
     alignItems:'flex-start', 
     justifyContent: 'center',
-    marginLeft: 32,  
+    // marginLeft: 32,  
   },
   image: { 
     width: 42, 
@@ -499,7 +510,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
   },
   textSection: {
-    marginLeft: 10,  
+    // marginLeft: 10,  
     justifyContent: 'flex-start', 
   },
   judul: {
@@ -519,13 +530,14 @@ const styles = StyleSheet.create({
     fontFamily: 'regular', 
     fontSize: 10, 
     marginTop: 5, 
-    marginRight: 40, 
+    // marginRight: 40, 
   }, 
   pelajariSection: {
     flexDirection: 'row', 
     alignItems: 'center', 
     justifyContent: 'flex-end',  
-    marginRight: 32, 
+    // marginRight: 32,
+    marginTop: 10 
   }, 
   pelajariText: {
     marginRight: 6, 

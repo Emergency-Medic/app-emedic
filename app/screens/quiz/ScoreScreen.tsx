@@ -4,6 +4,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { router } from 'expo-router';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import Articlepage from '../artikel/Articlepage';
 
 type RootStackParamList = {
   Score: undefined;
@@ -22,7 +23,7 @@ const ScoreScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.navigationButtons2}>
-        <TouchableOpacity onPress={() => router.push("./(auth)/SignInScreen")} style={styles.skipButton}>
+        <TouchableOpacity onPress={() => router.replace('../artikel/Articlepage')} style={styles.skipButton}>
           <Text style={styles.skipText}>Skip {'>'}{'>'}</Text>
         </TouchableOpacity>
       </View>
@@ -53,7 +54,7 @@ const ScoreScreen = () => {
       </TouchableOpacity>
       </View>
       
-      <TouchableOpacity style={styles.DoneButton}>
+      <TouchableOpacity style={styles.DoneButton} onPress={() => router.replace('../artikel/Articlepage')}>
         <Text style={styles.buttonTextWhite}>Selesai</Text>
       </TouchableOpacity>
     </View>
