@@ -104,30 +104,32 @@ export default function Home() {
           const backgroundColor = item.id % 2 === 0 ? Colors.blue : Colors.red;
           return (
             <View style={[styles.cart, { backgroundColor }]} key={item.id}> 
-              <View style={styles.pictureSection}>
-                <MaterialIcons name="verified" size={14} color={Colors.white} />
-                <Image source={item.image} style={styles.image}/>
-              </View>
-              <View style={styles.textSection}>
-                <Text style={styles.judul}> 
-                  {item.title} 
-                </Text>
-                <Text style={styles.kataKunci}>
-                  Kata Kunci: {item.keywords}
-                </Text>
-                <Text style={styles.deskripsi}>
-                  {item.description} 
-                </Text>
-    
-                <TouchableOpacity style={styles.pelajariSection}> 
-                  <Text style={styles.pelajariText}> 
-                    Pelajari
+              <View style={styles.contain}>
+                <View style={styles.pictureSection}>
+                  <MaterialIcons name="verified" size={14} color={Colors.white} />
+                  <Image source={item.image} style={styles.image}/>
+                </View>
+                <View style={styles.textSection}>
+                  <Text style={styles.judul}> 
+                    {item.title} 
                   </Text>
-                  <View style={styles.pelajariIcon}> 
-                    <MaterialIcons name="article" size={10} color="black" />
-                  </View>
-                </TouchableOpacity>
-              </View>  
+                  <Text style={styles.kataKunci}>
+                    Kata Kunci: {item.keywords}
+                  </Text>
+                  <Text style={styles.deskripsi}>
+                    {item.description} 
+                  </Text>
+      
+                  <TouchableOpacity style={styles.pelajariSection}> 
+                    <Text style={styles.pelajariText}> 
+                      Pelajari
+                    </Text>
+                    <View style={styles.pelajariIcon}> 
+                      <MaterialIcons name="article" size={10} color="black" />
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
           );
         }); 
@@ -470,22 +472,24 @@ const styles = StyleSheet.create({
 		fontFamily: 'regular', 
 		color: '#ACACAC',
 	},
-  cartContainer: { 
-    marginLeft: 15, 
+  cartContainer: {
+    marginTop: 10,  
+    marginLeft: 25, 
     marginRight: 30,
     borderRadius: 20,
-    padding: 10,
   },
   cart: {
-    width: 250, 
-    height: 110, 
+    width: 248, 
+    height: 100, 
     backgroundColor: Colors.blue,
     borderRadius: 20, 
-    flexDirection: 'row', 
+    marginLeft: 10, 
+  }, 
+  contain: {
+    flexDirection: 'row',
     alignContent: 'center', 
-    justifyContent: 'center', 
-    padding: 10, 
-    marginLeft: 10,
+    justifyContent: 'center',
+    padding: 5,
   }, 
   pictureSection: {
     flexDirection: 'column',  
