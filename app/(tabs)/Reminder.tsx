@@ -72,7 +72,7 @@ const [reminders, setReminders] = useState<RemindersType>({
   return (
     <View style={styles.container}>
       <StatusBar style='dark' translucent={true} />
-      <BackButton color={Colors.red} top={44} left={10} />
+      {/* <BackButton color={Colors.red} top={44} left={10} /> */}
       <View style={styles.header1}>
         <Text style={styles.title}>
           {`Hari ini, ${new Date().toLocaleDateString('id-ID', {
@@ -156,8 +156,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff' 
   },
   header1: { 
-    marginTop: 44, 
-    marginLeft:10, 
+    marginTop: 35, 
+    // marginLeft:10, 
     flexDirection: 'row', 
     alignItems: 'center', 
     padding: 16 
