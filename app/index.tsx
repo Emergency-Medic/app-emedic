@@ -60,7 +60,7 @@ export default function Index() {
   // }
   return (
     <View>
-      <MenuAwal />
+      {user ? <Home /> : <MenuAwal />}
     </View>
   );
 }
