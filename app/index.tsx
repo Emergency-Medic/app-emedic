@@ -14,6 +14,7 @@ import Quiz from "./Quiz"
 import Summary from "./Summary";
 import ScoreScreen from "./ScoreScreen";
 import Flashcard from "./FlashCard";
+import Homepagelayanan from "./Homepagelayanan";
 import Location from "./Location";
 import Home from "./(tabs)/Home";
 import { auth, db } from '@/firebaseConfig';
@@ -59,7 +60,7 @@ export default function Index() {
   // }
   return (
     <View>
-      <MenuAwal />
+      {user ? <Home /> : <MenuAwal />} 
     </View>
   );
 }
