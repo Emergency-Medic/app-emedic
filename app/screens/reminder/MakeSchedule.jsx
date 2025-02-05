@@ -61,7 +61,7 @@ const MakeSchedule = () => {
         keyboardShouldPersistTaps="handled"
         >
             <View>
-            <BackButton color={Colors.red} top={45}/>
+            <BackButton color={Colors.red} top={45} left={0}/>
             </View>
             
             <View style={styles.inContainer}>
@@ -92,14 +92,14 @@ const MakeSchedule = () => {
                     
                     <Text style={styles.frequencyText2}>sdm</Text>
                     <View style={styles.choice}>
-                        <Picker
+                        {/* <Picker
                             selectedValue={selectedValue}
                             onValueChange={(itemValue) => setSelectedValue(itemValue)}
                             style={{ fontFamily: 'regular' }}
                         >
                             <Picker.Item label="SDM" value="sdm" />
                             <Picker.Item label="SDT" value="sdt" />
-                        </Picker>
+                        </Picker> */}
                     </View>
 
                     <View style={styles.upDownContainer}>
@@ -140,32 +140,31 @@ const MakeSchedule = () => {
                     </TouchableOpacity>
 
                 </View>
-                <FlatList
-                    data={reminders}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item, index }) => (
-                        <View style={styles.reminderCard}>
-                        <Text style={styles.timeText}>{item.time}</Text>
-                        <View style={styles.switchContainer}>
-                            <View style={styles.checkboxContainer}>
-                            <Checkbox
-                                value={checkedItems[index] || false}
-                                onValueChange={() => {
-                                const newCheckedItems = [...checkedItems];
-                                newCheckedItems[index] = !newCheckedItems[index]; // Toggle state
-                                setCheckedItems(newCheckedItems);
-                                }}
-                                color={checkedItems[index] ? "#13070C" : undefined}
-                            />
-                            <Text style={styles.checkboxLabelBlue}>
-                                Ingatkan saya 15 menit setelahnya
-                            </Text>
+                <View>
+                    {
+                        reminders.map((item, index) => (
+                            <View key={index} style={styles.reminderCard}>
+                                <Text style={styles.timeText}>{item.time}</Text>
+                                <View style={styles.switchContainer}>
+                                    <View style={styles.checkboxContainer}>
+                                        <Checkbox
+                                            value={checkedItems[index] || false}
+                                            onValueChange={() => {
+                                            const newCheckedItems = [...checkedItems];
+                                            newCheckedItems[index] = !newCheckedItems[index]; // Toggle state
+                                            setCheckedItems(newCheckedItems);
+                                            }}
+                                            color={checkedItems[index] ? "#13070C" : undefined}
+                                        />
+                                        <Text style={styles.checkboxLabelBlue}>
+                                            Ingatkan saya 15 menit setelahnya
+                                        </Text>
+                                    </View>
+                                </View>
                             </View>
-                        </View>
-                        </View>
-                    )}
-                    nestedScrollEnabled={true}
-                    />
+                        ))
+                    }
+                </View>
 
                 <Text style={styles.label}>Deskripsi (Opsional)</Text>
                 <TextInput style={styles.descriptionInput} placeholder="Isi dengan informasi tambahan obat" />
@@ -193,12 +192,14 @@ const styles = StyleSheet.create({
     },
     checkboxContainer: {
         flexDirection: 'row',
-        marginTop: 5,
+        // marginTop: 5,
+        gap: 7
     },
     checkboxLabelBlue: {
-        marginLeft: 5,
+        // marginLeft: 5,
         fontFamily: 'semibold',
         color: '#13070C',
+        fontSize: 12
     },
     checkboxLabelRed: {
         marginLeft: 5,
@@ -243,8 +244,8 @@ const styles = StyleSheet.create({
     doseContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: -85,
-        marginBottom: -85,
+        // marginTop: -85,
+        // marginBottom: -85,
     },
     upDownContainer:{
         backgroundColor: '#A8201A',
@@ -325,16 +326,16 @@ const styles = StyleSheet.create({
     },
     saveButton: {
         backgroundColor: '#A8201A',
-        padding: 15,
-        borderRadius: 15,
+        padding: 12,
+        borderRadius: 30,
         alignItems: 'center',
         marginTop: 30,
         marginBottom: 30,
     },
     saveButtonText: {
         color: '#fff',
-        fontSize: 16,
-        fontWeight: 'bold',
+        fontSize: 20,
+        fontFamily: 'semibold',
     },
     or: {
         fontSize: 12,
@@ -353,15 +354,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    gap: 10
   },
   timeText: {
     fontSize: 18,
-    fontWeight: "semibold",
+    fontFamily: "semibold",
     color: "#13070C",
   },
   switchContainer: {
     flexDirection: "row",
     alignItems: "center",
+    gap: 20
   },
   button: {
     backgroundColor: '#A8201A',

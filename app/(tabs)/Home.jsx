@@ -7,6 +7,7 @@ import call from 'react-native-phone-call';
 import Swiper from 'react-native-swiper';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Slider from '../screens/artikel/awal/Slider'
 
 const data = {  
   kategori1: [  
@@ -189,7 +190,7 @@ export default function Home() {
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.
               </Text>
             </View>
-            <TouchableOpacity style={styles.nextButtonTap}>
+            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/Slider")} style={styles.nextButtonTap}>
               <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
             </TouchableOpacity>
           </View>
@@ -215,7 +216,7 @@ export default function Home() {
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.
               </Text>
             </View>
-            <TouchableOpacity style={styles.nextButtonTap}>
+            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/Slider")} style={styles.nextButtonTap}>
               <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
             </TouchableOpacity>
           </View>
@@ -241,7 +242,7 @@ export default function Home() {
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.
               </Text>
             </View>
-            <TouchableOpacity style={styles.nextButtonTap}>
+            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/Slider")} style={styles.nextButtonTap}>
               <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
             </TouchableOpacity>
           </View>
@@ -470,21 +471,22 @@ const styles = StyleSheet.create({
 		fontFamily: 'regular', 
 		color: '#ACACAC',
 	},
-  cartContainer: {
-    marginTop: 10, 
-    marginLeft: 25, 
+  cartContainer: { 
+    marginLeft: 15, 
     marginRight: 30,
     borderRadius: 20,
+    padding: 10,
   },
   cart: {
-    width: 248, 
-    height: 94, 
+    width: 250, 
+    height: 110, 
     backgroundColor: Colors.blue,
     borderRadius: 20, 
     flexDirection: 'row', 
     alignContent: 'center', 
     justifyContent: 'center', 
-    marginLeft: 10, 
+    padding: 10, 
+    marginLeft: 10,
   }, 
   pictureSection: {
     flexDirection: 'column',  
