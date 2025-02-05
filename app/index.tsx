@@ -31,8 +31,8 @@ export default function Index() {
   })
   return (
     <View>
-      <MenuAwal />
-      {/* <Location /> */}
+      {/* <MenuAwal /> */}
+      <Location />
     </View>
   );
 }
