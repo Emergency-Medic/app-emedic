@@ -1,18 +1,95 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { useRouter } from "expo-router";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView, Alert } from 'react-native'
 import BackButton from '@/components/BackButton'
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
 import Feather from '@expo/vector-icons/Feather';
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebaseConfig";
+import { signInWithGoogle, handleGoogleSignIn, signInUser } from "../services/authService";
 
 export default function SignInScreen() {
 
-    const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-
     const [showPass, setShowPass] = useState(false)  
+    const [emailFocused, setEmailFocused] = useState(false);
+    const [passFocused, setPassFocused] = useState(false);
     const router = useRouter();
+
+    const [errors, setErrors] = useState({});
+
+    useEffect(() => {
+        handleGoogleSignIn();
+      }, []);
+    
+    const handleGSignIn = async () => {
+        try {
+          await signInWithGoogle();
+        } catch (error) {
+          Alert.alert("Login Error", error.message);
+        }
+    };
+
+    const validateForm = () => {
+        let errors = {};
+
+        if (!email.trim()) {
+            errors.email = "Email wajib diisi";
+        } else if (!/\S+@\S+\.\S+/.test(email)) {
+            errors.email = "Format email tidak valid";
+        }
+        if (!password.trim()) {
+            errors.password = "Kata sandi wajib diisi";
+        } else if (password.length < 6) {
+            errors.password = "Kata sandi minimal 6 karakter";
+        }
+
+        setErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
+    const signInUser = async (email, password) => {
+        try {
+          const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
+          console.log("Signed in successfully:", user);
+      
+        } catch (error) {
+          // Tangani error
+          console.error("Sign In Error:", error);
+          throw error;
+        }
+      };
+
+      const handleSignIn = async () => {
+        if (!validateForm()) {
+            return; // Jika validasi gagal, hentikan eksekusi
+        }
+        try {
+            await signInUser(email, password)
+            // Alert.alert("Success", "User signed in successfully!");
+            router.replace('../(tabs)/Home')
+        } catch (error) {
+            // Alert.alert("Error", error.message);
+            if (error.code === 'auth/invalid-credential') {
+                setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  password: 'Email atau password salah. Silakan coba lagi',
+                }));
+              } else {
+                console.error("Error registering user:", error.message);
+              }
+        }
+      }
+
+      useEffect(() => {
+        if (auth.currentUser) {
+            router.replace("../(tabs)/Home"); // Arahkan ke halaman Home jika sudah login
+        }
+      }, [router]);
+
     return (
         <ScrollView style={styles.allwrap}>
             <StatusBar backgroundColor={Colors.red} translucent={false}/>
@@ -24,24 +101,55 @@ export default function SignInScreen() {
 
                 <View>
                     <View style={styles.username}>
-                        <Text style={styles.titleName}>Username</Text>
+                        <Text style={[
+                            styles.titleName,
+                            emailFocused && {
+                            color: Colors.red,
+                            fontFamily: 'regular'
+                            }
+                        ]}>
+                           Email
+                        </Text>
                         <TextInput
-                        placeholder='Isi dengan username Anda'
-                        value={username}
-                        onChangeText={setUsername}
-                        style={styles.input}
+                        placeholder='Isi dengan email Anda'
+                        onFocus={() => setEmailFocused(true)}
+                        onBlur={() => setEmailFocused(false)} 
+                        value={email}
+                        onChangeText={setEmail}
+                        style={[
+                            styles.input,
+                            emailFocused && {
+                            borderColor: Colors.red,
+                            }
+                        ]}
                         />
+                        {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
                     </View>
                     <View>
-                        <Text style={styles.titleName}>Kata Sandi</Text>
+                        <Text style={[
+                            styles.titleName,
+                            passFocused && {
+                            color: Colors.red,
+                            fontFamily: 'regular'
+                            }
+                        ]}>
+                            Kata Sandi
+                        </Text>
                         <TextInput
                         placeholder='Isi dengan kata sandi Anda'
                         secureTextEntry={!showPass}
                         value={password}
                         onChangeText={setPassword} 
-                        style={styles.input}
-                        
+                        style={[
+                            styles.input,
+                            passFocused && {
+                            borderColor: Colors.red,
+                            }
+                        ]}
+                        onFocus={() => setPassFocused(true)}
+                        onBlur={() => setPassFocused(false)} 
                         />
+                        {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
                         <TouchableOpacity onPress={() => setShowPass(!showPass)} style={styles.eyeIcon}>
                             <Feather name={showPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
                         </TouchableOpacity>
@@ -53,7 +161,7 @@ export default function SignInScreen() {
                     </View>
                 </View>
                 <View>
-                    <TouchableOpacity style={styles.submit} onPress={() => router.push('../(tabs)/Home')}>
+                    <TouchableOpacity style={styles.submit} onPress={handleSignIn}>
                         <Text style={styles.buttonText} >Masuk</Text>
                     </TouchableOpacity>
                     <View style={styles.belumwrap}>
@@ -68,7 +176,7 @@ export default function SignInScreen() {
 
                 <View>
                     <Text style= {styles.atau}>atau</Text>
-                    <TouchableOpacity style={styles.google} onPress={() => console.log("Masuk dengan Google")}>
+                    <TouchableOpacity style={styles.google} onPress={handleGSignIn}>
                         
                         <Image source={require('../../assets/images/sign in/google.png')} style={styles.googleImg}></Image>
                         
@@ -207,6 +315,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#13070C',
         fontFamily: 'regular'
-    }
+    },
+    errorText: {
+        color: Colors.red,
+        fontSize: 10,
+        fontFamily: 'light'
+      }
 })
 

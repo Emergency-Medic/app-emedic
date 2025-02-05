@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Modal, Image, TouchableWithoutFeedback } from 'react-native';    
+import { View, Text, StyleSheet, ScrollView, Modal, Image, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';    
 import { Colors } from '@/constants/Colors';
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
-
+import { signOut } from "firebase/auth";
+import { auth } from "@/firebaseConfig";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+
 
 interface ProfileProps {  
   modalVisible: boolean;  
@@ -14,6 +16,14 @@ interface ProfileProps {
 }  
   
 const Profile: React.FC<ProfileProps> = ({ modalVisible, setModalVisible }) => {    
+	const router = useRouter();
+	const handleSignOut = () => {
+		signOut(auth).then(() => {
+			router.replace('/MenuAwal')
+		}).catch((error) => {
+			console.log(error);
+		})
+	}
 	return (    
 		<Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
 			<TouchableWithoutFeedback onPressOut={() => setModalVisible(false)}>
@@ -51,8 +61,8 @@ const Profile: React.FC<ProfileProps> = ({ modalVisible, setModalVisible }) => {
 						
 						{/* Bookmark  */}
 						<View style={styles.bookmarkContainer}> 
-							<Image source={require('../../assets/images/Rectangle 151.png')} style={styles.image}></Image>
-							<Image source={require('../../assets/images/Rectangle 151.png')} style={styles.image}></Image>
+							<Image source={require( '../../assets/images/Rectangle 151.png')} style={styles.image}></Image>
+							<Image source={require( '../../assets/images/Rectangle 151.png')} style={styles.image}></Image>
 						</View> 
 						{/* Friend */}
 						<View style={styles.friendSection}>
@@ -60,9 +70,9 @@ const Profile: React.FC<ProfileProps> = ({ modalVisible, setModalVisible }) => {
 							<Text style={styles.teman}>Teman</Text>
 						</View>
 						{/* Log Out */}
-						<View style={styles.logOutSection}> 
+						<TouchableOpacity onPress={handleSignOut} style={styles.logOutSection}> 
 							<Text style={styles.logOut}>Log Out</Text>
-						</View>
+						</TouchableOpacity>
 					</View> 
 				</View>    
 	  		</TouchableWithoutFeedback> 

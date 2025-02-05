@@ -36,6 +36,7 @@ export default function TabLayout() {
             tabBarIcon: ({ color }) => (  
               <MaterialIcons name="access-alarm" size={24} color={color} />  
             ),  
+            headerShown: false
           }}  
         />  
         <Tabs.Screen   
@@ -43,7 +44,8 @@ export default function TabLayout() {
           options={{  
             tabBarIcon: ({ color }) => (  
               <AntDesign name="search1" size={24} color={color} />  
-            ),  
+            ),
+            headerShown: false  
           }}  
         />  
         <Tabs.Screen   
