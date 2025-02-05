@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Modal, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, TextInput, Modal, TouchableWithoutFeedback } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Feather from '@expo/vector-icons/Feather';
 import BackButton from '@/components/BackButton';
+import Octicons from '@expo/vector-icons/Octicons';
 import { useRouter } from "expo-router";
 import AntDesign from '@expo/vector-icons/AntDesign';
 
@@ -14,9 +15,11 @@ type Contact = {
   phone: string;
 };
 
-const ApproveFriend: React.FC = () => {
+const SendRequest: React.FC = () => {
+  const [id, setId] = useState('')
   const router = useRouter();
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false); 
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const contacts: Contact[] = [
     { id: '1', name: 'Orang X', phone: '+62 812 1565 2273' },
   ];
@@ -24,97 +27,111 @@ const ApproveFriend: React.FC = () => {
   const renderContact = ({ item }: { item: Contact }) => (
     <View style={styles.contactCard}>
       <View style={styles.contactInfo}>
-        <Image source={require('../../assets/images/icon.png')} style={styles.avatar} />
+        <Image source={require('../../../assets/images/icon.png')} style={styles.avatar} />
         <View>
           <Text style={styles.contactName}>{item.name}</Text>
           <Text style={styles.contactPhone}>{item.phone}</Text>
         </View>
       </View>
       <View style={styles.actionButtons}>
-        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.iconButtonEdit}>
+        <TouchableOpacity onPress={() => {
+          setSelectedContact(item); 
+          setModalVisible(true);
+        }} style={styles.iconButtonEdit}>
         <Feather name="check" size={18} color="#1AA832" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButtonDelete}>
-          <MaterialIcons name="delete-outline" size={18} color="#A8201A" />
         </TouchableOpacity>
       </View>
     </View>
   );
 
-  const renderHeader = () => (
+  const renderHeader = React.useMemo(() => (
     <>
       <StatusBar style="dark" translucent={true} />
-      {/* header */}
+      {/* headernya */}
       <BackButton color={Colors.red} top={44} left={10}/>
       <View style={styles.header}>
         <Text style={styles.title}>Halaman Kontak</Text>
       </View>
       {/* jumlah teman */}
       <View style={styles.friendCount}>
-        <Text style={styles.friendCountText}>Daftar Permintaan Teman</Text>
-        <View style={styles.friendCountBadge}>
-          <Text style={styles.friendCountNumber}>{contacts.length}/10</Text>
-        </View>
+        <TouchableOpacity style={styles.addFriend}>
+          <Octicons name="person-add" size={20} color="#29335C" />
+        </TouchableOpacity>
+        <TextInput
+          placeholder="Input Id"
+          value={id}
+          onChangeText={setId}
+          style={styles.friendCountText}
+        />
       </View>
       <View style={styles.listTitleWrapper}>
-        <Text style={styles.listTitle}>Permintaan</Text>
+        <Text style={styles.listTitle}>Hasil</Text>
       </View>
     </>
-  );
+  ), [id]);
   
 
   return (
       <View style={styles.container}>
-        <FlatList
+        <FlatList 
+          keyboardShouldPersistTaps="handled"
           data={contacts}
           keyExtractor={(item) => item.id}
           renderItem={renderContact}
           ListHeaderComponent={renderHeader}
           contentContainerStyle={styles.contactList}
         />
+        {/* modal */}
         <Modal transparent={true} visible={modalVisible} animationType="fade" onRequestClose={() => setModalVisible(false)}>
-          <TouchableWithoutFeedback onPressOut={() => setModalVisible(false)}>
-            <View style={styles.modalContainer}>
-              <TouchableWithoutFeedback>
-                <View style={styles.modalCardContent}> 
-                  <View style={styles.modalWarningContainer}>
-                    <View style ={styles.modalWarningIcon}>
-                      <AntDesign name="warning" size={16} color={Colors.red} />
-                    </View>
-                    <Text style={styles.modalWarningText}>
-                      Peringatan
-                    </Text>
+        <TouchableWithoutFeedback onPressOut={() => setModalVisible(false)}>
+          <View style={styles.modalContainer}>
+            <TouchableWithoutFeedback>
+              <View style={styles.modalCardContent}> 
+                <View style={styles.modalWarningContainer}>
+                  <View style ={styles.modalWarningIcon}>
+                    <AntDesign name="warning" size={16} color={Colors.red} />
                   </View>
-                  <Text style={styles.modalWarningQuestion}>
-                  Jika Anda menerima permintaan pertemanan, maka Anda akan diberikan notifikasi jika teman Anda dalam bahaya.
+                  <Text style={styles.modalWarningText}>
+                    Peringatan
                   </Text>
-                  <View style={styles.answerContent}> 
-                    <TouchableOpacity style={styles.meButton}> 
-                      <Text style={styles.meText} >
-                        Setuju
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.otherButton} onPress={() => setModalVisible(false)}>
-                      <Text style={styles.otherText}>
-                        Tidak
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
                 </View>
-              </TouchableWithoutFeedback>
-            </View>
-          </TouchableWithoutFeedback>
+                <View>
+                  {selectedContact && (
+                    <>
+                    <Text style={styles.modalWarningQuestion}>Anda yakin menambahkan 
+                      <Text style = {styles.getContactName}> {selectedContact.name} </Text>
+                      kedalam daftar pertemanan anda ? 
+                    </Text>
+                    </>
+                  )}
+                </View>
+                <View style={styles.answerContent}> 
+                  <TouchableOpacity style={styles.meButton}> 
+                    <Text style={styles.meText} >
+                      Yakin
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.otherButton}>
+                    <Text style={styles.otherText}>
+                      Tidak
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
       </Modal>
         {/* footer */}
         <View style={styles.footer}>
-          <TouchableOpacity onPress={() => router.push("/contact/Contactpage")} style={styles.footerButton}>
+          <TouchableOpacity onPress={() => router.push("./Contactpage")} style={styles.footerButton}>
             <Text style={styles.footerButtonText}>Teman</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push("/contact/SendRequest")}style={styles.footerButton}>
-            <Text style={styles.footerButtonText}>Kirim Permintaan</Text>
+          <TouchableOpacity onPress={() => router.push("./SendRequest")}style={styles.footerButtonActive}>
+            <Text style={styles.footerButtonTextActive}>Kirim Permintaan</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push("/contact/ApproveFriend")} style={styles.footerButtonActive}>
-            <Text style={styles.footerButtonTextActive}>Permintaan</Text>
+          <TouchableOpacity onPress={() => router.push("./ApproveFriend")} style={styles.footerButton}>
+            <Text style={styles.footerButtonText}>Permintaan</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -144,7 +161,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     margin: 10,
-    padding: 20,
+    padding: 10,
     backgroundColor: Colors.white,
     borderRadius: 8,
     elevation: 2,
@@ -152,9 +169,9 @@ const styles = StyleSheet.create({
   },
   friendCountText: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 16,
     color: Colors.black,
-    fontFamily: 'bold',
+    fontFamily: 'regular',
     marginLeft: 10,
   },
   friendCountBadge: {
@@ -229,6 +246,7 @@ const styles = StyleSheet.create({
     padding: 6,
     marginLeft: 6,
   },
+  // bagian modal
   modalContainer: {
     flex: 1,  
     justifyContent: 'center', 
@@ -237,7 +255,8 @@ const styles = StyleSheet.create({
   },
   modalCardContent: { 
     width: '85%',
-    paddingVertical: 12,
+    paddingHorizontal: 5,
+    paddingVertical: 10,
     backgroundColor: Colors.white,
     borderRadius: 20, 
     textAlign: 'center', 
@@ -265,6 +284,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',  
     marginTop: 12,
     marginBottom: 22
+  },
+  getContactName: {
+    fontFamily: 'bold'
   },
   answerContent: {
     flexDirection: 'row', 
@@ -312,7 +334,7 @@ const styles = StyleSheet.create({
     fontFamily: 'semibold', 
     fontSize: 14, 
   },
-  footer: {
+    footer: {
     position: 'absolute',
     bottom: 0,
     width: '100%',
@@ -352,4 +374,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ApproveFriend;
+export default SendRequest;
