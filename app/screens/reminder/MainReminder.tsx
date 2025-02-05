@@ -35,6 +35,7 @@ const [reminders, setReminders] = useState<RemindersType>({
 });
 
 
+
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [editingReminder, setEditingReminder] = useState<Reminder | null>(null);
   const [activeReminderId, setActiveReminderId] = useState<number | null>(null);
@@ -153,7 +154,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff' 
   },
   header1: { 
-    marginTop: 44,
+    marginTop: 50, 
     marginLeft:10, 
     flexDirection: 'row', 
     alignItems: 'center', 

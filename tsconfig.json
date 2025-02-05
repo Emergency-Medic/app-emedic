@@ -9,9 +9,9 @@
     }
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
+    "/*.ts",
+    "/*.tsx",
+    ".expo/types//*.ts",
     "expo-env.d.ts"
-, "app/(tabs)/Emergency.jsx", "app/EmergencyCallScreen.jsx", "app/Homepagelayanan.jsx", "app/viewModels/registerUser.js", "app/(auth)/RegisterScreen.jsx", "app/(auth)/SignInScreen.jsx"  ]
+, "app/(tabs)/Emergency.jsx", "app/EmergencyCallScreen.jsx", "app/Homepagelayanan.jsx", "app/viewModels/registerUser.js", "app/(auth)/RegisterScreen.jsx", "app/(auth)/SignInScreen.jsx", "app/screens/MetodePenangan.jsx", "app/EditSchedule.jsx"  ]
 }
