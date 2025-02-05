@@ -44,7 +44,7 @@ export default function Index() {
       setUser(user); // Set the current user if logged in
       if (user) {
         // If the user is logged in, navigate to Home
-        router.replace("./(tabs)/Home");
+        router.replace("./Location");
       } else {
         // If no user, stay on MenuAwal
         router.replace("./MenuAwal");

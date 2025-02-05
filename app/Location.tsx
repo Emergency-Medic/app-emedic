@@ -4,6 +4,7 @@ import { useNavigation, useRouter } from "expo-router";
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
+import * as Loc from 'expo-location';
 
 const INITIAL_REGION = {
 	latitude: -6.6000, 
@@ -15,24 +16,28 @@ const INITIAL_REGION = {
 export default function Location() {
 
 	return(
-		<View style={{flex: 1}}>
+		<View style={styles.container}>
 			<StatusBar style="auto" />
+
 			<MapView 
-				style={StyleSheet.absoluteFill}  
+				style={styles.maps}  
 				provider={PROVIDER_GOOGLE} 
 				initialRegion={INITIAL_REGION}
+				showsUserLocation
+				showsMyLocationButton
 			/>
+			
 		</View>
 	); 
 }
 
-// const styles = StyleSheet.create({
-//   container: {
-// 	flex: 1,
-//   },
-//   maps: {
-// 	width: '100%',
-// 	height: '100%',
-//   },
+const styles = StyleSheet.create({
+  container: {
+	flex: 1,
+  },
+  maps: {
+	width: '100%',
+	height: '100%',
+  },
 
-// });
+});

@@ -141,9 +141,9 @@ export default function Home() {
         {/* Hello, (name) */}
         <View style={styles.header}> 
           <View style={styles.profileSection}> 
-            <View style={styles.profileIcon}>
+            <TouchableOpacity style={styles.profileIcon}>
               <MaterialIcons name="person-outline" size={18} color={Colors.grey} />
-            </View>
+            </TouchableOpacity>
             {/* Greating Section */}
             <View style={styles.greatingSection}>
               <Text style={styles.halo}>
