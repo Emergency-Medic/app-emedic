@@ -10,9 +10,9 @@ import React, {useEffect, useState} from "react";
 import Onboarding from "./Onboarding"
 import SignInScreen from './(auth)/SignInScreen'
 import RegisterScreen from './(auth)/RegisterScreen'
-import Quiz from "./screens/quiz/Quiz"
-import Summary from "./screens/quiz/Summary";
-import ScoreScreen from "./screens/quiz/ScoreScreen";
+import Quiz from "./Quiz"
+import Summary from "./Summary";
+import ScoreScreen from "./ScoreScreen";
 import Flashcard from "./FlashCard";
 import Homepagelayanan from "./Homepagelayanan";
 import Location from "./Location";
@@ -44,7 +44,7 @@ export default function Index() {
       setUser(user); // Set the current user if logged in
       if (user) {
         // If the user is logged in, navigate to Home
-        router.replace("./Location");
+        router.replace("./(tabs)/Home");
       } else {
         // If no user, stay on MenuAwal
         router.replace("./MenuAwal");
