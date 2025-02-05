@@ -17,6 +17,7 @@ const Articlepage = () => {
     const router = useRouter();
     const [quizStarted, setQuizStarted] = useState(false);
     const handlePress = () => {
+      router.push('../quiz/Quiz')
       setQuizStarted(true);
     };
     // video
@@ -98,7 +99,7 @@ const Articlepage = () => {
                       <Text style={styles.cardContent}>
                       Hubungi layanan darurat medis kami. Minta orang lain mencari Automated External Defibrillator (AED) jika tersedia.
                       </Text>
-                      <Image source={{ uri: 'https://via.placeholder.com/100' }} style={styles.aedImage} />
+                      <Image source={{ uri: 'https://seremonia.id/wp-content/uploads/2022/06/Bentuk-Alat-AED-Automated-External-Defibrillator.jpg' }} style={styles.aedImage} />
                     <Text style={styles.cardContent}>
                       / alat medis yang untuk menganalisis dan memberikan kejutan listrik secara otomatis kepada seseorang yang mengalami henti jantung.
                      </Text>
@@ -122,7 +123,7 @@ const Articlepage = () => {
                           )}
                         </View>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => router.push("./MenuAwal")} style={styles.finishButton}>
+                      <TouchableOpacity onPress={() => router.back()} style={styles.finishButton}>
                         <Text style={styles.finishButtonText}>Selesai</Text>
                       </TouchableOpacity>
             </View>
@@ -255,8 +256,9 @@ const styles = StyleSheet.create({
     aedImage: {
       width: 100,
       height: 100,
-      margin: 8,
-      alignSelf: 'center',
+      // margin: 8,
+      // alignSelf: 'center',
+      resizeMode: 'contain'
     },
     footerText: {
       fontSize: 14,
@@ -304,7 +306,7 @@ const styles = StyleSheet.create({
     finishButtonText: {
       color: Colors.white,
       fontSize: 20,
-      fontFamily: 'bold'
+      fontFamily: 'semibold'
     },
 });
 
