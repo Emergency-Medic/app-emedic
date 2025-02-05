@@ -14,10 +14,14 @@ import Quiz from "./Quiz"
 import Summary from "./Summary";
 import ScoreScreen from "./ScoreScreen";
 import Flashcard from "./FlashCard";
+<<<<<<< HEAD
+import Homepagelayanan from "./Homepagelayanan";
+=======
 import Location from "./Location";
 import Home from "./(tabs)/Home";
 import { auth, db } from '@/firebaseConfig';
 import { useRouter } from "expo-router";
+>>>>>>> 75ec8ac61091da38bf6398f984fe70c5a0d354f7
 
 const Stack = createStackNavigator(); 
 
@@ -62,7 +66,11 @@ export default function Index() {
       {/* <SearchPage /> */}
       {/* <Homepagelayanan /> */}
       {/* <Quiz /> */}
+<<<<<<< HEAD
+      {/* <Slider /> */}
+=======
       {user ? <Home /> : <MenuAwal />}
+>>>>>>> 75ec8ac61091da38bf6398f984fe70c5a0d354f7
       {/* <Contactpage /> */}
     </View>
   );

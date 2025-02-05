@@ -21,69 +21,69 @@ const MakeSchedule = () => {
     const [reminders, setReminders] = useState([]);
     const [checkedItems, setCheckedItems] = useState([]);
 
-    const addReminder = () => {
-        if (time && /^([01]\d|2[0-3]):([0-5]\d)$/.test(time)) {
-        setReminders([...reminders, { time, remindLater: false }]);
-        setTime("");
-        }
-    };
+//     const addReminder = () => {
+//         if (time && /^([01]\d|2[0-3]):([0-5]\d)$/.test(time)) {
+//         setReminders([...reminders, { time, remindLater: false }]);
+//         setTime("");
+//         }
+//     };
 
-    const toggleReminder = (index) => {
-        const newReminders = [...reminders];
-        newReminders[index].remindLater = !newReminders[index].remindLater;
-        setReminders(newReminders);
-    };
+//     const toggleReminder = (index) => {
+//         const newReminders = [...reminders];
+//         newReminders[index].remindLater = !newReminders[index].remindLater;
+//         setReminders(newReminders);
+//     };
 
     
-    const calculateDays = (start, end) => {
-        const months = {
-            'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'Mei': 4, 'Jun': 5,
-            'Jul': 6, 'Agu': 7, 'Sep': 8, 'Okt': 9, 'Nov': 10, 'Des': 11
-        };
+//     const calculateDays = (start, end) => {
+//         const months = {
+//             'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'Mei': 4, 'Jun': 5,
+//             'Jul': 6, 'Agu': 7, 'Sep': 8, 'Okt': 9, 'Nov': 10, 'Des': 11
+//         };
         
-        const parseDate = (dateStr) => {
-            const [day, month, year] = dateStr.split(' ');
-            return new Date(parseInt(year), months[month], parseInt(day));
-        };
+//         const parseDate = (dateStr) => {
+//             const [day, month, year] = dateStr.split(' ');
+//             return new Date(parseInt(year), months[month], parseInt(day));
+//         };
         
-        const startDateObj = parseDate(start);
-        const endDateObj = parseDate(end);
+//         const startDateObj = parseDate(start);
+//         const endDateObj = parseDate(end);
         
-        return Math.max(0, (endDateObj - startDateObj) / (1000 * 60 * 60 * 24));
-    };
+//         return Math.max(0, (endDateObj - startDateObj) / (1000 * 60 * 60 * 24));
+//     };
     
-    const duration = calculateDays(startDate, endDate)+1;
+//     const duration = calculateDays(startDate, endDate)+1;
 
-    return (
-        <ScrollView style={styles.container}>
-            <View>
-            <BackButton color={Colors.red} top={45}/>
-            </View>
+//     return (
+//         <ScrollView style={styles.container}>
+//             <View>
+//             <BackButton color={Colors.red} top={45}/>
+//             </View>
             
-            <Text style={styles.title}>Edit Pengingat</Text>
-            <Text style={styles.label}>Nama Obat</Text>
-            <TextInput 
-                style={styles.input}
-                value={medName}
-                onChangeText={setMedName}
-            />
+//             <Text style={styles.title}>Edit Pengingat</Text>
+//             <Text style={styles.label}>Nama Obat</Text>
+//             <TextInput 
+//                 style={styles.input}
+//                 value={medName}
+//                 onChangeText={setMedName}
+//             />
             
-            <Text style={styles.label}>Jenis Obat</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.typeScroll}>
-                <TouchableOpacity style={[styles.typeButton, { marginLeft: 0 }]}><FontAwesome5 name="capsules" size={24} color="black" /><Text>Tablet</Text></TouchableOpacity>
-                <TouchableOpacity style={styles.typeButton}><FontAwesome name="tint" size={30} color="black" /><Text>Sirup</Text></TouchableOpacity>
-                <TouchableOpacity style={styles.typeButton}><FontAwesome6 name="eye-dropper" size={24} color="black" /><Text>Tetes</Text></TouchableOpacity>
-                <TouchableOpacity style={styles.typeButton}><FontAwesome5 name="syringe" size={24} color="black" /><Text>Injeksi</Text></TouchableOpacity>
-                <TouchableOpacity style={styles.typeButton}><FontAwesome name="flask" size={30} color="black" /><Text>Salep</Text></TouchableOpacity>
-            </ScrollView>
+//             <Text style={styles.label}>Jenis Obat</Text>
+//             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.typeScroll}>
+//                 <TouchableOpacity style={[styles.typeButton, { marginLeft: 0 }]}><FontAwesome5 name="capsules" size={24} color="black" /><Text>Tablet</Text></TouchableOpacity>
+//                 <TouchableOpacity style={styles.typeButton}><FontAwesome name="tint" size={30} color="black" /><Text>Sirup</Text></TouchableOpacity>
+//                 <TouchableOpacity style={styles.typeButton}><FontAwesome6 name="eye-dropper" size={24} color="black" /><Text>Tetes</Text></TouchableOpacity>
+//                 <TouchableOpacity style={styles.typeButton}><FontAwesome5 name="syringe" size={24} color="black" /><Text>Injeksi</Text></TouchableOpacity>
+//                 <TouchableOpacity style={styles.typeButton}><FontAwesome name="flask" size={30} color="black" /><Text>Salep</Text></TouchableOpacity>
+//             </ScrollView>
             
-            <Text style={styles.label}>Dosis</Text>
-            <View style={styles.doseContainer}>
-                <View style={styles.upDownContainer}>
-                    <TouchableOpacity onPress={() => setDose(Math.max(1, dose - 1))} style={styles.doseButton}><Text style={styles.white}>-</Text></TouchableOpacity>
-                    <Text style={styles.doseText}>{dose}</Text>
-                    <TouchableOpacity onPress={() => setDose(dose + 1)} style={styles.doseButton}><Text style={styles.white}>+</Text></TouchableOpacity>
-                </View>
+//             <Text style={styles.label}>Dosis</Text>
+//             <View style={styles.doseContainer}>
+//                 <View style={styles.upDownContainer}>
+//                     <TouchableOpacity onPress={() => setDose(Math.max(1, dose - 1))} style={styles.doseButton}><Text style={styles.white}>-</Text></TouchableOpacity>
+//                     <Text style={styles.doseText}>{dose}</Text>
+//                     <TouchableOpacity onPress={() => setDose(dose + 1)} style={styles.doseButton}><Text style={styles.white}>+</Text></TouchableOpacity>
+//                 </View>
                 
                 <Text style={styles.frequencyText2}>sdm</Text>
                 <View style={styles.choice}>
@@ -97,79 +97,79 @@ const MakeSchedule = () => {
                     </Picker>
                 </View>
 
-                <View style={styles.upDownContainer}>
-                    <TouchableOpacity onPress={() => setFrequency(Math.max(1, frequency - 1))} style={styles.frequencyButton}><Text style={styles.white}>-</Text></TouchableOpacity>
-                    <Text style={styles.frequencyText}>{frequency}</Text>
-                    <TouchableOpacity onPress={() => setFrequency(frequency + 1)} style={styles.frequencyButton}><Text style={styles.white}>+</Text></TouchableOpacity>
-                </View>
-                <Text style={styles.frequencyText2}>kali/hari</Text>
-            </View>
+//                 <View style={styles.upDownContainer}>
+//                     <TouchableOpacity onPress={() => setFrequency(Math.max(1, frequency - 1))} style={styles.frequencyButton}><Text style={styles.white}>-</Text></TouchableOpacity>
+//                     <Text style={styles.frequencyText}>{frequency}</Text>
+//                     <TouchableOpacity onPress={() => setFrequency(frequency + 1)} style={styles.frequencyButton}><Text style={styles.white}>+</Text></TouchableOpacity>
+//                 </View>
+//                 <Text style={styles.frequencyText2}>kali/hari</Text>
+//             </View>
             
-            <Text style={styles.label}>Durasi Minum Obat</Text>
-            <View style={styles.dateContainer}>
-                <Text style={[styles.toText, { marginLeft: 0 }]}>Dari</Text>
-                <TextInput style={styles.dateInput} value={startDate} onChangeText={setStartDate} />
-                <Text style={styles.toText}>ke</Text>
-                <TextInput style={styles.dateInput} value={endDate} onChangeText={setEndDate} />
-                <Text style={styles.toText}>({duration} hari)</Text>
-            </View>
+//             <Text style={styles.label}>Durasi Minum Obat</Text>
+//             <View style={styles.dateContainer}>
+//                 <Text style={[styles.toText, { marginLeft: 0 }]}>Dari</Text>
+//                 <TextInput style={styles.dateInput} value={startDate} onChangeText={setStartDate} />
+//                 <Text style={styles.toText}>ke</Text>
+//                 <TextInput style={styles.dateInput} value={endDate} onChangeText={setEndDate} />
+//                 <Text style={styles.toText}>({duration} hari)</Text>
+//             </View>
                      
-            <Text style={styles.or}>Atau</Text>
-            {/* Checkbox untuk opsi tambahan */}
-            <View style={styles.checkboxContainer}>
-                <Checkbox value={isChecked} onValueChange={setIsChecked} color={isChecked ? "#A8201A" : undefined} />
-                <Text style={styles.checkboxLabelRed}>Selamanya</Text>
-            </View>
+//             <Text style={styles.or}>Atau</Text>
+//             {/* Checkbox untuk opsi tambahan */}
+//             <View style={styles.checkboxContainer}>
+//                 <Checkbox value={isChecked} onValueChange={setIsChecked} color={isChecked ? "#A8201A" : undefined} />
+//                 <Text style={styles.checkboxLabelRed}>Selamanya</Text>
+//             </View>
 
-            <Text style={styles.label}>Pengingat</Text>
+//             <Text style={styles.label}>Pengingat</Text>
             
-            <View style={styles.inputContainer}>
-                <TextInput
-                style={styles.input}
-                placeholder="HH:MM"
-                value={time}
-                onChangeText={setTime}
-                />
-                <TouchableOpacity style={styles.button} onPress={addReminder}>
-                    <Text style={styles.buttonText}>Tambah</Text>
-                </TouchableOpacity>
+//             <View style={styles.inputContainer}>
+//                 <TextInput
+//                 style={styles.input}
+//                 placeholder="HH:MM"
+//                 value={time}
+//                 onChangeText={setTime}
+//                 />
+//                 <TouchableOpacity style={styles.button} onPress={addReminder}>
+//                     <Text style={styles.buttonText}>Tambah</Text>
+//                 </TouchableOpacity>
 
-            </View>
-            <FlatList
-                data={reminders}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item, index }) => (
-                    <View style={styles.reminderCard}>
-                    <Text style={styles.timeText}>{item.time}</Text>
-                    <View style={styles.switchContainer}>
-                        <View style={styles.checkboxContainer}>
-                        <Checkbox
-                            value={checkedItems[index] || false}
-                            onValueChange={() => {
-                            const newCheckedItems = [...checkedItems];
-                            newCheckedItems[index] = !newCheckedItems[index]; // Toggle state
-                            setCheckedItems(newCheckedItems);
-                            }}
-                            color={checkedItems[index] ? "#13070C" : undefined}
-                        />
-                        <Text style={styles.checkboxLabelBlue}>
-                            Ingatkan saya 15 menit setelahnya
-                        </Text>
-                        </View>
-                    </View>
-                    </View>
-                )}
-                />
+//             </View>
+//             <FlatList
+//                 data={reminders}
+//                 keyExtractor={(item, index) => index.toString()}
+//                 renderItem={({ item, index }) => (
+//                     <View style={styles.reminderCard}>
+//                     <Text style={styles.timeText}>{item.time}</Text>
+//                     <View style={styles.switchContainer}>
+//                         <View style={styles.checkboxContainer}>
+//                         <Checkbox
+//                             value={checkedItems[index] || false}
+//                             onValueChange={() => {
+//                             const newCheckedItems = [...checkedItems];
+//                             newCheckedItems[index] = !newCheckedItems[index]; // Toggle state
+//                             setCheckedItems(newCheckedItems);
+//                             }}
+//                             color={checkedItems[index] ? "#13070C" : undefined}
+//                         />
+//                         <Text style={styles.checkboxLabelBlue}>
+//                             Ingatkan saya 15 menit setelahnya
+//                         </Text>
+//                         </View>
+//                     </View>
+//                     </View>
+//                 )}
+//                 />
 
-            <Text style={styles.label}>Deskripsi (Opsional)</Text>
-            <TextInput style={styles.descriptionInput} placeholder="Isi dengan informasi tambahan obat" />
+//             <Text style={styles.label}>Deskripsi (Opsional)</Text>
+//             <TextInput style={styles.descriptionInput} placeholder="Isi dengan informasi tambahan obat" />
             
-            <TouchableOpacity style={styles.saveButton}>
-                <Text style={styles.saveButtonText}>Simpan</Text>
-            </TouchableOpacity>
-        </ScrollView>
-    );
-};
+//             <TouchableOpacity style={styles.saveButton}>
+//                 <Text style={styles.saveButtonText}>Simpan</Text>
+//             </TouchableOpacity>
+//         </ScrollView>
+//     );
+// };
 
 const styles = StyleSheet.create({
     container: {

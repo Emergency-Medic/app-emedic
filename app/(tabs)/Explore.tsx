@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Image } from 'react-native';
 import Entypo from '@expo/vector-icons/Entypo';
 
+
 const Exp = () => {
   const history = ['Luka Bakar', 'Luka Tusuk', 'Pendarahan', 'Mimisan', 'Gigitan Ular'];
 
@@ -94,7 +95,7 @@ const Exp = () => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop:30,
+    // marginTop:30,
     // flex: 1,
     padding: 20,
     backgroundColor: '#FFF',
@@ -201,4 +202,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Exp;
+export default Exp

@@ -276,6 +276,242 @@ export default function MetodePenangan() {
 				<Ionicons name="arrow-back-circle-sharp" size={22} color={Colors.red} />
 			</TouchableOpacity> 
 			<View style={styles.rekomendasiPembelajaranTitle}>
+<<<<<<< HEAD
+         		 <Text style={styles.titleText}>Rekomendasi Pembelajaran</Text>
+        	</View>
+        	
+			<ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.kategoriSection}> 
+				<View style={styles.sectionBerada}> 
+        		    <Text style={styles.keteranganBerada}>Semua</Text> 
+          		</View>
+         		 <View style={styles.section}> 
+        		    <Text style={styles.keterangan}>Kategori 1</Text> 
+          		</View>
+          		<View style={styles.section}> 
+            		<Text style={styles.keterangan}>Kategori 2</Text> 
+          		</View>
+         	 	<View style={styles.section}> 
+            		<Text style={styles.keterangan}>Kategori 3</Text> 
+          		</View>
+	        </ScrollView>
+        	
+			<ScrollView style={styles.cartContainer}>
+          		<View style={styles.cart}> 
+            		<View style={styles.pictureSection}>
+						<MaterialIcons name="verified" size={14} color={Colors.white} />
+             			<Image source={require( '@/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
+            		</View>
+					<View style={styles.textSection}>
+              			<Text style={styles.judul}> 
+                			Penanganan penderita epilepsi 
+              			</Text>
+              			<Text style={styles.kataKunci}>
+            			    Kata Kunci: Henti, Jantung, Pernapasan, CPR
+             			 </Text>
+						<Text style={styles.deskripsi}>
+            			    Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+            			  </Text>
+
+						<View style={styles.pelajariSection}> 
+            			    <Text style={styles.pelajariText}> 
+            		    	  Pelajari
+            		    	</Text>
+            		    	<View style={styles.pelajariIcon}> 
+            		    	  <MaterialIcons name="article" size={10} color="black" />
+            		    	</View>
+              			</View>
+            		</View>  
+          		</View>
+
+          		<View style={styles.cart2}> 
+            		<View style={styles.pictureSection}>
+              			<MaterialIcons name="verified" size={14} color={Colors.white} />
+              			<Image source={require( '@/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
+            		</View>
+            		<View style={styles.textSection}>
+              			<Text style={styles.judul}> 
+                			Penanganan penderita epilepsi 
+              			</Text>
+              			<Text style={styles.kataKunci}>
+                			Kata Kunci: Henti, Jantung, Pernapasan, CPR
+              			</Text>
+              			<Text style={styles.deskripsi}>
+                			Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+              			</Text>
+
+              			<View style={styles.pelajariSection}> 
+                			<Text style={styles.pelajariText}> 
+                  				Pelajari
+                			</Text>
+                			<View style={styles.pelajariIcon}> 
+                  				<MaterialIcons name="article" size={10} color="black" />
+                			</View>
+              			</View>
+            		</View>
+          		</View>
+
+				  <View style={styles.cart}> 
+            		<View style={styles.pictureSection}>
+						<MaterialIcons name="verified" size={14} color={Colors.white} />
+             			<Image source={require( '@/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
+            		</View>
+					<View style={styles.textSection}>
+              			<Text style={styles.judul}> 
+                			Penanganan penderita epilepsi 
+              			</Text>
+              			<Text style={styles.kataKunci}>
+            			    Kata Kunci: Henti, Jantung, Pernapasan, CPR
+             			 </Text>
+						<Text style={styles.deskripsi}>
+            			    Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+            			  </Text>
+
+						<View style={styles.pelajariSection}> 
+            			    <Text style={styles.pelajariText}> 
+            		    	  Pelajari
+            		    	</Text>
+            		    	<View style={styles.pelajariIcon}> 
+            		    	  <MaterialIcons name="article" size={10} color="black" />
+            		    	</View>
+              			</View>
+            		</View>  
+          		</View>
+
+          		<View style={styles.cart2}> 
+            		<View style={styles.pictureSection}>
+              			<MaterialIcons name="verified" size={14} color={Colors.white} />
+              			<Image source={require( '@/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
+            		</View>
+            		<View style={styles.textSection}>
+              			<Text style={styles.judul}> 
+                			Penanganan penderita epilepsi 
+              			</Text>
+              			<Text style={styles.kataKunci}>
+                			Kata Kunci: Henti, Jantung, Pernapasan, CPR
+              			</Text>
+              			<Text style={styles.deskripsi}>
+                			Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+              			</Text>
+
+              			<View style={styles.pelajariSection}> 
+                			<Text style={styles.pelajariText}> 
+                  				Pelajari
+                			</Text>
+                			<View style={styles.pelajariIcon}> 
+                  				<MaterialIcons name="article" size={10} color="black" />
+                			</View>
+              			</View>
+            		</View>
+          		</View>
+				  <View style={styles.cart}> 
+            		<View style={styles.pictureSection}>
+						<MaterialIcons name="verified" size={14} color={Colors.white} />
+             			<Image source={require( '@/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
+            		</View>
+					<View style={styles.textSection}>
+              			<Text style={styles.judul}> 
+                			Penanganan penderita epilepsi 
+              			</Text>
+              			<Text style={styles.kataKunci}>
+            			    Kata Kunci: Henti, Jantung, Pernapasan, CPR
+             			 </Text>
+						<Text style={styles.deskripsi}>
+            			    Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+            			  </Text>
+
+						<View style={styles.pelajariSection}> 
+            			    <Text style={styles.pelajariText}> 
+            		    	  Pelajari
+            		    	</Text>
+            		    	<View style={styles.pelajariIcon}> 
+            		    	  <MaterialIcons name="article" size={10} color="black" />
+            		    	</View>
+              			</View>
+            		</View>  
+          		</View>
+
+          		<View style={styles.cart2}> 
+            		<View style={styles.pictureSection}>
+              			<MaterialIcons name="verified" size={14} color={Colors.white} />
+              			<Image source={require( '@/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
+            		</View>
+            		<View style={styles.textSection}>
+              			<Text style={styles.judul}> 
+                			Penanganan penderita epilepsi 
+              			</Text>
+              			<Text style={styles.kataKunci}>
+                			Kata Kunci: Henti, Jantung, Pernapasan, CPR
+              			</Text>
+              			<Text style={styles.deskripsi}>
+                			Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+              			</Text>
+
+              			<View style={styles.pelajariSection}> 
+                			<Text style={styles.pelajariText}> 
+                  				Pelajari
+                			</Text>
+                			<View style={styles.pelajariIcon}> 
+                  				<MaterialIcons name="article" size={10} color="black" />
+                			</View>
+              			</View>
+            		</View>
+          		</View>
+				  <View style={styles.cart}> 
+            		<View style={styles.pictureSection}>
+						<MaterialIcons name="verified" size={14} color={Colors.white} />
+             			<Image source={require( '@/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
+            		</View>
+					<View style={styles.textSection}>
+              			<Text style={styles.judul}> 
+                			Penanganan penderita epilepsi 
+              			</Text>
+              			<Text style={styles.kataKunci}>
+            			    Kata Kunci: Henti, Jantung, Pernapasan, CPR
+             			 </Text>
+						<Text style={styles.deskripsi}>
+            			    Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+            			  </Text>
+
+						<View style={styles.pelajariSection}> 
+            			    <Text style={styles.pelajariText}> 
+            		    	  Pelajari
+            		    	</Text>
+            		    	<View style={styles.pelajariIcon}> 
+            		    	  <MaterialIcons name="article" size={10} color="black" />
+            		    	</View>
+              			</View>
+            		</View>  
+          		</View>
+
+          		<View style={styles.cart2}> 
+            		<View style={styles.pictureSection}>
+              			<MaterialIcons name="verified" size={14} color={Colors.white} />
+              			<Image source={require( '@/assets/images/undraw_injured_9757 1.png')} style={styles.image}></Image>
+            		</View>
+            		<View style={styles.textSection}>
+              			<Text style={styles.judul}> 
+                			Penanganan penderita epilepsi 
+              			</Text>
+              			<Text style={styles.kataKunci}>
+                			Kata Kunci: Henti, Jantung, Pernapasan, CPR
+              			</Text>
+              			<Text style={styles.deskripsi}>
+                			Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+              			</Text>
+
+              			<View style={styles.pelajariSection}> 
+                			<Text style={styles.pelajariText}> 
+                  				Pelajari
+                			</Text>
+                			<View style={styles.pelajariIcon}> 
+                  				<MaterialIcons name="article" size={10} color="black" />
+                			</View>
+              			</View>
+            		</View>
+          		</View>
+        	</ScrollView>  
+	  </ScrollView>  
+=======
 				<Text style={styles.titleText}>Rekomendasi Pembelajaran</Text>
 			</View>
 			
@@ -301,6 +537,7 @@ export default function MetodePenangan() {
 				{renderCategoryInfo()}
 			</ScrollView>  
 		</View>  
+>>>>>>> 75ec8ac61091da38bf6398f984fe70c5a0d354f7
 	);  
 }  
 
