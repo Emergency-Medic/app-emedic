@@ -22,7 +22,7 @@ const ScoreScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.navigationButtons2}>
-        <TouchableOpacity onPress={() => router.push("./(auth)/SignInScreen")} style={styles.skipButton}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.skipButton}>
           <Text style={styles.skipText}>Skip {'>'}{'>'}</Text>
         </TouchableOpacity>
       </View>
@@ -53,7 +53,7 @@ const ScoreScreen = () => {
       </TouchableOpacity>
       </View>
       
-      <TouchableOpacity style={styles.DoneButton}>
+      <TouchableOpacity style={styles.DoneButton} onPress={() => router.replace('../artikel/Articlepage')}>
         <Text style={styles.buttonTextWhite}>Selesai</Text>
       </TouchableOpacity>
     </View>
