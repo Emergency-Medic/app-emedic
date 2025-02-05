@@ -668,8 +668,8 @@ slide: {
 backgroundImage: {
   // flex: 1,
   width: '100%',
-  height: '100%',
-  margin: 20,
+  height: '90%',
+  margin: 40,
   justifyContent: 'center',
   alignItems: 'center',
   // marginTop: 160,
