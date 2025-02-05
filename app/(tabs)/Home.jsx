@@ -470,21 +470,22 @@ const styles = StyleSheet.create({
 		fontFamily: 'regular', 
 		color: '#ACACAC',
 	},
-  cartContainer: {
-    marginTop: 10, 
-    marginLeft: 25, 
+  cartContainer: { 
+    marginLeft: 15, 
     marginRight: 30,
     borderRadius: 20,
+    padding: 10,
   },
   cart: {
-    width: 248, 
-    height: 94, 
+    width: 250, 
+    height: 110, 
     backgroundColor: Colors.blue,
     borderRadius: 20, 
     flexDirection: 'row', 
     alignContent: 'center', 
     justifyContent: 'center', 
-    marginLeft: 10, 
+    padding: 10, 
+    marginLeft: 10,
   }, 
   pictureSection: {
     flexDirection: 'column',  
