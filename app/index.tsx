@@ -14,6 +14,7 @@ import Quiz from "./Quiz"
 import Summary from "./Summary";
 import ScoreScreen from "./ScoreScreen";
 import Flashcard from "./FlashCard";
+import Homepagelayanan from "./Homepagelayanan";
 import Location from "./Location";
 import Home from "./(tabs)/Home";
 import MakeSchedule from "./MakeSchedule";
@@ -60,11 +61,7 @@ export default function Index() {
   // }
   return (
     <View>
-      {/* <SearchPage /> */}
-      {/* <Homepagelayanan /> */}
-      <MakeSchedule />
-      {/* <Slider /> */}
-      {/* <Contactpage /> */}
+      {user ? <Home /> : <MenuAwal />} 
     </View>
   );
 }

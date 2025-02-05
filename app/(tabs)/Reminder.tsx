@@ -8,6 +8,7 @@ import BackButton from "@/components/BackButton";
 import Entypo from "@expo/vector-icons/Entypo";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import MakeSchedule from '../screens/reminder/MakeSchedule'
 
 type Reminder = {
   id: number;
@@ -87,7 +88,9 @@ const [reminders, setReminders] = useState<RemindersType>({
       />
       <View style={styles.headerPengingat}>
         <Text style={styles.header2}>Pengingat Anda</Text>
-        <Text style={styles.addText}>Tambah Baru</Text>
+        <TouchableOpacity onPress={() => {router.push('../screens/reminder/MakeSchedule')}}>
+          <Text style={styles.addText}>Tambah Baru</Text>
+        </TouchableOpacity>
       </View>
       <FlatList
         data={reminders[selectedDate] || []}
@@ -136,7 +139,7 @@ const [reminders, setReminders] = useState<RemindersType>({
       <Modal visible={modalVisible} transparent animationType='slide'>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Button onPress={saveEdit}><Text style={styles.buttonText}>Edit</Text></Button>
+            <Button onPress={() => router.push('../screens/reminder/EditSchedule')}><Text style={styles.buttonText}>Edit</Text></Button>
             <Button onPress={() => handleDelete(editingReminder?.id!)}><Text style={styles.buttonText}>Hapus</Text></Button>
             <Button onPress={() => setModalVisible(false)}><Text style={styles.buttonText}>Batal</Text></Button>
           </View>
@@ -153,7 +156,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff' 
   },
   header1: { 
-    marginTop: 50, 
+    marginTop: 44, 
     marginLeft:10, 
     flexDirection: 'row', 
     alignItems: 'center', 

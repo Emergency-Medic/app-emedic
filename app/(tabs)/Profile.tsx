@@ -37,7 +37,7 @@ const Profile: React.FC<ProfileProps> = ({ modalVisible, setModalVisible }) => {
 							</View>           
 						</View>  
 
-						<View style={styles.profileSection}>
+						<TouchableOpacity style={styles.profileSection} onPress={() => router.push('/screens/profile/EditProfile')}>
 							<View style={styles.profileContainer}>
 								<View style={styles.profileIcon}>
 									<MaterialIcons name="person-outline" size={14} color={Colors.grey}/>
@@ -45,7 +45,7 @@ const Profile: React.FC<ProfileProps> = ({ modalVisible, setModalVisible }) => {
 								<Text style={styles.userName}>Natasya Josy</Text>
 							</View>
 							<AntDesign name="right" size={15} color={Colors.blue} />
-						</View>
+						</TouchableOpacity>
 						
 						{/* Progress Section */}
 						<View style={styles.progresSection}>
@@ -67,10 +67,10 @@ const Profile: React.FC<ProfileProps> = ({ modalVisible, setModalVisible }) => {
 							<Image source={require('../../assets/images/Rectangle 151.png')} style={styles.image}></Image>
 						</View> 
 						{/* Friend */}
-						<View style={styles.friendSection}>
+						<TouchableOpacity style={styles.friendSection} onPress={() => router.push('../screens/contact/Contactpage')}>
 							<MaterialCommunityIcons name="contacts" size={20} color={Colors.blue} />
 							<Text style={styles.teman}>Teman</Text>
-						</View>
+						</TouchableOpacity>
 						{/* Log Out */}
 						<TouchableOpacity onPress={handleSignOut} style={styles.logOutSection}> 
 							<Text style={styles.logOut}>Log Out</Text>
