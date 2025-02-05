@@ -14,9 +14,8 @@ import Quiz from "./Quiz"
 import Summary from "./Summary";
 import ScoreScreen from "./ScoreScreen";
 import Flashcard from "./FlashCard";
-import Homepagelayanan from "./Homepagelayanan";
+import Location from "./Location";
 import Home from "./(tabs)/Home";
-import SearchPage from "./SearchPage"
 import { auth, db } from '@/firebaseConfig';
 import { useRouter } from "expo-router";
 

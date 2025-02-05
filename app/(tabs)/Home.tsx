@@ -59,9 +59,9 @@ export default function Home() {
         {/* Hello, (name) */}
         <View style={styles.header}> 
           <View style={styles.profileSection}> 
-            <View style={styles.profileIcon}>
+            <TouchableOpacity style={styles.profileIcon}>
               <MaterialIcons name="person-outline" size={18} color={Colors.grey} />
-            </View>
+            </TouchableOpacity>
             {/* Greating Section */}
             <View style={styles.greatingSection}>
               <Text style={styles.halo}>
@@ -72,9 +72,9 @@ export default function Home() {
               </Text>
             </View>
           </View> 
-          <View style={styles.alarmIcon}> 
+          <TouchableOpacity style={styles.alarmIcon} onPress={() => router.push('../(tabs)/Reminder')}> 
             <MaterialIcons name="alarm" size={20} color= {Colors.blue} />
-          </View>
+          </TouchableOpacity>
         </View>
 
         {/* Content */}
@@ -86,17 +86,19 @@ export default function Home() {
           </TouchableOpacity>
           
         </View>
-        <View style={styles.kategoriSection}> 
-          <TouchableOpacity style={styles.section}> 
-            <Text style={styles.keterangan}>Kategori 1</Text> 
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.kategoriSection} contentContainerStyle={styles.kategoriContent}> 
+          <TouchableOpacity style={selectedCategory === 'kategori1' ? styles.sectionBerada : styles.section} onPress={() => setSelectedCategory('kategori1')}> 
+            <Text style={selectedCategory === 'kategori1' ? styles.keteranganBerada : styles.keterangan}>Kategori 1</Text> 
           </TouchableOpacity>
-          <TouchableOpacity style={styles.section}> 
-            <Text style={styles.keterangan}>Kategori 2</Text> 
+          <TouchableOpacity style={selectedCategory === 'kategori2' ? styles.sectionBerada : styles.section} onPress={() => setSelectedCategory('kategori2')}> 
+            <Text style={selectedCategory === 'kategori2' ? styles.keteranganBerada : styles.keterangan}>Kategori 2</Text> 
           </TouchableOpacity>
-          <TouchableOpacity style={styles.section}> 
-            <Text style={styles.keterangan}>Kategori 3</Text> 
+          <TouchableOpacity style={selectedCategory === 'kategori3' ? styles.sectionBerada : styles.section} onPress={() => setSelectedCategory('kategori3')}> 
+            <Text style={selectedCategory === 'kategori3' ? styles.keteranganBerada : styles.keterangan}>Kategori 3</Text> 
           </TouchableOpacity>
-        </View>
+        </ScrollView>
+        
+        {/* Cart */}  
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.cartContainer}>
           <View style={styles.cart}> 
             <View style={styles.pictureSection}>
@@ -216,27 +218,49 @@ const styles = StyleSheet.create({
     color: Colors.red,
   }, 
   kategoriSection: {
-    marginLeft: 32, 
-    flexDirection: 'row', 
-  },
-  section:{
-    width: 69, 
-    height: 23, 
-    backgroundColor: '#EDEDED',
-    borderRadius: 5,
-    alignItems: 'center', 
-    justifyContent: 'center',
-    marginTop: 10,  
-    marginRight: 10, 
-  },
-  keterangan: {
-    fontSize: 9, 
-  },
+		marginLeft: 20,
+		marginRight: 20,
+		borderRadius: 5,  
+		flexDirection: 'row',
+	},
+	kategoriContent: {
+    padding: 10,  
+	},
+	sectionBerada: {
+		width: 69, 
+		height: 23, 
+		backgroundColor: Colors.red,
+		borderRadius: 5,
+		alignItems: 'center', 
+		justifyContent: 'center',
+		marginTop: 10,  
+		marginRight: 10, 
+	},
+	section: {
+		width: 69, 
+		height: 23, 
+		backgroundColor: '#EDEDED',
+		borderRadius: 5,
+		alignItems: 'center', 
+		justifyContent: 'center',
+		marginTop: 10,  
+		marginRight: 10, 
+	},
+	keteranganBerada: {	
+		fontSize: 9, 
+		fontFamily: 'regular', 
+		color: Colors.white,
+	}, 
+	keterangan: {
+		fontSize: 9, 
+		fontFamily: 'regular', 
+		color: '#ACACAC',
+	},
   cartContainer: {
     marginTop: 10, 
-    marginLeft: 32, 
-    marginRight: 32,
-    borderRadius: 20,  
+    marginLeft: 25, 
+    marginRight: 30,
+    borderRadius: 20,
   },
   cart: {
     width: 248, 
@@ -246,6 +270,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', 
     alignContent: 'center', 
     justifyContent: 'center', 
+    marginLeft: 10, 
   }, 
   pictureSection: {
     flexDirection: 'column',  
@@ -302,15 +327,4 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     justifyContent: 'center', 
   },
-  cart2: {
-    width: 248, 
-    height: 94, 
-    backgroundColor: Colors.red,
-    borderRadius: 20, 
-    flexDirection: 'row', 
-    alignContent: 'center', 
-    justifyContent: 'center', 
-    marginLeft: 10, 
-  },
-  
 }); 

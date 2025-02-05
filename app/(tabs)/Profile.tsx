@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
 	marginLeft: 5,
   }, 
   friendSection: {
-	marginTop: 15, 
+	marginTop: 20, 
 	flexDirection: 'row', 
 	alignItems: 'center', 
 	justifyContent: 'center', 
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   },
   logOutSection: {
 	flexDirection: 'row',  
-	marginTop: 20, 
+	marginTop: 10, 
 	width: '100%', 
 	alignItems: 'flex-end', 
 	justifyContent: 'flex-end', 
