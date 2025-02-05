@@ -7,7 +7,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 const TahapAwal = () => {
-  const swiperRef = useRef<Swiper | null>(null);
+  const swiperRef = useRef(null);
   const router = useRouter();
 
   return (

@@ -17,7 +17,13 @@ export default function Location() {
 	return(
 		<View>
 			<StatusBar style="auto" />
-			<MapView style={styles.map} provider={PROVIDER_GOOGLE} initialRegion={INITIAL_REGION} showsUserLocation showsMyLocationButton/>
+			<MapView 
+				style={styles.map} 
+				provider={PROVIDER_GOOGLE} 
+				initialRegion={INITIAL_REGION} 
+				showsUserLocation 
+				showsMyLocationButton
+			/>
 			
 		</View>
 	); 
