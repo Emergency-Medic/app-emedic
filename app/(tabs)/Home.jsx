@@ -477,21 +477,23 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   cart: {
-    width: 250, 
-    height: 110, 
+    // width: '50%', 
+    // height: 110, 
     backgroundColor: Colors.blue,
     borderRadius: 20, 
     flexDirection: 'row', 
     alignContent: 'center', 
     justifyContent: 'center', 
-    padding: 10, 
+    paddingHorizontal: 20, 
+    paddingVertical: 10,
     marginLeft: 10,
+    gap: 10
   }, 
   pictureSection: {
     flexDirection: 'column',  
     alignItems:'flex-start', 
     justifyContent: 'center',
-    marginLeft: 32,  
+    // marginLeft: 32,  
   },
   image: { 
     width: 42, 
@@ -500,7 +502,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
   },
   textSection: {
-    marginLeft: 10,  
+    // marginLeft: 10,  
     justifyContent: 'flex-start', 
   },
   judul: {
@@ -520,13 +522,14 @@ const styles = StyleSheet.create({
     fontFamily: 'regular', 
     fontSize: 10, 
     marginTop: 5, 
-    marginRight: 40, 
+    // marginRight: 40, 
   }, 
   pelajariSection: {
     flexDirection: 'row', 
     alignItems: 'center', 
     justifyContent: 'flex-end',  
-    marginRight: 32, 
+    // marginRight: 32,
+    marginTop: 10 
   }, 
   pelajariText: {
     marginRight: 6, 
