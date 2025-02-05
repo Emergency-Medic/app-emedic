@@ -1,25 +1,25 @@
-// import React, { useState } from 'react';
-// import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, FlatList } from 'react-native';
-// import FontAwesome from '@expo/vector-icons/FontAwesome';
-// import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-// import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-// import { Colors } from '@/constants/Colors';
-// import BackButton from '@/components/BackButton'
-// import { Picker } from "@react-native-picker/picker";
-// import Checkbox from 'expo-checkbox';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, FlatList } from 'react-native';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { Colors } from '@/constants/Colors';
+import BackButton from '@/components/BackButton'
+import { Picker } from "@react-native-picker/picker";
+import Checkbox from 'expo-checkbox';
 
 
-// const EditSchedule = () => {
-//     const [medName, setMedName] = useState('Obat XX');
-//     const [dose, setDose] = useState(1);
-//     const [frequency, setFrequency] = useState(2);
-//     const [startDate, setStartDate] = useState('01 Des 2024');
-//     const [endDate, setEndDate] = useState('03 Des 2024');
-//     const [selectedValue, setSelectedValue] = useState("sdm");  
-//     const [isChecked, setIsChecked] = useState(false); 
-//     const [time, setTime] = useState("");
-//     const [reminders, setReminders] = useState([]);
-//     const [checkedItems, setCheckedItems] = useState([]);
+const MakeSchedule = () => {
+    const [medName, setMedName] = useState('Obat XX');
+    const [dose, setDose] = useState(1);
+    const [frequency, setFrequency] = useState(2);
+    const [startDate, setStartDate] = useState('01 Des 2024');
+    const [endDate, setEndDate] = useState('03 Des 2024');
+    const [selectedValue, setSelectedValue] = useState("sdm");  
+    const [isChecked, setIsChecked] = useState(false); 
+    const [time, setTime] = useState("");
+    const [reminders, setReminders] = useState([]);
+    const [checkedItems, setCheckedItems] = useState([]);
 
 //     const addReminder = () => {
 //         if (time && /^([01]\d|2[0-3]):([0-5]\d)$/.test(time)) {
@@ -85,16 +85,17 @@
 //                     <TouchableOpacity onPress={() => setDose(dose + 1)} style={styles.doseButton}><Text style={styles.white}>+</Text></TouchableOpacity>
 //                 </View>
                 
-//                 <View style={styles.choice}>
-//                     <Picker
-//                         selectedValue={selectedValue}
-//                         onValueChange={(itemValue) => setSelectedValue(itemValue)}
-//                         style={{ fontFamily: 'regular' }}
-//                     >
-//                         <Picker.Item label="SDM" value="sdm" />
-//                         <Picker.Item label="SDT" value="sdt" />
-//                     </Picker>
-//                 </View>
+                <Text style={styles.frequencyText2}>sdm</Text>
+                <View style={styles.choice}>
+                    <Picker
+                        selectedValue={selectedValue}
+                        onValueChange={(itemValue) => setSelectedValue(itemValue)}
+                        style={{ fontFamily: 'regular' }}
+                    >
+                        <Picker.Item label="SDM" value="sdm" />
+                        <Picker.Item label="SDT" value="sdt" />
+                    </Picker>
+                </View>
 
 //                 <View style={styles.upDownContainer}>
 //                     <TouchableOpacity onPress={() => setFrequency(Math.max(1, frequency - 1))} style={styles.frequencyButton}><Text style={styles.white}>-</Text></TouchableOpacity>
@@ -170,193 +171,196 @@
 //     );
 // };
 
-// const styles = StyleSheet.create({
-//     container: {
-//         padding: 20,
-//         backgroundColor: '#fff',
-//     },
-//     backButton: {
-//         marginBottom: 10,
-//     },
-//     checkboxContainer: {
-//         flexDirection: 'row',
-//         marginTop: 5,
-//     },
-//     checkboxLabelBlue: {
-//         marginLeft: 5,
-//         fontFamily: 'semibold',
-//         color: '#13070C',
-//     },
-//     checkboxLabelRed: {
-//         marginLeft: 5,
-//         fontFamily: 'semibold',
-//         color: '#A8201A',
-//     },
-//     title: {
-//         fontSize: 24,
-//         marginBottom: 10,
-//         fontFamily: 'bold',
-//         color: '#29335C',
-//         marginTop: 100,
-//     },
-//     label: {
-//         fontSize: 18,
-//         fontFamily: 'bold',
-//         marginTop: 20,
-//         color: '#29335C',
-//     },
-//     input: {
-//         borderWidth: 1,
-//         borderColor: '#ccc',
-//         padding: 10,
-//         borderRadius: 20,
-//         marginTop: 5,
-//         fontFamily: 'regular',
-//     },
-//     typeScroll: {
-//         flexDirection: 'row',
-//         marginVertical: 10,
-//     },
-//     typeButton: {
-//         alignItems: 'center',
-//         padding: 10,
-//         borderWidth: 1,
-//         borderRadius: 10,
-//         borderColor: '#000',
-//         width: 80,
-//         marginHorizontal: 10,
-//     },
-//     doseContainer: {
-//         flexDirection: 'row',
-//         alignItems: 'center',
-//         marginTop: 5,
-//     },
-//     upDownContainer:{
-//         backgroundColor: '#A8201A',
-//         flexDirection: 'row',
-//         alignItems: 'center',
-//         borderRadius: 15,
-//     },
-//     doseButton: {
-//         borderWidth: 1,
-//         padding: 5,
-//         borderRadius: 5,
-//         width: 30,
-//         alignItems: 'center',
-//         borderColor: 'transparent'
-//     },
-//     white: {
-//         color: '#fff',
-//     },
-//     frequencyButton: {
-//         borderWidth: 1,
-//         padding: 5,
-//         borderRadius: 5,
-//         width: 30,
-//         alignItems: 'center',
-//         borderColor: 'transparent',
-//     },
-//     doseText: {
-//         marginHorizontal: 10,
-//         color: '#fff',
-//         fontSize: 12,
-//     },
-//     frequencyText: {
-//         marginHorizontal: 10,
-//         color: '#fff',
-//         fontFamily: 'regular',
-//         fontSize: 12,
-//     },
-//     frequencyText2: {
-//         marginHorizontal: 10,
-//         fontFamily: 'regular',
-//         fontSize: 12,
-//     },
-//     toText: {
-//         marginHorizontal: 10,
-//         fontFamily: 'regular',
-//     },
-//     choice: {
-//         marginHorizontal: 10,
-//     },
-//     dateContainer: {
-//         flexDirection: 'row',
-//         alignItems: 'center',
-//         marginTop: 5,
-//     },
-//     dateInput: {
-//         borderWidth: 1,
-//         borderColor: '#ccc',
-//         padding: 5,
-//         borderRadius: 15,
-//         width: 100,
-//         textAlign: 'center',
-//         fontSize: 13,
-//     },
-//     reminderText: {
-//         fontSize: 16,
-//         marginVertical: 5,
-//     },
-//     descriptionInput: {
-//         borderWidth: 1,
-//         borderColor: '#ccc',
-//         padding: 10,
-//         borderRadius: 8,
-//         marginTop: 5,
-//         height: 80,
-//         textAlignVertical: 'top',
-//         fontFamily: 'regular',
-//     },
-//     saveButton: {
-//         backgroundColor: '#A8201A',
-//         padding: 15,
-//         borderRadius: 10,
-//         alignItems: 'center',
-//         marginTop: 20,
-//     },
-//     saveButtonText: {
-//         color: '#fff',
-//         fontSize: 16,
-//         fontWeight: 'bold',
-//     },
-//     or: {
-//         fontSize: 12,
-//         marginTop: 5,
-//         marginBottom: 5,
-//     },
-//     inputContainer: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//     marginBottom: 16,
-//   },
-//   reminderCard: {
-//     padding: 16,
-//     borderBottomWidth: 1,
-//     borderColor: "#ddd",
-//     flexDirection: "row",
-//     justifyContent: "space-between",
-//     alignItems: "center",
-//   },
-//   timeText: {
-//     fontSize: 18,
-//     fontWeight: "semibold",
-//     color: "#13070C",
-//   },
-//   switchContainer: {
-//     flexDirection: "row",
-//     alignItems: "center",
-//   },
-//   button: {
-//     backgroundColor: '#A8201A',
-//     padding: 10,
-//     borderRadius: 20,
-//     marginLeft: 5,
-//   },
-//   buttonText: {
-//     color: '#fff',
-//     fontFamily: 'semibold',
-//     fontSize: 12,
-//   },
-// });
+const styles = StyleSheet.create({
+    container: {
+        padding: 20,
+        backgroundColor: '#fff',
+    },
+    backButton: {
+        marginBottom: 10,
+    },
+    checkboxContainer: {
+        flexDirection: 'row',
+        marginTop: 5,
+    },
+    checkboxLabelBlue: {
+        marginLeft: 5,
+        fontFamily: 'semibold',
+        color: '#13070C',
+    },
+    checkboxLabelRed: {
+        marginLeft: 5,
+        fontFamily: 'semibold',
+        color: '#A8201A',
+    },
+    title: {
+        fontSize: 24,
+        marginBottom: 10,
+        fontFamily: 'bold',
+        color: '#29335C',
+        marginTop: 100,
+    },
+    label: {
+        fontSize: 18,
+        fontFamily: 'bold',
+        marginTop: 20,
+        color: '#29335C',
+        marginBottom: 5,
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        padding: 10,
+        borderRadius: 20,
+        marginTop: 5,
+        fontFamily: 'regular',
+    },
+    typeScroll: {
+        flexDirection: 'row',
+        marginVertical: 10,
+    },
+    typeButton: {
+        alignItems: 'center',
+        padding: 10,
+        borderWidth: 1,
+        borderRadius: 10,
+        borderColor: '#000',
+        width: 80,
+        marginHorizontal: 10,
+    },
+    doseContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: -85,
+        marginBottom: -85,
+    },
+    upDownContainer:{
+        backgroundColor: '#A8201A',
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderRadius: 15,
+    },
+    doseButton: {
+        borderWidth: 1,
+        padding: 5,
+        borderRadius: 5,
+        width: 30,
+        alignItems: 'center',
+        borderColor: 'transparent'
+    },
+    white: {
+        color: '#fff',
+    },
+    frequencyButton: {
+        borderWidth: 1,
+        padding: 5,
+        borderRadius: 5,
+        width: 30,
+        alignItems: 'center',
+        borderColor: 'transparent',
+    },
+    doseText: {
+        marginHorizontal: 10,
+        color: '#fff',
+        fontSize: 12,
+    },
+    frequencyText: {
+        marginHorizontal: 10,
+        color: '#fff',
+        fontFamily: 'regular',
+        fontSize: 12,
+    },
+    frequencyText2: {
+        marginHorizontal: 10,
+        fontFamily: 'regular',
+        fontSize: 12,
+    },
+    toText: {
+        marginHorizontal: 10,
+        fontFamily: 'regular',
+    },
+    choice: {
+        marginHorizontal: 10,
+    },
+    dateContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 10,
+    },
+    dateInput: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        padding: 5,
+        borderRadius: 15,
+        width: 100,
+        textAlign: 'center',
+        fontSize: 13,
+    },
+    reminderText: {
+        fontSize: 16,
+        marginVertical: 5,
+    },
+    descriptionInput: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        padding: 10,
+        borderRadius: 8,
+        marginTop: 5,
+        height: 80,
+        textAlignVertical: 'top',
+        fontFamily: 'regular',
+    },
+    saveButton: {
+        backgroundColor: '#A8201A',
+        padding: 15,
+        borderRadius: 15,
+        alignItems: 'center',
+        marginTop: 30,
+        marginBottom: 30,
+    },
+    saveButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    or: {
+        fontSize: 12,
+        marginTop: 5,
+        marginBottom: 5,
+    },
+    inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  reminderCard: {
+    padding: 16,
+    borderBottomWidth: 1,
+    borderColor: "#ddd",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  timeText: {
+    fontSize: 18,
+    fontWeight: "semibold",
+    color: "#13070C",
+  },
+  switchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  button: {
+    backgroundColor: '#A8201A',
+    padding: 10,
+    borderRadius: 20,
+    marginLeft: 5,
+  },
+  buttonText: {
+    color: '#fff',
+    fontFamily: 'semibold',
+    fontSize: 12,
+  },
+});
 
-// export default EditSchedule;
+export default MakeSchedule;
