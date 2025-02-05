@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-export default function RootLayout() {
+export default function ReminderLayout() {
     return (
       <Stack>
         <Stack.Screen name="MakeSchedule" options={{ headerShown: false }} />

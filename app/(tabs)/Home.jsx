@@ -8,6 +8,7 @@ import Swiper from 'react-native-swiper';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Slider from '../screens/artikel/awal/Slider'
+import MetodePenangan from "../screens/MetodePenangan";
 
 const data = {  
   kategori1: [  
@@ -155,9 +156,9 @@ export default function Home() {
               </Text>
             </View>
           </View> 
-          <View style={styles.alarmIcon}> 
+          {/* <View style={styles.alarmIcon}> 
             <MaterialIcons name="alarm" size={20} color= {Colors.blue} />
-          </View>
+          </View> */}
         </View>
 
         {/* Content */}
@@ -423,6 +424,7 @@ const styles = StyleSheet.create({
     marginRight: 32,  
     flexDirection: 'row', 
     justifyContent: 'space-between', 
+    alignItems: 'center'
   }, 
   titleText: {
     fontFamily: 'bold', 

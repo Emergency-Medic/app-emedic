@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 
-export default function RootLayout() {
+export default function ContactLayout() {
     return (
       <Stack>
         <Stack.Screen name="Contactpage" options={{ headerShown: false }} />
