@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Image } from 'react-native';
 import Entypo from '@expo/vector-icons/Entypo';
 
-const SearchPage = () => {
+
+const Exp = () => {
   const history = ['Luka Bakar', 'Luka Tusuk', 'Pendarahan', 'Mimisan', 'Gigitan Ular'];
 
   const recommendations = [
@@ -201,4 +202,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default SearchPage;
+export default Exp

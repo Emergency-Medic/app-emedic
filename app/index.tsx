@@ -59,11 +59,7 @@ export default function Index() {
   // }
   return (
     <View>
-      {/* <SearchPage /> */}
-      {/* <Homepagelayanan /> */}
-      {/* <Quiz /> */}
-      {/* <Slider /> */}
-      {/* <Contactpage /> */}
+      <MenuAwal />
     </View>
   );
 }
