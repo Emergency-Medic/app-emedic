@@ -7,6 +7,7 @@ import call from 'react-native-phone-call';
 import Swiper from 'react-native-swiper';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Slider from '../screens/artikel/awal/Slider'
 
 const data = {  
   kategori1: [  
@@ -120,7 +121,7 @@ export default function Home() {
                     {item.description} 
                   </Text>
       
-                  <TouchableOpacity style={styles.pelajariSection}> 
+                  <TouchableOpacity style={styles.pelajariSection} onPress={() => router.push('/screens/artikel/Articlepage')}> 
                     <Text style={styles.pelajariText}> 
                       Pelajari
                     </Text>
@@ -191,7 +192,7 @@ export default function Home() {
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.
               </Text>
             </View>
-            <TouchableOpacity style={styles.nextButtonTap}>
+            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/Slider")} style={styles.nextButtonTap}>
               <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
             </TouchableOpacity>
           </View>
@@ -217,7 +218,7 @@ export default function Home() {
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.
               </Text>
             </View>
-            <TouchableOpacity style={styles.nextButtonTap}>
+            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/Slider")} style={styles.nextButtonTap}>
               <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
             </TouchableOpacity>
           </View>
@@ -243,7 +244,7 @@ export default function Home() {
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.
               </Text>
             </View>
-            <TouchableOpacity style={styles.nextButtonTap}>
+            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/Slider")} style={styles.nextButtonTap}>
               <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
             </TouchableOpacity>
           </View>
@@ -479,8 +480,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   cart: {
-    width: 248, 
-    height: 100, 
+    // width: '50%', 
+    // height: 110, 
     backgroundColor: Colors.blue,
     borderRadius: 20, 
     marginLeft: 10, 
@@ -488,14 +489,17 @@ const styles = StyleSheet.create({
   contain: {
     flexDirection: 'row',
     alignContent: 'center', 
-    justifyContent: 'center',
-    padding: 5,
+    justifyContent: 'center', 
+    paddingHorizontal: 20, 
+    paddingVertical: 10,
+    marginLeft: 10,
+    gap: 10
   }, 
   pictureSection: {
     flexDirection: 'column',  
     alignItems:'flex-start', 
     justifyContent: 'center',
-    marginLeft: 32,  
+    // marginLeft: 32,  
   },
   image: { 
     width: 42, 
@@ -504,7 +508,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
   },
   textSection: {
-    marginLeft: 10,  
+    // marginLeft: 10,  
     justifyContent: 'flex-start', 
   },
   judul: {
@@ -524,13 +528,14 @@ const styles = StyleSheet.create({
     fontFamily: 'regular', 
     fontSize: 10, 
     marginTop: 5, 
-    marginRight: 40, 
+    // marginRight: 40, 
   }, 
   pelajariSection: {
     flexDirection: 'row', 
     alignItems: 'center', 
     justifyContent: 'flex-end',  
-    marginRight: 32, 
+    // marginRight: 32,
+    marginTop: 10 
   }, 
   pelajariText: {
     marginRight: 6, 

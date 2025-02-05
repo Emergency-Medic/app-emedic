@@ -89,7 +89,7 @@ const Quiz = () => {
       
       
         <View style={styles.navigationButtons2}>
-            <TouchableOpacity onPress={() => router.push("./(auth)/SignInScreen")} style={styles.skipButton}>
+            <TouchableOpacity onPress={() => router.back()} style={styles.skipButton}>
                 <Text style={styles.skipText}>Skip {'>'}{'>'}</Text>
             </TouchableOpacity>
         </View>

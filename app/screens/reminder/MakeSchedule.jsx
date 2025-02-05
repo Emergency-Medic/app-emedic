@@ -55,7 +55,11 @@ const MakeSchedule = () => {
     const duration = calculateDays(startDate, endDate)+1;
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView 
+        style={styles.container}
+        contentContainerStyle={{ flexGrow: 1 }}
+        keyboardShouldPersistTaps="handled"
+        >
             <View>
             <BackButton color={Colors.red} top={45} left={0}/>
             </View>
@@ -178,6 +182,7 @@ const styles = StyleSheet.create({
     container: {
         padding: 20,
         backgroundColor: '#fff',
+        flexGrow:1,
     },
     inContainer: {
         margin: 0,
