@@ -11,7 +11,7 @@
     "ios": {
       "supportsTablet": true,
       "config": {
-        "googleMapsApiKey": "logical-craft-450006-h4"
+        "googleMapsApiKey": "REDACTED"
       }
     },
     "android": {
@@ -22,7 +22,7 @@
       "package": "com.anonymous.appemedic",
       "config": {
         "googleMaps": {
-          "apiKey": "logical-craft-450006-h4"
+          "apiKey": "REDACTED"
         }
       }
     },

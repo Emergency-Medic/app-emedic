@@ -10,11 +10,11 @@ import React, {useEffect, useState} from "react";
 import Onboarding from "./Onboarding"
 import SignInScreen from './(auth)/SignInScreen'
 import RegisterScreen from './(auth)/RegisterScreen'
-import Quiz from "./Quiz"
-import Summary from "./Summary";
-import ScoreScreen from "./ScoreScreen";
+import Quiz from "./screens/quiz/Quiz"
+import Summary from "./screens/quiz/Summary";
+import ScoreScreen from "./screens/quiz/ScoreScreen";
 import Flashcard from "./FlashCard";
-
+import Homepagelayanan from "./Homepagelayanan";
 import Location from "./Location";
 import Home from "./(tabs)/Home";
 import { auth, db } from '@/firebaseConfig';
@@ -60,7 +60,7 @@ export default function Index() {
   // }
   return (
     <View>
-      <MenuAwal />
-    </View>
-  );
+      {user ? <Home /> : <MenuAwal />}
+    </View>
+  );
 }
