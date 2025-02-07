@@ -73,13 +73,6 @@ export default function RegisterScreen() {
         if (!username.trim()) {
             errors.username = 'Username wajib diisi';
         } 
-        // else {
-        //     const usernameExists = await checkUsernameExists(username);
-        //     if (usernameExists) {
-        //         console.log("Username sudah dipakai, pilih yang lain")
-        //         errors.username = "Username sudah dipakai, pilih yang lain";
-        //     }
-        // }
 
         if (!phonenum.trim()) {
             errors.phonenum = "Nomor telepon wajib diisi";
@@ -161,14 +154,7 @@ export default function RegisterScreen() {
                 ...prevErrors,
                 email: 'Email sudah terdaftar di akun lain. Gunakan email lain',
                 }));
-            } 
-            else if (error.code === 'Username already taken') {
-                setErrors((prevErrors) => ({
-                ...prevErrors,
-                username: 'Username sudah digunakan. Buat username baru yang unik.',
-                }));
-            }
-            else {
+            } else {
                 console.error("Error registering user:", error.message);
             }
         }
