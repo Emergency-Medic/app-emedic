@@ -20,17 +20,17 @@ export default function SignInScreen() {
 
     const [errors, setErrors] = useState({});
 
-    useEffect(() => {
-        handleGoogleSignIn();
-      }, []);
+    // useEffect(() => {
+    //     handleGoogleSignIn();
+    //   }, []);
     
-    const handleGSignIn = async () => {
-        try {
-          await signInWithGoogle();
-        } catch (error) {
-          Alert.alert("Login Error", error.message);
-        }
-    };
+    // const handleGSignIn = async () => {
+    //     try {
+    //       await signInWithGoogle();
+    //     } catch (error) {
+    //       Alert.alert("Login Error", error.message);
+    //     }
+    // };
 
     const validateForm = () => {
         let errors = {};
@@ -176,7 +176,7 @@ export default function SignInScreen() {
 
                 <View>
                     <Text style= {styles.atau}>atau</Text>
-                    <TouchableOpacity style={styles.google} onPress={handleGSignIn}>
+                    <TouchableOpacity style={styles.google}>
                         
                         <Image source={require('../../assets/images/sign in/google.png')} style={styles.googleImg}></Image>
                         

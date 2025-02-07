@@ -8,7 +8,7 @@ import Feather from '@expo/vector-icons/Feather'
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import firebase from 'firebase/app';
 import 'firebase/auth';
-import { doc, setDoc, collection, addDoc } from 'firebase/firestore';
+import { doc, setDoc, collection, addDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebaseConfig';
 import { signInWithGoogle, handleGoogleSignIn, signInUser } from "../services/authService";
 
@@ -16,6 +16,7 @@ import { signInWithGoogle, handleGoogleSignIn, signInUser } from "../services/au
 export default function RegisterScreen() {
     const [namaDepan, setNamaDepan] = useState('')
     const [namaBelakang, setNamaBelakang] = useState('')
+    const [username, setUsername] = useState('')
     const [phonenum, setPhonenum] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -26,6 +27,7 @@ export default function RegisterScreen() {
 
     const [firstFocused, setFirstFocused] = useState(false);
     const [lastFocused, setLastFocused] = useState(false);
+    const [unameFocused, setUnameFocused] = useState(false)
     const [phoneFocused, setPhoneFocused] = useState(false);
     const [emailFocused, setEmailFocused] = useState(false);
     const [passFocused, setPassFocused] = useState(false);
@@ -35,17 +37,17 @@ export default function RegisterScreen() {
 
     const [errors, setErrors] = useState({});
 
-    useEffect(() => {
-            handleGoogleSignIn();
-          }, []);
+    // useEffect(() => {
+    //         handleGoogleSignIn();
+    //       }, []);
         
-        const handleGSignIn = async () => {
-            try {
-              await signInWithGoogle();
-            } catch (error) {
-              Alert.alert("Login Error", error.message);
-            }
-        };
+    //     const handleGSignIn = async () => {
+    //         try {
+    //           await signInWithGoogle();
+    //         } catch (error) {
+    //           Alert.alert("Login Error", error.message);
+    //         }
+    //     };
 
     const formatPhoneNumber = (phone) => {
         if (phone.startsWith('0')) {
@@ -54,11 +56,31 @@ export default function RegisterScreen() {
         return phone; // Jika sudah dalam format internasional (+62), tidak perlu diubah
       };
 
-    const validateForm = () => {
+    // memeriksa apakah username sudah digunakan
+    const checkUsernameExists = async (username) => {
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("username", "==", username));
+        const querySnapshot = await getDocs(q);
+        return !querySnapshot.empty; // Jika ada hasil, berarti username sudah dipakai
+    };
+
+    const validateForm = async () => {
         setErrors({})
-        let errors = {};
+        let errors = {}
         if (!namaDepan.trim()) errors.namaDepan = "Nama depan wajib diisi";
         if (!namaBelakang.trim()) errors.namaBelakang = "Nama belakang wajib diisi";
+
+        if (!username.trim()) {
+            errors.username = 'Username wajib diisi';
+        } 
+        // else {
+        //     const usernameExists = await checkUsernameExists(username);
+        //     if (usernameExists) {
+        //         console.log("Username sudah dipakai, pilih yang lain")
+        //         errors.username = "Username sudah dipakai, pilih yang lain";
+        //     }
+        // }
+
         if (!phonenum.trim()) {
             errors.phonenum = "Nomor telepon wajib diisi";
         } else if (!/^(?:\+62|0)8[1-9][0-9]{6,10}$/.test(phonenum)) {
@@ -83,34 +105,53 @@ export default function RegisterScreen() {
     };
             
 
-    const registerUser = async (firstName, lastName, phone, email, password) => {
+    const registerUser = async (firstName, lastName, username, phone, email, password) => {
         try {
-          // Buat user di Firebase Authentication
-          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-          const user = userCredential.user;
-
-          const docRef = await addDoc(collection(db, "users"), {
-            firstName: firstName,
-            lastName: lastName,
-            phone: formatPhoneNumber(phone),
-            email: email,
-            createdAt: new Date().toISOString(),
-          });
-          
-          console.log('User registered successfully!',  userCredential.user);
+          // 1. Check if username exists
+          const usernameDocRef = doc(db, "usernames", username);
+          const usernameDocSnapshot = await getDoc(usernameDocRef);
+      
+          if (usernameDocSnapshot.exists()) {
+            // Username already exists, handle the error
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                username: 'Username sudah digunakan. Buat username baru yang unik.',
+            }));
+            throw new Error("Username already taken.");
+          } else {
+            // 2. Create user in Firebase Authentication
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+      
+            // 3. Add user data to "users" collection
+            const docRef = await addDoc(collection(db, "users"), {
+              uid: user.uid,
+              firstName: firstName,
+              lastName: lastName,
+              username: username,
+              phone: formatPhoneNumber(phone),
+              email: email,
+              createdAt: new Date().toISOString(),
+            });
+      
+            // 4. Add username to "usernames" collection
+            await setDoc(doc(db, "usernames", username), { uid: user.uid });
+      
+            console.log('User registered successfully!', userCredential.user);
+          }
         } catch (error) {
           console.error("Error registering user:", error.message);
           throw error;
         }
       };
+      
 
     const handleRegister = async () => {
-        if (!validateForm()) {
-            return; // Jika validasi gagal, hentikan eksekusi
-        }
+        const isValid = await validateForm(); // 🔹 Pastikan menunggu validasi selesai
+        if (!isValid) return;
         
         try {
-          await registerUser(namaDepan, namaBelakang, phonenum, email, password);
+          await registerUser(namaDepan, namaBelakang, username, phonenum, email, password);
         //   Alert.alert("Success", "User registered successfully!");
           router.replace('../(tabs)/Home')
         } catch (error) {
@@ -120,7 +161,14 @@ export default function RegisterScreen() {
                 ...prevErrors,
                 email: 'Email sudah terdaftar di akun lain. Gunakan email lain',
                 }));
-            } else {
+            } 
+            else if (error.code === 'Username already taken') {
+                setErrors((prevErrors) => ({
+                ...prevErrors,
+                username: 'Username sudah digunakan. Buat username baru yang unik.',
+                }));
+            }
+            else {
                 console.error("Error registering user:", error.message);
             }
         }
@@ -192,6 +240,32 @@ export default function RegisterScreen() {
                             />
                             {errors.namaBelakang && <Text style={styles.errorText}>{errors.namaBelakang}</Text>}
                         </View>
+                    </View>
+                    <View style={styles.wrapform}>
+                        <Text 
+                        style={[
+                            styles.titleName,
+                            unameFocused && {
+                                color: Colors.red,
+                                fontFamily: 'regular'
+                            }
+                        ]}>
+                            Username
+                        </Text>
+                        <TextInput
+                        placeholder='Isi dengan username Anda'
+                        value={username}
+                        onFocus={() => setUnameFocused(true)}
+                        onBlur={() => setUnameFocused(false)} 
+                        onChangeText={setUsername}
+                        style={[
+                            styles.input,
+                            unameFocused && {
+                                borderColor: Colors.red,
+                            }
+                        ]}
+                        />
+                        {errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
                     </View>
                     <View style={styles.wrapform}>
                         <Text 
@@ -319,7 +393,7 @@ export default function RegisterScreen() {
 
                 <View>
                     <Text style= {styles.atau}>atau</Text>
-                    <TouchableOpacity style={styles.google} onPress={handleGSignIn}>
+                    <TouchableOpacity style={styles.google}>
                         
                         <Image source={require('../../assets/images/sign in/google.png')} style={styles.googleImg}></Image>
                         
