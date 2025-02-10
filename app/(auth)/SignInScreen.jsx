@@ -123,7 +123,7 @@ export default function SignInScreen() {
                             }
                         ]}
                         />
-                        {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+                        {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
                     </View>
                     <View>
                         <Text style={[
@@ -149,7 +149,7 @@ export default function SignInScreen() {
                         onFocus={() => setPassFocused(true)}
                         onBlur={() => setPassFocused(false)} 
                         />
-                        {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+                        {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
                         <TouchableOpacity onPress={() => setShowPass(!showPass)} style={styles.eyeIcon}>
                             <Feather name={showPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
                         </TouchableOpacity>
@@ -177,9 +177,7 @@ export default function SignInScreen() {
                 <View>
                     <Text style= {styles.atau}>atau</Text>
                     <TouchableOpacity style={styles.google}>
-                        
                         <Image source={require('../../assets/images/sign in/google.png')} style={styles.googleImg}></Image>
-                        
                         <Text style={styles.googletxt}>Masuk dengan Google</Text>
                     </TouchableOpacity>
                 </View>

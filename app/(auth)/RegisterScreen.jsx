@@ -37,6 +37,8 @@ export default function RegisterScreen() {
 
     const [errors, setErrors] = useState({});
 
+    const DEFAULT_PROFILE_PIC = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+
     // useEffect(() => {
     //         handleGoogleSignIn();
     //       }, []);
@@ -124,6 +126,7 @@ export default function RegisterScreen() {
               username: username,
               phone: formatPhoneNumber(phone),
               email: email,
+              profilePic:  DEFAULT_PROFILE_PIC,
               createdAt: new Date().toISOString(),
             });
       
@@ -136,7 +139,7 @@ export default function RegisterScreen() {
           console.error("Error registering user:", error.message);
           throw error;
         }
-      };
+      }
       
 
     const handleRegister = async () => {
@@ -199,7 +202,7 @@ export default function RegisterScreen() {
                                 }
                             ]}
                             />
-                            {errors.namaDepan && <Text style={styles.errorText}>{errors.namaDepan}</Text>}
+                            {errors.namaDepan ? <Text style={styles.errorText}>{errors.namaDepan}</Text> : null}
                         </View>
                         <View style={styles.wrapdalam}>
                             <Text style={[
@@ -224,7 +227,7 @@ export default function RegisterScreen() {
                                 }
                             ]}
                             />
-                            {errors.namaBelakang && <Text style={styles.errorText}>{errors.namaBelakang}</Text>}
+                            {errors.namaBelakang ? <Text style={styles.errorText}>{errors.namaBelakang}</Text> : null}
                         </View>
                     </View>
                     <View style={styles.wrapform}>
@@ -251,7 +254,7 @@ export default function RegisterScreen() {
                             }
                         ]}
                         />
-                        {errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
+                        {errors.username ? <Text style={styles.errorText}>{errors.username}</Text> : null}
                     </View>
                     <View style={styles.wrapform}>
                         <Text 
@@ -277,7 +280,7 @@ export default function RegisterScreen() {
                             }
                         ]}
                         />
-                        {errors.phonenum && <Text style={styles.errorText}>{errors.phonenum}</Text>}
+                        {errors.phonenum ? <Text style={styles.errorText}>{errors.phonenum}</Text> : null}
                     </View>
                     <View style={styles.wrapform}>
                         <Text style={[
@@ -302,7 +305,7 @@ export default function RegisterScreen() {
                             }
                         ]}
                         />
-                        {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+                        {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
                     </View>
                     <View style={styles.wrapform}>
                         <Text style={[
@@ -357,7 +360,7 @@ export default function RegisterScreen() {
                             }
                         ]}
                         />
-                        {errors.confPass && <Text style={styles.errorText}>{errors.confPass}</Text>}
+                        {errors.confPass ? <Text style={styles.errorText}>{errors.confPass}</Text> : null}
                         <TouchableOpacity onPress={() => setShowConfPass(!showConfPass)} style={styles.eyeIcon}>
                             <Feather name={showConfPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
                         </TouchableOpacity>
@@ -380,9 +383,7 @@ export default function RegisterScreen() {
                 <View>
                     <Text style= {styles.atau}>atau</Text>
                     <TouchableOpacity style={styles.google}>
-                        
                         <Image source={require('../../assets/images/sign in/google.png')} style={styles.googleImg}></Image>
-                        
                         <Text style={styles.googletxt}>Daftar dengan Google</Text>
                     </TouchableOpacity>
                 </View>

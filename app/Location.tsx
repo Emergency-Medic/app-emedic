@@ -28,15 +28,12 @@ export default function Location() {
 				initialRegion={INITIAL_REGION}
 				showsUserLocation
 			/>
-
-			{/* Contain Location */}
 			<View style= {styles.container2}> 
 				<View style={styles.bukaMapsButton}>
 					<TouchableOpacity style={styles.bukaMapsContainer}>
 						<View style={styles.bukaMapsIcon}>
 							<Entypo name="location-pin" size={20} color={Colors.white} />
 						</View>
-
 						<View style={styles.bukaMapsText}> 
 							<Text style={styles.bukaMaps}>Buka Maps</Text>
 						</View>
@@ -57,9 +54,7 @@ export default function Location() {
 							</Text>
 						</View>
 					</View>
-
 					<View style={styles.line}/>
-
 					<View style={styles.subInfo}> 
 						<Text style={styles.keterangan}>
 							Jarak dari lokasi saya 
@@ -69,9 +64,7 @@ export default function Location() {
 						</Text>
 					</View>
 				</View>
-
 			</View>
-			
 		</View>
 	); 
 }
