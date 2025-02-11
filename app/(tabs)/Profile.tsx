@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, Modal, Image, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';    
 import { Colors } from '@/constants/Colors';
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { signOut } from "firebase/auth";
-import { auth } from "@/firebaseConfig";
+import { auth, db } from "@/firebaseConfig";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
 
 interface ProfileProps {  
@@ -24,6 +26,32 @@ const Profile: React.FC<ProfileProps> = ({ modalVisible, setModalVisible }) => {
 			console.log(error);
 		})
 	}
+	const [name, setName] = useState('')
+	
+	  useEffect(() => {
+		const unsubscribe = onAuthStateChanged(auth, async (user) => {
+		  console.log(user)
+		  if (user) {
+			console.log(user.uid)
+			try {
+			  const userDocRef = doc(db, 'users', user.uid)
+			  const userDocSnap = await getDoc(userDocRef)
+			  if (userDocSnap.exists()) {
+				setName(`${userDocSnap.data().firstName} ${userDocSnap.data().lastName}`);
+			  } else {
+				console.log("User document not found")
+				setName('Guest')
+			  }
+			} catch (error) {
+			  console.error(error)
+			  setName('Guest')
+			}
+		  } else {
+			setName('')
+		  }
+		})
+		return () => unsubscribe();
+	  }, [])
 	return (    
 		<Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
 			<TouchableWithoutFeedback onPressOut={() => setModalVisible(false)}>
@@ -42,7 +70,7 @@ const Profile: React.FC<ProfileProps> = ({ modalVisible, setModalVisible }) => {
 								<View style={styles.profileIcon}>
 									<MaterialIcons name="person-outline" size={14} color={Colors.grey}/>
 								</View>
-								<Text style={styles.userName}>Natasya Josy</Text>
+								<Text style={styles.userName}>{name}</Text>
 							</View>
 							<AntDesign name="right" size={15} color={Colors.blue} />
 						</TouchableOpacity>

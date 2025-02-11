@@ -6,8 +6,6 @@ import { StatusBar } from 'expo-status-bar'
 import { Colors } from '@/constants/Colors'
 import Feather from '@expo/vector-icons/Feather'
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import firebase from 'firebase/app';
-import 'firebase/auth';
 import { doc, setDoc, collection, addDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebaseConfig';
 import { signInWithGoogle, handleGoogleSignIn, signInUser } from "../services/authService";
@@ -119,7 +117,7 @@ export default function RegisterScreen() {
             const user = userCredential.user;
       
             // 3. Add user data to "users" collection
-            const docRef = await addDoc(collection(db, "users"), {
+            await setDoc(doc(db, "users", user.uid), {
               uid: user.uid,
               firstName: firstName,
               lastName: lastName,
@@ -132,7 +130,7 @@ export default function RegisterScreen() {
       
             // 4. Add username to "usernames" collection
             await setDoc(doc(db, "usernames", username), { uid: user.uid });
-      
+            // console.log(docRef.id)
             console.log('User registered successfully!', userCredential.user);
           }
         } catch (error) {

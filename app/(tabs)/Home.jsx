@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { ImageBackground, Modal, ScrollView, View, Image ,  Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Animated, Alert, PanResponder } from 'react-native';
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
@@ -9,6 +9,9 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Slider from '../screens/artikel/awal/Slider'
 import MetodePenangan from "../screens/MetodePenangan";
+import { auth, db } from '@/firebaseConfig'
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
 const data = {  
   kategori1: [  
@@ -72,7 +75,33 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState('kategori1');
 
   const [sliderValue, setSliderValue] = useState(new Animated.Value(0));
-  
+  const [name, setName] = useState('')
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      console.log(user)
+      if (user) {
+        console.log(user.uid)
+        try {
+          const userDocRef = doc(db, 'users', user.uid)
+          const userDocSnap = await getDoc(userDocRef)
+          if (userDocSnap.exists()) {
+            setName(userDocSnap.data().firstName)
+          } else {
+            console.log("User document not found")
+            setName('Guest')
+          }
+        } catch (error) {
+          console.error(error)
+          setName('Guest')
+        }
+      } else {
+        setName('')
+      }
+    })
+    return () => unsubscribe();
+  }, [])
+
       const makePhoneCall = () => {
           const args = {
             number: '112',
@@ -152,7 +181,7 @@ export default function Home() {
                 Halo,
               </Text>
               <Text style={styles.name}> 
-                Natasya
+                {name}
               </Text>
             </View>
           </View> 
