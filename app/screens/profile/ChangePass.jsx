@@ -38,11 +38,13 @@ export default function ChangePass() {
           auth.currentUser.email,
           oldPass
         );
-        await reauthenticateWithCredential(auth.currentUser, credential);
+        await reauthenrticateWithCredential(auth.currentUser, credential);
         setReauthenticated(true);
       } catch (error) {
         console.error(error);
-        setError(error.message);
+        if (error.code === 'auth/wrong-password') {
+          setErrorPass("Password salah");
+        }
       }
     }
 
