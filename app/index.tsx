@@ -10,16 +10,17 @@ import React, {useEffect, useState} from "react";
 import Onboarding from "./Onboarding"
 import SignInScreen from './(auth)/SignInScreen'
 import RegisterScreen from './(auth)/RegisterScreen'
-import Quiz from "./Quiz"
-import Summary from "./Summary";
-import ScoreScreen from "./ScoreScreen";
+import Quiz from "./screens/quiz/Quiz"
+import Summary from "./screens/quiz/Summary";
+import ScoreScreen from "./screens/quiz/ScoreScreen";
 import Flashcard from "./FlashCard";
-
+import Homepagelayanan from "./Homepagelayanan";
 import Location from "./Location";
 import Home from "./(tabs)/Home";
 import MakeSchedule from "./MakeSchedule";
 import { auth, db } from '@/firebaseConfig';
 import { useRouter } from "expo-router";
+import { UserProvider } from "./context/UserContext";
 
 const Stack = createStackNavigator(); 
 
@@ -60,8 +61,10 @@ export default function Index() {
   //   return <LoadingScreen />; // You can use a placeholder or loading spinner here
   // }
   return (
-    <View>
-      <MenuAwal />
-    </View>
-  );
+    <UserProvider>
+      <View>
+        {user ? <Home /> : <MenuAwal />}
+      </View>
+    </UserProvider>
+  );
 }
