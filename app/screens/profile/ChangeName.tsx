@@ -1,13 +1,40 @@
 import { View, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native'
 import { Colors } from '@/constants/Colors';
-import React, { useState } from 'react'
+import { useUser } from "../../context/UserContext";
+import React, { useState, useEffect } from 'react'
 import BackButton from '@/components/BackButton'
 import { useRouter } from "expo-router";
+import { auth, db } from "@/firebaseConfig";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 export default function ChangeName() {
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+  const [errorFirst, setErrorFirst] = useState('')
+  const [errorLast, setErrorLast] = useState('')
   const router = useRouter();
+
+  const updateName = async () => {
+    setErrorFirst('')
+    setErrorLast('')
+    if (!firstName) {
+      setErrorFirst("Nama depan tidak boleh kosong")
+      return
+    }
+    if (!lastName) {
+      setErrorLast("Nama belakang tidak boleh kosong")
+      return
+    }
+    try {
+      if (!auth.currentUser) return
+      const userDocRef = doc(db, "users", auth.currentUser.uid)
+      await updateDoc(userDocRef, { firstName: firstName, lastName: lastName })
+      router.back()
+    }  catch (error) {
+      console.error("Error updating document: ", error);
+    }
+  }
+
   return (
     <View style={styles.allwrap}>
         <BackButton color={Colors.red} top={45}/>
@@ -23,6 +50,7 @@ export default function ChangeName() {
             onChangeText={setFirstName}
             style={styles.input}
             />
+            {errorFirst ? <Text style={styles.errorText}>{errorFirst}</Text> : null}
         </View>
         <View style={styles.wrapform}>
           <Text style={styles.titleName}>Nama Belakang</Text>
@@ -32,8 +60,9 @@ export default function ChangeName() {
             onChangeText={setLastName}
             style={styles.input}
             />
+            {errorLast ? <Text style={styles.errorText}>{errorLast}</Text> : null}
         </ View>
-        <TouchableOpacity style={styles.submit} onPress={() => router.back()}>
+        <TouchableOpacity style={styles.submit} onPress={updateName}>
           <Text style={styles.buttonText}>Konfirmasi</Text>
         </TouchableOpacity>
     </View>
@@ -43,6 +72,11 @@ const styles = StyleSheet.create({
     allwrap: {
       height: '100%',
       backgroundColor: Colors.white,
+    },
+    errorText: {
+      color: Colors.red,
+      fontSize: 10,
+      fontFamily: 'light'
     },
     title: {
       fontSize: 24,
