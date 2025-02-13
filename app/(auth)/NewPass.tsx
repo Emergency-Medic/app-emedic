@@ -47,7 +47,7 @@ export default function NewPass() {
             </TouchableOpacity>
         </View>
         <TouchableOpacity style={styles.submit} onPress={() => router.push('./SignInScreen')}>
-          <Text style={styles.buttonText} >Konfirmasi</Text>
+          <Text style={styles.buttonText}>Konfirmasi</Text>
         </TouchableOpacity>
     </View>
   )
