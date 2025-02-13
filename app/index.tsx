@@ -19,6 +19,7 @@ import Location from "./Location";
 import Home from "./(tabs)/Home";
 import { auth, db } from '@/firebaseConfig';
 import { useRouter } from "expo-router";
+import { UserProvider } from "./context/UserContext";
 
 const Stack = createStackNavigator(); 
 
@@ -59,8 +60,10 @@ export default function Index() {
   //   return <LoadingScreen />; // You can use a placeholder or loading spinner here
   // }
   return (
-    <View>
-      {user ? <Home /> : <MenuAwal />}
-    </View>
+    <UserProvider>
+      <View>
+        {user ? <Home /> : <MenuAwal />}
+      </View>
+    </UserProvider>
   );
 }

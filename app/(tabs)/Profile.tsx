@@ -4,10 +4,10 @@ import { Colors } from '@/constants/Colors';
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { signOut } from "firebase/auth";
-import { auth, db } from "@/firebaseConfig";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { auth, db } from "@/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 
@@ -52,6 +52,7 @@ const Profile: React.FC<ProfileProps> = ({ modalVisible, setModalVisible }) => {
 		})
 		return () => unsubscribe();
 	  }, [])
+
 	return (    
 		<Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
 			<TouchableWithoutFeedback onPressOut={() => setModalVisible(false)}>
