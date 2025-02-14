@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import call from 'react-native-phone-call'; 
 import { Colors } from '@/constants/Colors';
+import { auth, db } from '@/firebaseConfig'
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
@@ -15,6 +18,7 @@ const Emergency = () => {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
+  const [name, setName] = useState(false);
 
   const makePhoneCall = () => {
     const args = {
@@ -25,6 +29,31 @@ const Emergency = () => {
 
     call(args).catch(console.error);
   };
+
+  useEffect(() => {
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        console.log(user)
+        if (user) {
+          console.log(user.uid)
+          try {
+            const userDocRef = doc(db, 'users', user.uid)
+            const userDocSnap = await getDoc(userDocRef)
+            if (userDocSnap.exists()) {
+              setName(userDocSnap.data().firstName)
+            } else {
+              console.log("User document not found")
+              setName('Guest')
+            }
+          } catch (error) {
+            console.error(error)
+            setName('Guest')
+          }
+        } else {
+          setName('')
+        }
+      })
+      return () => unsubscribe();
+    }, [])
 
 
   return (
@@ -40,7 +69,7 @@ const Emergency = () => {
           {/* Keterangan profile */}
           <View style={styles.profileText}>
             <Text style={styles.name}>
-              Natasya Fernanda
+              {name}
             </Text>
             <Text style={styles.role}>
               Pemilik
