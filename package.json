@@ -36,6 +36,7 @@
     "expo-font": "~13.0.1",
     "expo-haptics": "~14.0.0",
     "expo-linking": "~7.0.3",
+    "expo-location": "~18.0.6",
     "expo-router": "^3.1.0",
     "expo-splash-screen": "~0.29.18",
     "expo-status-bar": "~2.0.0",
@@ -75,8 +76,7 @@
     "react-native-swiper": "^1.6.0",
     "react-native-text-input-otp": "^1.0.7",
     "react-native-web": "~0.19.13",
-    "react-native-webview": "13.12.5",
-    "expo-location": "~18.0.5"
+    "react-native-webview": "^13.12.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

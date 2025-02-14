@@ -92,6 +92,8 @@ const Profile: React.FC<ProfileProps> = ({ modalVisible, setModalVisible }) => {
 						<View style={styles.bookmarkContainer}> 
 							<Image source={require( '../../assets/images/Rectangle 151.png')} style={styles.image}></Image>
 							<Image source={require( '../../assets/images/Rectangle 151.png')} style={styles.image}></Image>
+							<Image source={require('../../assets/images/Rectangle 151.png')} style={styles.image}></Image>
+							<Image source={require('../../assets/images/Rectangle 151.png')} style={styles.image}></Image>
 						</View> 
 						{/* Friend */}
 						<TouchableOpacity style={styles.friendSection} onPress={() => router.push('../screens/contact/Contactpage')}>

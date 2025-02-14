@@ -17,6 +17,7 @@ import Flashcard from "./FlashCard";
 import Homepagelayanan from "./Homepagelayanan";
 import Location from "./Location";
 import Home from "./(tabs)/Home";
+import MakeSchedule from "./MakeSchedule";
 import { auth, db } from '@/firebaseConfig';
 import { useRouter } from "expo-router";
 import { UserProvider } from "./context/UserContext";
