@@ -23,7 +23,7 @@ const Summary = () => {
     <ScrollView style={styles.allwrap}>
     <View style={styles.container}>
         <View style={styles.navigationButtons2}>
-            <TouchableOpacity onPress={() => router.push("./(auth)/SignInScreen")} style={styles.skipButton}>
+            <TouchableOpacity onPress={() => router.replace('../artikel/Articlepage')} style={styles.skipButton}>
             <Text style={styles.skipText}>Skip {'>'}{'>'}</Text>
             </TouchableOpacity>
         </View>
@@ -190,7 +190,7 @@ const Summary = () => {
             </View>
       </View>
 
-    <TouchableOpacity style={styles.DoneButton}>
+    <TouchableOpacity style={styles.DoneButton} onPress={() => router.replace('../artikel/Articlepage')}>
               <Text style={styles.buttonTextWhite}>Selesai</Text>
     </TouchableOpacity>
       
