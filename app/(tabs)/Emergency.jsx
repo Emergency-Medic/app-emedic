@@ -5,12 +5,10 @@ import { StatusBar } from 'expo-status-bar';
 import call from 'react-native-phone-call'; 
 import { Colors } from '@/constants/Colors';
 import { auth, db } from '@/firebaseConfig'
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Foundation from '@expo/vector-icons/Foundation';
 
@@ -19,6 +17,7 @@ const Emergency = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
   const [name, setName] = useState(false);
+  const user = auth.currentUser
 
   const makePhoneCall = () => {
     const args = {
@@ -31,29 +30,22 @@ const Emergency = () => {
   };
 
   useEffect(() => {
-      const unsubscribe = onAuthStateChanged(auth, async (user) => {
-        console.log(user)
-        if (user) {
-          console.log(user.uid)
-          try {
-            const userDocRef = doc(db, 'users', user.uid)
-            const userDocSnap = await getDoc(userDocRef)
-            if (userDocSnap.exists()) {
-              setName(userDocSnap.data().firstName)
-            } else {
-              console.log("User document not found")
-              setName('Guest')
-            }
-          } catch (error) {
-            console.error(error)
-            setName('Guest')
-          }
+      if (!user) return;
+  
+      // Listen to real-time updates on this user's document
+      const userRef = doc(db, "users", user.uid);
+      const unsubscribe = onSnapshot(userRef, (snapshot) => {
+        if (snapshot.exists()) {
+          console.log(snapshot.data())
+          const data = snapshot.data();
+          setName(snapshot.data().firstName);
         } else {
-          setName('')
+          console.log("User does not exist!");
         }
-      })
-      return () => unsubscribe();
-    }, [])
+      });
+  
+      return () => unsubscribe();  // Cleanup listener on unmount
+    }, [user]);
 
 
   return (
