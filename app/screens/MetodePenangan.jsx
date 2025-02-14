@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import { Colors } from '@/constants/Colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
-
+import BackButton from "@/components/BackButton";
 const data = {  
 	semuaKategori: [
 		{  
@@ -257,7 +257,7 @@ export default function MetodePenangan() {
 						<Text style={styles.judul}>{item.title}</Text>
 						<Text style={styles.kataKunci}>Kata Kunci: {item.keywords}</Text>
 						<Text style={styles.deskripsi}>{item.description}</Text>
-						<TouchableOpacity style={styles.pelajariSection}>
+						<TouchableOpacity style={styles.pelajariSection} onPress={() => router.push('./artikel/Articlepage')}>
 							<Text style={styles.pelajariText}>Pelajari</Text>
 							<View style={styles.pelajariIcon}>
 								<MaterialIcons name="article" size={10} color="black" />
@@ -271,10 +271,8 @@ export default function MetodePenangan() {
 
 	return (
 		<View style={styles.container}>  
+			<BackButton color={Colors.red} top={45}/>
 			<StatusBar barStyle='dark-content' translucent={true} />
-			<TouchableOpacity style={styles.headerIcon} onPress={() => router.back()}> 
-				<Ionicons name="arrow-back-circle-sharp" size={22} color={Colors.red} />
-			</TouchableOpacity> 
 			<View style={styles.rekomendasiPembelajaranTitle}>
 				<Text style={styles.titleText}>Rekomendasi Pembelajaran</Text>
 			</View>
@@ -319,6 +317,7 @@ const styles = StyleSheet.create({
 		marginLeft: 20,
 		marginRight: 20,  
 		flexDirection: 'row', 
+		marginTop: 80,
 		justifyContent: 'space-between', 
 	}, 
 	titleText: {
@@ -376,13 +375,14 @@ const styles = StyleSheet.create({
 	},
 	cart: {
 		width: '100%', 
-		height: 94, 
+		// height: 94, 
 		borderRadius: 20, 
 		flexDirection: 'row', 
 		alignItems: 'center', 
 		justifyContent: 'flex-start', 
 		marginTop: 10, 
-		paddingHorizontal: 10,
+		// paddingHorizontal: 10,
+		padding: 10
 	}, 
 	pictureSection: {
 		flexDirection: 'column',  
