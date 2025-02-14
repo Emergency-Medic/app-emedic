@@ -29,7 +29,7 @@ const Contactpage: React.FC = () => {
   const renderContact = ({ item }: { item: Contact }) => (
     <View style={styles.contactCard}>
       <View style={styles.contactInfo}>
-        <Image source={require('../../assets/images/icon.png')} style={styles.avatar} />
+        <Image source={require('../../../assets/images/icon.png')} style={styles.avatar} />
         <View>
           <Text style={styles.contactName}>{item.name}</Text>
           <Text style={styles.contactPhone}>{item.phone}</Text>
@@ -69,7 +69,7 @@ const Contactpage: React.FC = () => {
         <View style={styles.friendCountBadge}>
           <Text style={styles.friendCountNumber}>{contacts.length}/10</Text>
         </View>
-        <TouchableOpacity onPress={() => router.push("/contact/SendRequest")} style={styles.addFriend}>
+        <TouchableOpacity onPress={() => router.push("./SendRequest")} style={styles.addFriend}>
           <Octicons name="person-add" size={20} color="#29335C" />
         </TouchableOpacity>
       </View>
@@ -97,7 +97,7 @@ const Contactpage: React.FC = () => {
               <View style={styles.modalCardContent}> 
                 <View style={styles.contactCard2}>
                   <View style={styles.contactInfo}>
-                    <Image source={require('../../assets/images/icon.png')} style={styles.avatar} />
+                    <Image source={require('../../../assets/images/icon.png')} style={styles.avatar} />
                     <View>
                       {/* data kontak */}
                       {selectedContact && (
@@ -173,13 +173,13 @@ const Contactpage: React.FC = () => {
       </Modal>
       {/* footer */}
       <View style={styles.footer}>
-        <TouchableOpacity onPress={() => router.push("/contact/Contactpage")}style={styles.footerButtonActive}>
+        <TouchableOpacity onPress={() => router.push("./Contactpage")}style={styles.footerButtonActive}>
           <Text style={styles.footerButtonTextActive}>Teman</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push("/contact/SendRequest")} style={styles.footerButton}>
+        <TouchableOpacity onPress={() => router.push("./SendRequest")} style={styles.footerButton}>
           <Text style={styles.footerButtonText}>Kirim permintaan</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push("/contact/ApproveFriend")} style={styles.footerButton}>
+        <TouchableOpacity onPress={() => router.push("./ApproveFriend")} style={styles.footerButton}>
           <Text style={styles.footerButtonText}>Permintaan</Text>
         </TouchableOpacity>
       </View>

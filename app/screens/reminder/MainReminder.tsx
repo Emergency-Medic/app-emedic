@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, FlatList, TouchableOpacity, Modal, TextInput, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Colors } from "@/constants/Colors";
+// import { Colors } from "react-native/Libraries/NewAppScreen";
 import { Calendar, DateData } from "react-native-calendars";
 import { Card, IconButton, Button } from "react-native-paper";
 import BackButton from "@/components/BackButton";
