@@ -6,9 +6,8 @@ import { Colors } from '@/constants/Colors';
 import BackButton from '@/components/BackButton';
 import { router } from 'expo-router';
 import { auth, db } from "@/firebaseConfig";
-import { onAuthStateChanged, sendEmailVerification } from "firebase/auth";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { useUser } from "../../context/UserContext";
+import { sendEmailVerification } from "firebase/auth";
+import { doc, onSnapshot } from "firebase/firestore";
 import AntDesign from '@expo/vector-icons/AntDesign';
 
 export default function EditProfile() {
@@ -17,7 +16,7 @@ export default function EditProfile() {
         const [phone, setPhone] = useState('')
         const [email, setEmail] = useState('')
         const [modalVisible, setModalVisible] = useState(false);
-
+        const user = auth.currentUser
         // const { user, setUser } = useUser()
 
         const handleEmail = async () => {
@@ -35,33 +34,26 @@ export default function EditProfile() {
             }
         }
         
-          useEffect(() => {
-            const unsubscribe = onAuthStateChanged(auth, async (user) => {
-              console.log(user)
-              if (user) {
-                console.log(user.uid)
-                try {
-                  const userDocRef = doc(db, 'users', user.uid)
-                  const userDocSnap = await getDoc(userDocRef)
-                  if (userDocSnap.exists()) {
-                    setName(`${userDocSnap.data().firstName} ${userDocSnap.data().lastName}`);
-                    setUsername(userDocSnap.data().username);
-                    setPhone(userDocSnap.data().phone);
-                    setEmail(userDocSnap.data().email);
-                  } else {
-                    console.log("User document not found")
-                    setName('Guest')
-                  }
-                } catch (error) {
-                  console.error(error)
-                  setName('Guest')
-                }
-              } else {
-                setName('')
-              }
-            })
-            return () => unsubscribe();
-          }, [])
+        useEffect(() => {
+            if (!user) return;
+                
+            // Listen to real-time updates on this user's document
+            const userRef = doc(db, "users", user.uid);
+            const unsubscribe = onSnapshot(userRef, (snapshot) => {
+            if (snapshot.exists()) {
+                console.log(snapshot.data())
+                const data = snapshot.data();
+                setName(`${snapshot.data().firstName} ${snapshot.data().lastName}`);
+                setUsername(snapshot.data().username);
+                setPhone(snapshot.data().phone);
+                setEmail(snapshot.data().email);
+            } else {
+                console.log("User does not exist!");
+            }
+            });
+                
+            return () => unsubscribe();  // Cleanup listener on unmount
+        }, [user]);
 
 
 

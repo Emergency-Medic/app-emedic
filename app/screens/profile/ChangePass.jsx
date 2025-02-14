@@ -38,7 +38,7 @@ export default function ChangePass() {
           auth.currentUser.email,
           oldPass
         );
-        await reauthenrticateWithCredential(auth.currentUser, credential);
+        await reauthenticateWithCredential(auth.currentUser, credential);
         setReauthenticated(true);
       } catch (error) {
         console.error(error);

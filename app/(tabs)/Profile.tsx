@@ -8,8 +8,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { auth, db } from "@/firebaseConfig";
-import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 
 
 interface ProfileProps {  
@@ -27,31 +26,27 @@ const Profile: React.FC<ProfileProps> = ({ modalVisible, setModalVisible }) => {
 		})
 	}
 	const [name, setName] = useState('')
+	const [username, setUsername] = useState('')
+	const user = auth.currentUser
 	
 	  useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, async (user) => {
-		  console.log(user)
-		  if (user) {
-			console.log(user.uid)
-			try {
-			  const userDocRef = doc(db, 'users', user.uid)
-			  const userDocSnap = await getDoc(userDocRef)
-			  if (userDocSnap.exists()) {
-				setName(`${userDocSnap.data().firstName} ${userDocSnap.data().lastName}`);
+			if (!user) return;
+		
+			// Listen to real-time updates on this user's document
+			const userRef = doc(db, "users", user.uid);
+			const unsubscribe = onSnapshot(userRef, (snapshot) => {
+			  if (snapshot.exists()) {
+				console.log(snapshot.data())
+				const data = snapshot.data();
+				setName(snapshot.data().firstName);
+				setUsername(snapshot.data().username);
 			  } else {
-				console.log("User document not found")
-				setName('Guest')
+				console.log("User does not exist!");
 			  }
-			} catch (error) {
-			  console.error(error)
-			  setName('Guest')
-			}
-		  } else {
-			setName('')
-		  }
-		})
-		return () => unsubscribe();
-	  }, [])
+			});
+		
+			return () => unsubscribe();  // Cleanup listener on unmount
+		  }, [user]);
 
 	return (    
 		<Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
@@ -60,9 +55,9 @@ const Profile: React.FC<ProfileProps> = ({ modalVisible, setModalVisible }) => {
 					<View style={styles.modalContent}>  
 						{/* Header */}
 						<View style={styles.header}>
-							<Text style={styles.eMedicId}>E Medic ID</Text>
+							<Text style={styles.eMedicId}>Username</Text>
 							<View style={styles.idCircle}> 
-								<Text style={styles.userId}>NF92312423</Text>
+								<Text style={styles.userId}>{username}</Text>
 							</View>           
 						</View>  
 
@@ -130,31 +125,34 @@ const styles = StyleSheet.create({
   header: {
 	flexDirection: 'row', 
 	alignItems: 'center',
-	justifyContent: 'center'
+	justifyContent: 'space-between',
+	width: '100%'
   },
   eMedicId: {
 	fontFamily: 'regular',
 	padding: 20,  
-    fontSize: 10,    
+    fontSize: 13,    
     color: Colors.blue,    
   },    
   idCircle: {
-	width: 189, 
-	height: 32, 
+	// width: 189, 
+	// height: 32, 
 	borderRadius: 60,
 	backgroundColor: Colors.white, 
 	alignItems: 'center', 
 	justifyContent: 'center',
-	elevation: 10,
+	elevation: 2,
     shadowColor: Colors.black,
-    shadowOffset: { width: 0, height: 10 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 10, 
   },
   userId: {    
     fontSize: 14,    
-    color: Colors.blue,    
-  },
+    color: Colors.blue,   
+	paddingHorizontal: 25,
+	paddingVertical: 5,
+  },    
   profileSection: {
 	width: 270, 
 	height: 50, 
@@ -164,10 +162,10 @@ const styles = StyleSheet.create({
 	flexDirection: 'row', 
 	justifyContent: 'space-around',
     alignItems: 'center',
-	elevation: 10,
+	elevation: 3,
     shadowColor: Colors.black,
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.05,
     shadowRadius: 10, 
   },
   profileContainer: {
