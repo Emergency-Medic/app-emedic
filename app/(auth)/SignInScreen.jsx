@@ -154,7 +154,7 @@ export default function SignInScreen() {
                             <Feather name={showPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
                         </TouchableOpacity>
                         <View style={styles.forgotPass}>
-                            <TouchableOpacity onPress={() => router.push('./ForgotPass')} >
+                            <TouchableOpacity onPress={() => router.push('./ForgotPassInput')} >
                                 <Text style={styles.forgotPassTxt}>Lupa Kata Sandi?</Text>
                             </TouchableOpacity>
                         </View>
