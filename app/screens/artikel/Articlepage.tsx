@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Button } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
@@ -9,21 +9,55 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 // import { useEvent } from 'expo';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { db } from '@/firebaseConfig';
+import { doc, getDoc } from 'firebase/firestore';
+import { WebView } from 'react-native-webview';
+
 // ini sementara dari link dulu yaa, blm nemu videonya
-const videoSource =
-  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+// const videoSource =
+//   'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
 
 const Articlepage = () => {
     const router = useRouter();
     const [quizStarted, setQuizStarted] = useState(false);
+    const [title, setTitle] = useState('');
+    const [deskripsi, setDeskripsi] = useState('');
+    const [verifikasi, setVerifikasi] = useState('');
+    const [dos, setDos] = useState([]);
+    const [donts, setDonts] = useState([]);
+    const [gambarPenyakit, setGambarPenyakit] = useState('');
+    const [gambarDos, setGambarDos] = useState('');
+    const [video, setVideo] = useState('');
     const handlePress = () => {
+      router.push('../quiz/Quiz')
       setQuizStarted(true);
     };
+    useEffect(() => {
+      const fetchData = async () => {
+        const docRef = doc(db, "articles_no_cat", "lukatusuk");
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setTitle(data.judul);
+          setDeskripsi(data.deskripsi);
+          setVerifikasi(data.verifikasi);
+          setDos(data["do's"] || []);
+          setDonts(data["dont's"] || []);
+          setGambarPenyakit(data.gambarPenyakit || '');
+          setGambarDos(data["gambarDo's"] || '');
+          setVideo(data.video);
+        } else {
+          console.log("No such document!");
+        }
+      };
+      fetchData();
+    }, []);
     // video
-    const player = useVideoPlayer(videoSource, player => {
-      player.loop = true;
-      player.play();
-    });
+    // const player = useVideoPlayer(videoSource, player => {
+    //   player.loop = true;
+    //   player.play();
+    // });
     // const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
     return (
         <ScrollView style={styles.allwrap}>
@@ -38,73 +72,81 @@ const Articlepage = () => {
             </View>
             {/* video */}
             <View style={styles.videoContainer}>
-              <VideoView style={styles.video} player={player} allowsFullscreen allowsPictureInPicture />
-              <View style={styles.controlsContainer}>
-              </View>
+            {video ? (
+                <WebView
+                  style={styles.video}
+                  source={{ uri: video }}
+                  javaScriptEnabled={true}
+                  domStorageEnabled={true}
+                />
+              ) : (
+                <Text>No video available</Text>
+              )}
             </View>
             <View style={styles.container}>
                 <View style={styles.containerTitle}>
                     <View style={styles.titleRow}>
-                        <Text style={styles.sectionTitle}>Henti Jantung</Text>
+                    <Text style={styles.sectionTitle}>{title}</Text>
                         <MaterialIcons name="verified" size={20} color="#007bff" style={styles.verifiedIcon} />
                     </View>
                 </View>
-                <Text style={styles.verified}>Di verifikasi oleh : 
+                <Text style={styles.verified}>Diverifikasi oleh : 
                   <Text style={styles.verifiedname}>
-                   Dr. Deon, Dr. Devi
+                   {verifikasi}
                   </Text>
                 </Text>
                 <Text style={styles.description}>
-                    Henti jantung adalah kondisi darurat ketika jantung tiba-tiba berhenti berdetak, menghentikan aliran darah ke otak dan organ vital, yang bisa berakibat fatal jika tidak segera ditangani.
+                    {deskripsi}
                 </Text>
+
+                {gambarPenyakit ? (
+                  <Image source={{ uri: gambarPenyakit }} style={styles.aedImage} />
+                ) : null}
             </View>
 
             <View style={styles.container}>
                 {/* Penanganan Section */}
-                <Text style={styles.sectionHeader}>Penanganan</Text>
-                <View style={styles.card}>
-                  <View>
-                    <View style={styles.iconContainer}>
-                      <MaterialCommunityIcons name="debug-step-into" size={24} color='#A8201A' />
+                <Text style={styles.sectionHeader}>Dont's</Text>
+                {donts.length > 0 ? (
+                  donts.map((item, index) => (
+                    <View key={index} style={styles.card}>
+                      <View>
+                        <View style={styles.iconContainer}>
+                          <MaterialCommunityIcons name="debug-step-into" size={24} color="#A8201A" />
+                        </View>
+                        <View style={styles.textContainer}>
+                          <Text style={styles.cardTitle}>Peringatan {index + 1}</Text>
+                          <Text style={styles.cardContent}>{item}</Text>
+                        </View>
+                      </View>
                     </View>
-                    <View style={styles.textContainer}>
-                      <Text style={styles.cardTitle}>Pastikan Keamanan Lingkungan</Text>
-                      <Text style={styles.cardContent}>
-                        Pastikan area aman untuk Anda dan korban.
-                      </Text>
+                  ))
+                ) : (
+                  <Text style={styles.cardContent}>No Do's available</Text>
+                )}
+
+                <Text style={styles.sectionHeader}>Do's</Text>
+                {dos.length > 0 ? (
+                  dos.map((item, index) => (
+                    <View key={index} style={styles.card}>
+                      <View>
+                        <View style={styles.iconContainer}>
+                          <MaterialCommunityIcons name="debug-step-into" size={24} color="#A8201A" />
+                        </View>
+                        <View style={styles.textContainer}>
+                          <Text style={styles.cardTitle}>Langkah {index + 1}</Text>
+                          <Text style={styles.cardContent}>{item}</Text>
+                        </View>
+                      </View>
                     </View>
-                  </View>
-                </View>
-                <View style={styles.card}>
-                  <View>
-                    <View style={styles.iconContainer}>
-                      <MaterialCommunityIcons name="debug-step-into" size={24} color='#A8201A' />
-                    </View>
-                    <View style={styles.textContainer}>
-                      <Text style={styles.cardTitle}>Periksa Respons Korban</Text>
-                      <Text style={styles.cardContent}>
-                      Goyangkan dan panggil korban. Jika tidak merespons, segera lanjutkan ke langkah berikut.
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-                <View style={styles.card}>
-                  <View>
-                    <View style={styles.iconContainer}>
-                      <MaterialCommunityIcons name="debug-step-into" size={24} color='#A8201A' />
-                    </View>
-                    <View style={styles.textContainer}>
-                      <Text style={styles.cardTitle}>Panggil Bantuann</Text>
-                      <Text style={styles.cardContent}>
-                      Hubungi layanan darurat medis kami. Minta orang lain mencari Automated External Defibrillator (AED) jika tersedia.
-                      </Text>
-                      <Image source={{ uri: 'https://via.placeholder.com/100' }} style={styles.aedImage} />
-                    <Text style={styles.cardContent}>
-                      / alat medis yang untuk menganalisis dan memberikan kejutan listrik secara otomatis kepada seseorang yang mengalami henti jantung.
-                     </Text>
-                    </View>
-                  </View>
-                </View>
+                  ))
+                ) : (
+                  <Text style={styles.cardContent}>No Do's available</Text>
+                )}
+
+                {gambarDos ? (
+                  <Image source={{ uri: gambarDos }} style={styles.aedImage} />
+                ) : null}
             </View>
 
             <View style={styles.container}>
@@ -122,7 +164,7 @@ const Articlepage = () => {
                           )}
                         </View>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => router.push("./MenuAwal")} style={styles.finishButton}>
+                      <TouchableOpacity onPress={() => router.back()} style={styles.finishButton}>
                         <Text style={styles.finishButtonText}>Selesai</Text>
                       </TouchableOpacity>
             </View>
@@ -155,11 +197,12 @@ const styles = StyleSheet.create({
       marginTop: 15,
       flex: 1,
       alignItems: 'center',
-      justifyContent: 'center'
+      justifyContent: 'center',
+      marginBottom: 15,
     },
     video: {
-      width: 350,
-      height: 220,
+      width: 400,
+      height: 250,
       borderRadius: 10,
     },
     controlsContainer: {
@@ -253,10 +296,11 @@ const styles = StyleSheet.create({
       fontFamily: 'regular',
     },
     aedImage: {
-      width: 100,
-      height: 100,
-      margin: 8,
+      width: 300,
+      height: 300,
+      // margin: 8,
       alignSelf: 'center',
+      resizeMode: 'contain'
     },
     footerText: {
       fontSize: 14,
@@ -304,7 +348,7 @@ const styles = StyleSheet.create({
     finishButtonText: {
       color: Colors.white,
       fontSize: 20,
-      fontFamily: 'bold'
+      fontFamily: 'semibold'
     },
 });
 

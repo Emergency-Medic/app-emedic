@@ -1,26 +1,85 @@
-import { View, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native'
+import { View, StyleSheet, Text, TouchableOpacity, TextInput, Alert } from 'react-native'
 import { Colors } from '@/constants/Colors';
 import React, { useState } from 'react'
 import BackButton from '@/components/BackButton'
 import { useRouter } from "expo-router";
 import Feather from '@expo/vector-icons/Feather';
+import { auth, db } from "@/firebaseConfig";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { EmailAuthProvider, reauthenticateWithCredential, updatePassword } from 'firebase/auth';
 
 export default function ChangePass() {
   const [oldPass, setOldPass] = useState('')
   const [newPass, setnewPass] = useState('')
   const [confNewPass, setConfNewPass] = useState('')
 
+  const [errorPass, setErrorPass] = useState('')
+  const [errorPassNew, setErrorPassNew] = useState('')
+  const [errorPassNewConf, setErrorPassNewConf] = useState('')
+
   const [showOldPass, setShowOldPass] = useState(false)  
   const [showNewPass, setShowNewPass] = useState(false)  
   const [showConfPass, setShowConfPass] = useState(false)  
+  const [reauthenticated, setReauthenticated] = useState(false)
 
   const router = useRouter();
+
+  const reauthenticate = async () => {
+    setErrorPass('')
+    if (!oldPass) {
+      setErrorPass("Kata sandi wajib diisi")
+      return
+    } else if (oldPass.length < 6) {
+      setErrorPass("Kata sandi minimal 6 karakter");
+      return
+    }
+      try {
+        const credential = EmailAuthProvider.credential(
+          auth.currentUser.email,
+          oldPass
+        );
+        await reauthenrticateWithCredential(auth.currentUser, credential);
+        setReauthenticated(true);
+      } catch (error) {
+        console.error(error);
+        if (error.code === 'auth/wrong-password') {
+          setErrorPass("Password salah");
+        }
+      }
+    }
+
+  const handlePassUpdate = async () => {
+    setErrorPassNew('')
+    setErrorPassNewConf('')
+
+    if (!newPass) {
+      setErrorPassNew("Kata sandi baru wajib diisi")
+      return
+    } else if (newPass.length < 6) {
+      setErrorPassNew("Kata sandi minimal 6 karakter");
+      return
+    }
+    if (confNewPass !== newPass) {
+      setErrorPassNewConf("Konfirmasi kata sandi tidak cocok")
+      return
+    } 
+
+    try {
+      await updatePassword(auth.currentUser, newPass)
+      Alert.alert('Berhasil', 'Password Anda berhasil diubah');
+      router.back();
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return (
     <View style={styles.allwrap}>
+      {!reauthenticated ? 
+      <View>
         <BackButton color={Colors.red} top={45}/>
         <Text style={styles.title}>Ubah Kata Sandi</Text>
         <Text style={styles.par}>
-        Ubah kata sandi yang kuat, aman, namun dapat diingat oleh Anda
+        Untuk keamanan, masukkan kata sandi lama Anda dahulu
         </Text>
         <View style={styles.wrapform}>
           <Text style={styles.titleName}>Kata Sandi Lama</Text>
@@ -31,10 +90,21 @@ export default function ChangePass() {
             onChangeText={setOldPass}
             style={styles.input}
             />
+            {errorPass ? <Text style={styles.errorText}>{errorPass}</Text> : null}
             <TouchableOpacity onPress={() => setShowOldPass(!showOldPass)} style={styles.eyeIcon}>
               <Feather name={showOldPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
             </TouchableOpacity>
         </View>
+        <TouchableOpacity style={styles.submit} onPress={reauthenticate}>
+                  <Text style={styles.buttonText}>Konfirmasi</Text>
+        </TouchableOpacity>
+      </View> : 
+      <View>
+        <BackButton color={Colors.red} top={45}/>
+        <Text style={styles.title}>Ubah Kata Sandi</Text>
+        <Text style={styles.par}>
+        Ubah kata sandi yang kuat, aman, namun dapat diingat oleh Anda
+        </Text>
         <View style={styles.wrapform}>
           <Text style={styles.titleName}>Kata Sandi Baru</Text>
           <TextInput
@@ -44,6 +114,7 @@ export default function ChangePass() {
             onChangeText={setnewPass}
             style={styles.input}
             />
+            {errorPassNew ? <Text style={styles.errorText}>{errorPassNew}</Text> : null}
             <TouchableOpacity onPress={() => setShowNewPass(!showNewPass)} style={styles.eyeIcon}>
               <Feather name={showNewPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
             </TouchableOpacity>
@@ -57,13 +128,16 @@ export default function ChangePass() {
             onChangeText={setConfNewPass}
             style={styles.input}
             />
+            {errorPassNewConf ? <Text style={styles.errorText}>{errorPassNewConf}</Text> : null}
             <TouchableOpacity onPress={() => setShowConfPass(!showConfPass)} style={styles.eyeIcon}>
               <Feather name={showConfPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
             </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.submit} onPress={() => router.back()}>
+        <TouchableOpacity style={styles.submit} onPress={handlePassUpdate}>
           <Text style={styles.buttonText}>Konfirmasi</Text>
         </TouchableOpacity>
+      </View>
+      }
     </View>
   )
 }
@@ -71,6 +145,11 @@ const styles = StyleSheet.create({
     allwrap: {
       height: '100%',
       backgroundColor: Colors.white,
+    },
+    errorText: {
+      color: Colors.red,
+      fontSize: 10,
+      fontFamily: 'light'
     },
     title: {
       fontSize: 24,

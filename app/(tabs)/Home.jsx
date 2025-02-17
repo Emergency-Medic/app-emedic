@@ -1,12 +1,13 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { ImageBackground, Modal, ScrollView, View, Image ,  Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Animated, Alert, PanResponder } from 'react-native';
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
 import call from 'react-native-phone-call'; 
 import Swiper from 'react-native-swiper';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { auth, db } from '@/firebaseConfig'
+import { doc, onSnapshot } from "firebase/firestore";
 
 const data = {  
   kategori1: [  
@@ -70,7 +71,30 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState('kategori1');
 
   const [sliderValue, setSliderValue] = useState(new Animated.Value(0));
-  
+  const [name, setName] = useState('')
+  const user = auth.currentUser
+  const [userData, setUserData] = useState(null)
+
+  useEffect(() => {
+    if (!user) return;
+
+    // Listen to real-time updates on this user's document
+    const userRef = doc(db, "users", user.uid);
+    const unsubscribe = onSnapshot(userRef, (snapshot) => {
+      if (snapshot.exists()) {
+        console.log(snapshot.data())
+        const data = snapshot.data();
+        // setUserData({...data});
+        setName(snapshot.data().firstName);
+      } else {
+        console.log("User does not exist!");
+        setUserData(null);
+      }
+    });
+
+    return () => unsubscribe();  // Cleanup listener on unmount
+  }, [user]);
+
       const makePhoneCall = () => {
           const args = {
             number: '112',
@@ -104,30 +128,32 @@ export default function Home() {
           const backgroundColor = item.id % 2 === 0 ? Colors.blue : Colors.red;
           return (
             <View style={[styles.cart, { backgroundColor }]} key={item.id}> 
-              <View style={styles.pictureSection}>
-                <MaterialIcons name="verified" size={14} color={Colors.white} />
-                <Image source={item.image} style={styles.image}/>
-              </View>
-              <View style={styles.textSection}>
-                <Text style={styles.judul}> 
-                  {item.title} 
-                </Text>
-                <Text style={styles.kataKunci}>
-                  Kata Kunci: {item.keywords}
-                </Text>
-                <Text style={styles.deskripsi}>
-                  {item.description} 
-                </Text>
-    
-                <TouchableOpacity style={styles.pelajariSection}> 
-                  <Text style={styles.pelajariText}> 
-                    Pelajari
+              <View style={styles.contain}>
+                <View style={styles.pictureSection}>
+                  <MaterialIcons name="verified" size={14} color={Colors.white} />
+                  <Image source={item.image} style={styles.image}/>
+                </View>
+                <View style={styles.textSection}>
+                  <Text style={styles.judul}> 
+                    {item.title} 
                   </Text>
-                  <View style={styles.pelajariIcon}> 
-                    <MaterialIcons name="article" size={10} color="black" />
-                  </View>
-                </TouchableOpacity>
-              </View>  
+                  <Text style={styles.kataKunci}>
+                    Kata Kunci: {item.keywords}
+                  </Text>
+                  <Text style={styles.deskripsi}>
+                    {item.description} 
+                  </Text>
+      
+                  <TouchableOpacity style={styles.pelajariSection} onPress={() => router.push('/screens/artikel/Articlepage')}> 
+                    <Text style={styles.pelajariText}> 
+                      Pelajari
+                    </Text>
+                    <View style={styles.pelajariIcon}> 
+                      <MaterialIcons name="article" size={10} color="black" />
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
           );
         }); 
@@ -139,22 +165,22 @@ export default function Home() {
         {/* Hello, (name) */}
         <View style={styles.header}> 
           <View style={styles.profileSection}> 
-            <View style={styles.profileIcon}>
+            <TouchableOpacity style={styles.profileIcon}>
               <MaterialIcons name="person-outline" size={18} color={Colors.grey} />
-            </View>
+            </TouchableOpacity>
             {/* Greating Section */}
             <View style={styles.greatingSection}>
               <Text style={styles.halo}>
                 Halo,
               </Text>
               <Text style={styles.name}> 
-                Natasya
+                {name}
               </Text>
             </View>
           </View> 
-          <View style={styles.alarmIcon}> 
+          {/* <View style={styles.alarmIcon}> 
             <MaterialIcons name="alarm" size={20} color= {Colors.blue} />
-          </View>
+          </View> */}
         </View>
 
         {/* Content */}
@@ -189,7 +215,7 @@ export default function Home() {
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.
               </Text>
             </View>
-            <TouchableOpacity style={styles.nextButtonTap}>
+            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/Slider")} style={styles.nextButtonTap}>
               <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
             </TouchableOpacity>
           </View>
@@ -215,7 +241,7 @@ export default function Home() {
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.
               </Text>
             </View>
-            <TouchableOpacity style={styles.nextButtonTap}>
+            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/Slider")} style={styles.nextButtonTap}>
               <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
             </TouchableOpacity>
           </View>
@@ -241,7 +267,7 @@ export default function Home() {
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit.
               </Text>
             </View>
-            <TouchableOpacity style={styles.nextButtonTap}>
+            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/Slider")} style={styles.nextButtonTap}>
               <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
             </TouchableOpacity>
           </View>
@@ -420,6 +446,7 @@ const styles = StyleSheet.create({
     marginRight: 32,  
     flexDirection: 'row', 
     justifyContent: 'space-between', 
+    alignItems: 'center'
   }, 
   titleText: {
     fontFamily: 'bold', 
@@ -470,28 +497,33 @@ const styles = StyleSheet.create({
 		fontFamily: 'regular', 
 		color: '#ACACAC',
 	},
-  cartContainer: { 
-    marginLeft: 15, 
+  cartContainer: {
+    marginTop: 10,  
+    marginLeft: 25, 
     marginRight: 30,
     borderRadius: 20,
-    padding: 10,
   },
   cart: {
-    width: 250, 
-    height: 110, 
+    // width: '50%', 
+    // height: 110, 
     backgroundColor: Colors.blue,
     borderRadius: 20, 
-    flexDirection: 'row', 
+    marginLeft: 10, 
+  }, 
+  contain: {
+    flexDirection: 'row',
     alignContent: 'center', 
     justifyContent: 'center', 
-    padding: 10, 
+    paddingHorizontal: 20, 
+    paddingVertical: 10,
     marginLeft: 10,
+    gap: 10
   }, 
   pictureSection: {
     flexDirection: 'column',  
     alignItems:'flex-start', 
     justifyContent: 'center',
-    marginLeft: 32,  
+    // marginLeft: 32,  
   },
   image: { 
     width: 42, 
@@ -500,7 +532,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
   },
   textSection: {
-    marginLeft: 10,  
+    // marginLeft: 10,  
     justifyContent: 'flex-start', 
   },
   judul: {
@@ -520,13 +552,14 @@ const styles = StyleSheet.create({
     fontFamily: 'regular', 
     fontSize: 10, 
     marginTop: 5, 
-    marginRight: 40, 
+    // marginRight: 40, 
   }, 
   pelajariSection: {
     flexDirection: 'row', 
     alignItems: 'center', 
     justifyContent: 'flex-end',  
-    marginRight: 32, 
+    // marginRight: 32,
+    marginTop: 10 
   }, 
   pelajariText: {
     marginRight: 6, 

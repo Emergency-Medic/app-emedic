@@ -9,14 +9,22 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "config": {
+        "googleMapsApiKey": "REDACTED"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.appemedic"
+      "package": "com.anonymous.appemedic",
+      "config": {
+        "googleMaps": {
+          "apiKey": "REDACTED"
+        }
+      }
     },
     "web": {
       "bundler": "metro",

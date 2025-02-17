@@ -39,7 +39,7 @@ const EmergencyCallScreen = () => {
           {/* Keterangan profile */}
           <View style={styles.profileText}>
             <Text style={styles.name}>
-              Natasya Fernanda
+              Guest
             </Text>
             <Text style={styles.role}>
               Pemilik
