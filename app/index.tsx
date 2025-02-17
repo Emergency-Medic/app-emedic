@@ -1,26 +1,11 @@
 import { useFonts } from "expo-font";
-import { Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { NavigationContainer } from "@react-navigation/native";
+import { View } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { StatusBar } from 'expo-status-bar';
-import EmergencyCallScreen from "./EmergencyCallScreen";
 import MenuAwal from "./MenuAwal";
 import React, {useEffect, useState} from "react";
-import Onboarding from "./Onboarding"
-import SignInScreen from './(auth)/SignInScreen'
-import RegisterScreen from './(auth)/RegisterScreen'
-import Quiz from "./screens/quiz/Quiz"
-import Summary from "./screens/quiz/Summary";
-import ScoreScreen from "./screens/quiz/ScoreScreen";
-import Flashcard from "./FlashCard";
-import Homepagelayanan from "./Homepagelayanan";
-import Location from "./Location";
 import Home from "./(tabs)/Home";
-import MakeSchedule from "./MakeSchedule";
-import { auth, db } from '@/firebaseConfig';
+import { auth } from '@/firebaseConfig';
 import { useRouter } from "expo-router";
-import { UserProvider } from "./context/UserContext";
 
 const Stack = createStackNavigator(); 
 
@@ -61,10 +46,8 @@ export default function Index() {
   //   return <LoadingScreen />; // You can use a placeholder or loading spinner here
   // }
   return (
-    <UserProvider>
       <View>
         {user ? <Home /> : <MenuAwal />}
       </View>
-    </UserProvider>
   );
 }
