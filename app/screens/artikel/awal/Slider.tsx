@@ -5,6 +5,8 @@ import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import BackButton from '@/components/BackButton'
+import { Colors } from '@/constants/Colors';
 
 const Slider = () => {
     const swiperRef = useRef<Swiper | null>(null);
@@ -12,6 +14,7 @@ const Slider = () => {
 
   return (
     <View style={styles.container}>
+      <BackButton color={Colors.red} top={45} />
       <StatusBar style="light" translucent={true} backgroundColor="transparent" />
       <Swiper
         autoplay

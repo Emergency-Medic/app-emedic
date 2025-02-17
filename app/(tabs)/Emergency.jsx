@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import call from 'react-native-phone-call'; 
 import { Colors } from '@/constants/Colors';
+import { auth, db } from '@/firebaseConfig'
+import { doc, onSnapshot } from "firebase/firestore";
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Foundation from '@expo/vector-icons/Foundation';
 
@@ -15,6 +16,8 @@ const Emergency = () => {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
+  const [name, setName] = useState(false);
+  const user = auth.currentUser
 
   const makePhoneCall = () => {
     const args = {
@@ -25,6 +28,24 @@ const Emergency = () => {
 
     call(args).catch(console.error);
   };
+
+  useEffect(() => {
+      if (!user) return;
+  
+      // Listen to real-time updates on this user's document
+      const userRef = doc(db, "users", user.uid);
+      const unsubscribe = onSnapshot(userRef, (snapshot) => {
+        if (snapshot.exists()) {
+          console.log(snapshot.data())
+          const data = snapshot.data();
+          setName(snapshot.data().firstName);
+        } else {
+          console.log("User does not exist!");
+        }
+      });
+  
+      return () => unsubscribe();  // Cleanup listener on unmount
+    }, [user]);
 
 
   return (
@@ -40,7 +61,7 @@ const Emergency = () => {
           {/* Keterangan profile */}
           <View style={styles.profileText}>
             <Text style={styles.name}>
-              Natasya Fernanda
+              {name}
             </Text>
             <Text style={styles.role}>
               Pemilik

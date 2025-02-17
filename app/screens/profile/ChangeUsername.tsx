@@ -3,10 +3,30 @@ import { Colors } from '@/constants/Colors';
 import React, { useState } from 'react'
 import BackButton from '@/components/BackButton'
 import { useRouter } from "expo-router";
+import { auth, db } from "@/firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 export default function ChangeUsername() {
   const [username, setUsername] = useState('')
+  const [error, setError] = useState('')
   const router = useRouter();
+
+  const updateUsername = async () => {
+    setError('')
+      if (!username) {
+        setError('Username harus diisi')
+        return
+      }
+      try {
+        if (!auth.currentUser) return
+        const userRef = doc(db, 'users', auth.currentUser.uid)
+        await updateDoc(userRef, { username: username })
+        router.back()
+      } catch (error) {
+        console.log('Error updating user', error)
+      }
+  }
   return (
     <View style={styles.allwrap}>
         <BackButton color={Colors.red} top={45}/>
@@ -22,8 +42,9 @@ export default function ChangeUsername() {
             onChangeText={setUsername}
             style={styles.input}
             />
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
         </View>
-        <TouchableOpacity style={styles.submit} onPress={() => router.back()}>
+        <TouchableOpacity style={styles.submit} onPress={updateUsername}>
           <Text style={styles.buttonText}>Konfirmasi</Text>
         </TouchableOpacity>
     </View>
@@ -33,6 +54,11 @@ const styles = StyleSheet.create({
     allwrap: {
       height: '100%',
       backgroundColor: Colors.white,
+    },
+    errorText: {
+      color: Colors.red,
+      fontSize: 10,
+      fontFamily: 'light'
     },
     title: {
       fontSize: 24,

@@ -9,7 +9,7 @@ import { Picker } from "@react-native-picker/picker";
 import Checkbox from 'expo-checkbox';
 
 
-const EditSchedule = () => {
+const MakeSchedule = () => {
     const [medName, setMedName] = useState('Obat XX');
     const [dose, setDose] = useState(1);
     const [frequency, setFrequency] = useState(2);
@@ -57,11 +57,11 @@ const EditSchedule = () => {
     return (
         <ScrollView style={styles.container}>
             <View>
-            <BackButton color={Colors.red} top={45} left={0}/>
+            <BackButton color={Colors.red} top={45}/>
             </View>
             
             <View style={styles.inContainer}>
-                <Text style={styles.title}>Edit Pengingat</Text>
+                <Text style={styles.title}>Pengingat Baru</Text>
                 <Text style={styles.label}>Nama Obat</Text>
                 <TextInput 
                     style={styles.input}
@@ -88,14 +88,14 @@ const EditSchedule = () => {
                     
                     <Text style={styles.frequencyText2}>sdm</Text>
                     <View style={styles.choice}>
-                        {/* <Picker
+                        <Picker
                             selectedValue={selectedValue}
                             onValueChange={(itemValue) => setSelectedValue(itemValue)}
                             style={{ fontFamily: 'regular' }}
                         >
                             <Picker.Item label="SDM" value="sdm" />
                             <Picker.Item label="SDT" value="sdt" />
-                        </Picker> */}
+                        </Picker>
                     </View>
 
                     <View style={styles.upDownContainer}>
@@ -136,31 +136,31 @@ const EditSchedule = () => {
                     </TouchableOpacity>
 
                 </View>
-                <View>
-                    {
-                        reminders.map((item, index) => (
-                            <View key={index} style={styles.reminderCard}>
-                                <Text style={styles.timeText}>{item.time}</Text>
-                                <View style={styles.switchContainer}>
-                                    <View style={styles.checkboxContainer}>
-                                        <Checkbox
-                                            value={checkedItems[index] || false}
-                                            onValueChange={() => {
-                                            const newCheckedItems = [...checkedItems];
-                                            newCheckedItems[index] = !newCheckedItems[index]; // Toggle state
-                                            setCheckedItems(newCheckedItems);
-                                            }}
-                                            color={checkedItems[index] ? "#13070C" : undefined}
-                                        />
-                                        <Text style={styles.checkboxLabelBlue}>
-                                            Ingatkan saya 15 menit setelahnya
-                                        </Text>
-                                    </View>
-                                </View>
+                <FlatList
+                    data={reminders}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({ item, index }) => (
+                        <View style={styles.reminderCard}>
+                        <Text style={styles.timeText}>{item.time}</Text>
+                        <View style={styles.switchContainer}>
+                            <View style={styles.checkboxContainer}>
+                            <Checkbox
+                                value={checkedItems[index] || false}
+                                onValueChange={() => {
+                                const newCheckedItems = [...checkedItems];
+                                newCheckedItems[index] = !newCheckedItems[index]; // Toggle state
+                                setCheckedItems(newCheckedItems);
+                                }}
+                                color={checkedItems[index] ? "#13070C" : undefined}
+                            />
+                            <Text style={styles.checkboxLabelBlue}>
+                                Ingatkan saya 15 menit setelahnya
+                            </Text>
                             </View>
-                        ))
-                    }
-                </View>
+                        </View>
+                        </View>
+                    )}
+                    />
 
                 <Text style={styles.label}>Deskripsi (Opsional)</Text>
                 <TextInput style={styles.descriptionInput} placeholder="Isi dengan informasi tambahan obat" />
@@ -187,14 +187,12 @@ const styles = StyleSheet.create({
     },
     checkboxContainer: {
         flexDirection: 'row',
-        // marginTop: 5,
-        gap: 7
+        marginTop: 5,
     },
     checkboxLabelBlue: {
-        // marginLeft: 5,
+        marginLeft: 5,
         fontFamily: 'semibold',
         color: '#13070C',
-        fontSize: 12
     },
     checkboxLabelRed: {
         marginLeft: 5,
@@ -320,17 +318,18 @@ const styles = StyleSheet.create({
         fontFamily: 'regular',
     },
     saveButton: {
+        marginHorizontal: 25,
         backgroundColor: '#A8201A',
-        padding: 12,
         borderRadius: 30,
+        padding: 12,
+        justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 30,
-        marginBottom: 30,
+        marginTop: 70,
     },
     saveButtonText: {
         color: '#fff',
         fontSize: 20,
-        fontFamily: 'semibold',
+        fontWeight: 'semibold',
     },
     or: {
         fontSize: 12,
@@ -349,17 +348,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    gap: 10
   },
   timeText: {
     fontSize: 18,
-    fontFamily: "semibold",
+    fontWeight: "semibold",
     color: "#13070C",
   },
   switchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 20
   },
   button: {
     backgroundColor: '#A8201A',
@@ -374,4 +371,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditSchedule;
+export default MakeSchedule;

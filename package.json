@@ -20,7 +20,9 @@
     "@react-native-community/art": "^1.2.0",
     "@react-native-community/datetimepicker": "github:react-native-community/datetimepicker",
     "@react-native-community/masked-view": "^0.1.11",
-    "@react-native-firebase/auth": "^21.7.1",
+    "@react-native-firebase/app": "^21.10.0",
+    "@react-native-firebase/auth": "^21.10.0",
+    "@react-native-firebase/firestore": "^21.10.0",
     "@react-native-google-signin/google-signin": "^13.1.0",
     "@react-native-picker/picker": "2.9.0",
     "@react-navigation/bottom-tabs": "^7.0.0",
@@ -36,6 +38,7 @@
     "expo-font": "~13.0.1",
     "expo-haptics": "~14.0.0",
     "expo-linking": "~7.0.3",
+    "expo-location": "~18.0.6",
     "expo-router": "^3.1.0",
     "expo-splash-screen": "~0.29.18",
     "expo-status-bar": "~2.0.0",
@@ -75,7 +78,8 @@
     "react-native-swiper": "^1.6.0",
     "react-native-text-input-otp": "^1.0.7",
     "react-native-web": "~0.19.13",
-    "react-native-webview": "13.12.5"
+    "react-native-webview": "^13.12.5",
+    "expo-dev-client": "~5.0.12"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
