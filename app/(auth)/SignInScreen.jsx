@@ -76,9 +76,15 @@ export default function SignInScreen() {
             if (error.code === 'auth/invalid-credential') {
                 setErrors((prevErrors) => ({
                   ...prevErrors,
-                  password: 'Email atau password salah. Silakan coba lagi',
+                  email: 'Email salah. Silakan coba lagi',
                 }));
-              } else {
+              } 
+              if (error.code === 'auth/wrong-password') {
+                setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  password: 'Password salah. Silakan coba lagi',
+                })) }
+              else {
                 console.error("Error registering user:", error.message);
               }
         }
