@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Modal, TouchableWithoutFeedback } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Modal, TouchableWithoutFeedback, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -7,39 +7,159 @@ import Feather from '@expo/vector-icons/Feather';
 import BackButton from '@/components/BackButton';
 import { useRouter } from "expo-router";
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { auth, db } from '@/firebaseConfig';
+import { getDoc, doc, collection, getDocs, updateDoc, addDoc, where, query } from "firebase/firestore";
 
-type Contact = {
+
+interface FriendRequest {
   id: string;
+  senderUid: string;
+  senderName: string;
+  // ... other properties of the friend request 
+}
+
+interface UserData {
   name: string;
-  phone: string;
-};
+  // ... properti lain dari data user Anda
+}
+
+// type Contact = {
+//     id: string;
+//     name: string;
+//     phone: string;
+// };
 
 const ApproveFriend: React.FC = () => {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
-  const contacts: Contact[] = [
-    { id: '1', name: 'Orang X', phone: '+62 812 1565 2273' },
-  ];
+  const [selectedRequest, setSelectedRequest] = useState<FriendRequest | null>(null);
+  const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
+  const user = auth.currentUser;
 
-  const renderContact = ({ item }: { item: Contact }) => (
-    <View style={styles.contactCard}>
-      <View style={styles.contactInfo}>
-        <Image source={require('../../../assets/images/icon.png')} style={styles.avatar} />
-        <View>
-          <Text style={styles.contactName}>{item.name}</Text>
-          <Text style={styles.contactPhone}>{item.phone}</Text>
-        </View>
-      </View>
-      <View style={styles.actionButtons}>
-        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.iconButtonEdit}>
-        <Feather name="check" size={18} color="#1AA832" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButtonDelete}>
-          <MaterialIcons name="delete-outline" size={18} color="#A8201A" />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+  useEffect(() => {
+    const fetchFriendRequests = async () => {
+        if (user) {
+            try {
+                const friendRequestsRef = collection(db, "friend_requests");
+                const q = query(
+                    friendRequestsRef,
+                    where("receiverUid", "==", user.uid),
+                    where("status", "==", "pending")
+                );
+                const querySnapshot = await getDocs(q);
+
+                const requests: FriendRequest[] = []; // Inisialisasi array di luar loop
+
+                for (const currentDoc of querySnapshot.docs) {
+                  const requestData = currentDoc.data();
+                  const senderUid = requestData.senderUid;
+      
+                  try {
+                      const senderRef = doc(db, "users", senderUid);
+                      const senderSnapshot = await getDoc(senderRef);
+                      const senderData = senderSnapshot.data() as UserData; // Type assertion
+      
+                      const friendRequestData = {
+                          id: currentDoc.id,
+                          senderUid: senderUid,
+                          senderName: senderData?.name ?? "Nama Tidak Tersedia", // Optional chaining dan nullish coalescing
+                          // ... other properties
+                      };
+                      requests.push(friendRequestData);
+                  } catch (senderError) {
+                      console.error(`Error getting sender ${senderUid} data:`, senderError);
+                      const friendRequestData = {
+                          id: currentDoc.id,
+                          senderUid: senderUid,
+                          senderName: "Nama Tidak Tersedia",
+                          // ... other properties
+                      };
+                      requests.push(friendRequestData);
+                  }
+              }
+              setFriendRequests(requests);
+
+            } catch (error) {
+                console.error("Error fetching friend requests:", error);
+                Alert.alert("Error", "Gagal mengambil daftar permintaan.");
+            }
+        }
+    };
+
+    fetchFriendRequests();
+}, [user]);
+
+  const approveFriendRequest = async () => {
+      if (selectedRequest && user) {
+          try {
+              const requestRef = doc(db, "friend_requests", selectedRequest.id);
+              await updateDoc(requestRef, { status: "accepted" });
+
+              const userFriendsRef = collection(db, "users", user.uid, "friends");
+              await addDoc(userFriendsRef, { friendUid: selectedRequest.senderUid });
+
+              const senderFriendsRef = collection(db, "users", selectedRequest.senderUid, "friends");
+              await addDoc(senderFriendsRef, { friendUid: user.uid });
+
+              setFriendRequests(friendRequests.filter(request => request.id !== selectedRequest.id));
+
+              Alert.alert("Success", "Permintaan pertemanan diterima.");
+              setModalVisible(false);
+          } catch (error) {
+              console.error("Error approving friend request:", error);
+              Alert.alert("Error", "Gagal menerima permintaan pertemanan.");
+          }
+      } else {
+          if (!user) {
+              Alert.alert("Perhatian", "Anda harus login untuk menerima permintaan.");
+          } else if (!selectedRequest) {
+              Alert.alert("Perhatian", "Pilih permintaan yang ingin diterima.");
+          }
+      }
+  };
+
+  const rejectFriendRequest = async (requestId: string) => {
+      if (requestId && user) {
+          try {
+              const requestRef = doc(db, "friend_requests", requestId);
+              await updateDoc(requestRef, { status: "rejected" });
+              setFriendRequests(friendRequests.filter(request => request.id !== requestId));
+              Alert.alert("Success", "Permintaan pertemanan ditolak.");
+              setModalVisible(false);
+          } catch (error) {
+              console.error("Error rejecting friend request:", error);
+              Alert.alert("Error", "Gagal menolak permintaan pertemanan.");
+          }
+      } else {
+          if (!user) {
+              Alert.alert("Perhatian", "Anda harus login untuk menolak permintaan.");
+          } else if (!requestId) {
+              Alert.alert("Perhatian", "Permintaan tidak valid.");
+          }
+      }
+  };
+
+  const renderContact = ({ item }: { item: FriendRequest }) => {
+      return (
+          <View style={styles.contactCard}>
+              {/* ... (avatar and sender info) */}
+              <View>
+                  <Text>{item.senderName}</Text> {/* Tampilkan nama pengirim */}
+              </View>
+              <View style={styles.actionButtons}>
+                  <TouchableOpacity onPress={() => {
+                      setSelectedRequest(item);
+                      setModalVisible(true);
+                  }} style={styles.iconButtonEdit}>
+                      <Feather name="check" size={18} color="#1AA832" />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => rejectFriendRequest(item.id)} style={styles.iconButtonDelete}>
+                      <MaterialIcons name="delete-outline" size={18} color="#A8201A" />
+                  </TouchableOpacity>
+              </View>
+          </View>
+      );
+  };
 
   const renderHeader = () => (
     <>
@@ -53,7 +173,7 @@ const ApproveFriend: React.FC = () => {
       <View style={styles.friendCount}>
         <Text style={styles.friendCountText}>Daftar Permintaan Teman</Text>
         <View style={styles.friendCountBadge}>
-          <Text style={styles.friendCountNumber}>{contacts.length}/10</Text>
+          <Text style={styles.friendCountNumber}>{friendRequests.length}/10</Text>{/* Gunakan friendRequests.length pengganti dari contact nya*/}
         </View>
       </View>
       <View style={styles.listTitleWrapper}>
@@ -66,17 +186,17 @@ const ApproveFriend: React.FC = () => {
   return (
       <View style={styles.container}>
         <FlatList
-          data={contacts}
-          keyExtractor={(item) => item.id}
-          renderItem={renderContact}
-          ListHeaderComponent={renderHeader}
-          contentContainerStyle={styles.contactList}
+            data={friendRequests}
+            keyExtractor={(item) => item.id}
+            renderItem={renderContact}
+            ListHeaderComponent={renderHeader}
+            contentContainerStyle={styles.contactList}
         />
         <Modal transparent={true} visible={modalVisible} animationType="fade" onRequestClose={() => setModalVisible(false)}>
           <TouchableWithoutFeedback onPressOut={() => setModalVisible(false)}>
-            <View style={styles.modalContainer}>
-              <TouchableWithoutFeedback>
-                <View style={styles.modalCardContent}> 
+              <View style={styles.modalContainer}>
+                  <TouchableWithoutFeedback>
+                      <View style={styles.modalCardContent}>
                   <View style={styles.modalWarningContainer}>
                     <View style ={styles.modalWarningIcon}>
                       <AntDesign name="warning" size={16} color={Colors.red} />
@@ -89,15 +209,15 @@ const ApproveFriend: React.FC = () => {
                   Jika Anda menerima permintaan pertemanan, maka Anda akan diberikan notifikasi jika teman Anda dalam bahaya.
                   </Text>
                   <View style={styles.answerContent}> 
-                    <TouchableOpacity style={styles.meButton}> 
-                      <Text style={styles.meText} >
-                        Setuju
-                      </Text>
+                      <TouchableOpacity style={styles.meButton} onPress={approveFriendRequest}>
+                        <Text style={styles.meText}>
+                            Setuju
+                        </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.otherButton} onPress={() => setModalVisible(false)}>
-                      <Text style={styles.otherText}>
-                        Tidak
-                      </Text>
+                    <TouchableOpacity style={styles.otherButton} onPress={() => rejectFriendRequest}>
+                        <Text style={styles.otherText}>
+                            Tolak
+                        </Text>
                     </TouchableOpacity>
                   </View>
                 </View>
