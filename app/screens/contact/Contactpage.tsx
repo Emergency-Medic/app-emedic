@@ -36,20 +36,20 @@ const Contactpage: React.FC = () => {
                 const fetchedContacts: Contact[] = [];
 
                 for (const docSnapshot of querySnapshot.docs) {
-                    const friendUid = docSnapshot.id; // UID teman ada di ID dokumen
+                  const friendUid = docSnapshot.data().friendUid; // Ambil friendUid dari properti friendUid
                     const friendRef = doc(db, "users", friendUid); // Ambil data user dari collection "users"
                     const friendDocSnapshot = await getDoc(friendRef);
 
-                    if (friendDocSnapshot.exists()) { // Periksa apakah dokumen teman ada
+                    if (friendDocSnapshot.exists()) {
                       const friendData = friendDocSnapshot.data();
                       fetchedContacts.push({
                           id: friendUid,
                           name: friendData.displayName || friendData.username,
                           phone: friendData.phone || "",
                       });
-                  } else {
-                      console.warn(`Data user dengan UID ${friendUid} tidak ditemukan.`); // Tampilkan warning jika data user tidak ada
-                  }
+                    } else {
+                        console.warn(`Data user dengan UID ${friendUid} tidak ditemukan.`);
+                    }
                 }
 
                 setContacts(fetchedContacts);
