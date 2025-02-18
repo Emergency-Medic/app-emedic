@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Modal, TouchableWithoutFeedback } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Alert, View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Modal, TextInput, TouchableWithoutFeedback } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -8,23 +8,127 @@ import BackButton from '@/components/BackButton';
 import Octicons from '@expo/vector-icons/Octicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouter } from "expo-router";
+import { auth, db } from '@/firebaseConfig';
+import { collection, getDocs,getDoc, updateDoc, doc, deleteDoc, where, query } from "firebase/firestore";
 
 type Contact = {
-  id: string;
-  name: string;
-  phone: string;
+    id: string;
+    name: string;
+    phone: string;
 };
-
 const Contactpage: React.FC = () => {
   const router = useRouter();
-  const [modalVisible, setModalVisible] = useState(false); 
-  const [modalVisible2, setModalVisible2] = useState(false);
-  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
-  const contacts: Contact[] = [
-    { id: '1', name: 'Orang 1', phone: '+62 812 1565 2273' },
-    { id: '2', name: 'Orang 2', phone: '+62 813 1566 2272' },
-    { id: '3', name: 'Orang 3', phone: '+62 814 1567 2271' },
-  ];
+    const [contacts, setContacts] = useState<Contact[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisible2, setModalVisible2] = useState(false);
+    const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+    const [newName, setNewName] = useState('');
+    const [newPhone, setNewPhone] = useState('');
+    const user = auth.currentUser;
+
+    useEffect(() => {
+      if (user) {
+        const fetchContacts = async () => {
+            try {
+                const friendsRef = collection(db, "users", user.uid, "friends"); // Path ke subcollection "friends"
+                const querySnapshot = await getDocs(friendsRef);
+                const fetchedContacts: Contact[] = [];
+
+                for (const docSnapshot of querySnapshot.docs) {
+                    const friendUid = docSnapshot.id; // UID teman ada di ID dokumen
+                    const friendRef = doc(db, "users", friendUid); // Ambil data user dari collection "users"
+                    const friendDocSnapshot = await getDoc(friendRef);
+
+                    if (friendDocSnapshot.exists()) { // Periksa apakah dokumen teman ada
+                      const friendData = friendDocSnapshot.data();
+                      fetchedContacts.push({
+                          id: friendUid,
+                          name: friendData.displayName || friendData.username,
+                          phone: friendData.phone || "",
+                      });
+                  } else {
+                      console.warn(`Data user dengan UID ${friendUid} tidak ditemukan.`); // Tampilkan warning jika data user tidak ada
+                  }
+                }
+
+                setContacts(fetchedContacts);
+                setLoading(false);
+
+                if (fetchedContacts.length === 0) {
+                    Alert.alert("Info", "Anda belum mempunyai teman.", [{ text: "OK" }]);
+                }
+            } catch (error) {
+                console.error("Error fetching contacts: ", error);
+            }
+        };
+
+        if (user) { // Pastikan user sudah login
+            fetchContacts();
+        }
+      }else {
+        // Tampilkan pesan atau arahkan ke halaman login
+        Alert.alert("Anda belum login", "Silakan login untuk melihat teman Anda.", [
+          { text: "OK", onPress: () => router.push("/(auth)/SignInScreen") }, // Ganti /login dengan path ke halaman login Anda
+        ]);
+      }
+    }, [user]); // Tambahkan user sebagai dependency
+
+    const handleEditContact = async () => {
+      if (selectedContact && user) { // Pastikan selectedContact dan user tidak null
+          const contactRef = doc(db, "users", user.uid, "friends", selectedContact.id);
+          try {
+              await updateDoc(contactRef, {
+                  name: newName || selectedContact.name,
+                  phone: newPhone || selectedContact.phone,
+              });
+              setContacts((prevContacts) =>
+                  prevContacts.map((contact) =>
+                      contact.id === selectedContact.id
+                          ? { ...contact, name: newName || contact.name, phone: newPhone || contact.phone }
+                          : contact
+                  )
+              );
+              setModalVisible(false);
+          } catch (error) {
+              console.error("Error updating contact: ", error);
+          }
+      } else {
+          // Handle jika selectedContact atau user null.  Misalnya:
+          if (!user) {
+              console.warn("User belum login. Tidak dapat mengedit kontak.");
+              // Atau tampilkan alert:
+              Alert.alert("Perhatian", "Anda harus login untuk mengedit kontak.");
+              // Atau navigasi ke halaman login:
+              // router.push("/login");
+          } else if (!selectedContact) {
+            console.warn("Tidak ada kontak yang dipilih")
+          }
+      }
+  };
+
+  const handleDeleteContact = async () => {
+    if (selectedContact && user) { // Pastikan selectedContact dan user tidak null
+        const contactRef = doc(db, "users", user.uid, "friends", selectedContact.id);
+        try {
+            await deleteDoc(contactRef);
+            setContacts((prevContacts) => prevContacts.filter((contact) => contact.id !== selectedContact.id));
+            setModalVisible2(false);
+        } catch (error) {
+            console.error("Error deleting contact: ", error);
+        }
+    } else {
+        // Handle jika selectedContact atau user null
+        if (!user) {
+            console.warn("User belum login. Tidak dapat menghapus kontak.");
+            Alert.alert("Perhatian", "Anda harus login untuk menghapus kontak.");
+            // router.push("/login"); // Jika ingin mengarahkan ke halaman login
+        } else if (!selectedContact) {
+            console.warn("Tidak ada kontak yang dipilih");
+        }
+    }
+};
+
 
   const renderContact = ({ item }: { item: Contact }) => (
     <View style={styles.contactCard}>
