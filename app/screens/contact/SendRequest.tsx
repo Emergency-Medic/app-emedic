@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, TextInput, Modal, TouchableWithoutFeedback } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, TextInput, Modal, TouchableWithoutFeedback, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -8,41 +8,96 @@ import BackButton from '@/components/BackButton';
 import Octicons from '@expo/vector-icons/Octicons';
 import { useRouter } from "expo-router";
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { auth, db } from '@/firebaseConfig';
+import { doc, onSnapshot, collection, addDoc, getDocs, where, query } from "firebase/firestore";
 
 type Contact = {
-  id: string;
-  name: string;
-  phone: string;
+    id: string;
+    name: string;
+    phone: string;
 };
 
 const SendRequest: React.FC = () => {
-  const [id, setId] = useState('')
-  const router = useRouter();
-  const [modalVisible, setModalVisible] = useState(false); 
-  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
-  const contacts: Contact[] = [
-    { id: '1', name: 'Orang X', phone: '+62 812 1565 2273' },
-  ];
+    const [id, setId] = useState('');
+    const router = useRouter();
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+    const [foundUser, setFoundUser] = useState<Contact | null>(null); // State untuk user yang ditemukan
+    const user = auth.currentUser;
 
-  const renderContact = ({ item }: { item: Contact }) => (
-    <View style={styles.contactCard}>
-      <View style={styles.contactInfo}>
-        <Image source={require('../../../assets/images/icon.png')} style={styles.avatar} />
-        <View>
-          <Text style={styles.contactName}>{item.name}</Text>
-          <Text style={styles.contactPhone}>{item.phone}</Text>
+    useEffect(() => {
+        const findUser = async () => {
+            if (id) {
+                try {
+                    const usersRef = collection(db, "users");
+                    const q = query(usersRef, where("username", "==", id)); // Cari berdasarkan username
+                    const querySnapshot = await getDocs(q);
+
+                    if (!querySnapshot.empty) {
+                        const userData = querySnapshot.docs[0].data();
+                        setFoundUser({ // Set user yang ditemukan
+                            id: querySnapshot.docs[0].id,
+                            name: userData.displayName || userData.username,
+                            phone: userData.phone || "",
+                        });
+                    } else {
+                        setFoundUser(null); // Reset jika tidak ditemukan
+                    }
+                } catch (error) {
+                    console.error("Error finding user:", error);
+                    Alert.alert("Error", "Gagal mencari user.");
+                }
+            } else {
+                setFoundUser(null);
+            }
+        };
+
+        findUser();
+    }, [id]);
+
+    const sendFriendRequest = async () => {
+        if (selectedContact && user) {
+            try {
+                const friendRequestsRef = collection(db, "friend_requests");
+                await addDoc(friendRequestsRef, {
+                    senderUid: user.uid,
+                    receiverUid: selectedContact.id,
+                    status: "pending",
+                });
+                Alert.alert("Success", "Permintaan pertemanan berhasil dikirim.");
+                setModalVisible(false);
+            } catch (error) {
+                console.error("Error sending friend request:", error);
+                Alert.alert("Error", "Gagal mengirim permintaan pertemanan.");
+            }
+        } else {
+            if (!user) {
+                Alert.alert("Perhatian", "Anda harus login untuk mengirim permintaan.");
+            } else if (!selectedContact) {
+                Alert.alert("Perhatian", "Pilih user yang ingin ditambahkan.");
+            }
+        }
+    };
+
+    const renderContact = ({ item }: { item: Contact }) => (
+        <View style={styles.contactCard}>
+            <View style={styles.contactInfo}>
+                <Image source={require('../../../assets/images/icon.png')} style={styles.avatar} />
+                <View>
+                    <Text style={styles.contactName}>{item.name}</Text>
+                    <Text style={styles.contactPhone}>{item.phone}</Text>
+                </View>
+            </View>
+            <View style={styles.actionButtons}>
+                <TouchableOpacity onPress={() => {
+                    setSelectedContact(item);
+                    setModalVisible(true);
+                }} style={styles.iconButtonEdit}>
+                    <Feather name="check" size={18} color="#1AA832" />
+                </TouchableOpacity>
+            </View>
         </View>
-      </View>
-      <View style={styles.actionButtons}>
-        <TouchableOpacity onPress={() => {
-          setSelectedContact(item); 
-          setModalVisible(true);
-        }} style={styles.iconButtonEdit}>
-        <Feather name="check" size={18} color="#1AA832" />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+    );
 
   const renderHeader = React.useMemo(() => (
     <>
@@ -73,13 +128,13 @@ const SendRequest: React.FC = () => {
 
   return (
       <View style={styles.container}>
-        <FlatList 
-          keyboardShouldPersistTaps="handled"
-          data={contacts}
-          keyExtractor={(item) => item.id}
-          renderItem={renderContact}
-          ListHeaderComponent={renderHeader}
-          contentContainerStyle={styles.contactList}
+        <FlatList
+            keyboardShouldPersistTaps="handled"
+            data={foundUser ? [foundUser] : []} // Tampilkan user yang ditemukan atau array kosong
+            keyExtractor={(item) => item?.id || 'not-found'} // Tambahkan keyExtractor
+            renderItem={renderContact}
+            ListHeaderComponent={renderHeader}
+            contentContainerStyle={styles.contactList}
         />
         {/* modal */}
         <Modal transparent={true} visible={modalVisible} animationType="fade" onRequestClose={() => setModalVisible(false)}>
@@ -106,11 +161,11 @@ const SendRequest: React.FC = () => {
                   )}
                 </View>
                 <View style={styles.answerContent}> 
-                  <TouchableOpacity style={styles.meButton}> 
-                    <Text style={styles.meText} >
-                      Yakin
+                <TouchableOpacity style={styles.meButton} onPress={sendFriendRequest}> {/* Panggil fungsi sendFriendRequest */}
+                    <Text style={styles.meText}>
+                        Yakin
                     </Text>
-                  </TouchableOpacity>
+                </TouchableOpacity>
                   <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.otherButton}>
                     <Text style={styles.otherText}>
                       Tidak
