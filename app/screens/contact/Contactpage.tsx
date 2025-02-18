@@ -44,7 +44,7 @@ const Contactpage: React.FC = () => {
                       const friendData = friendDocSnapshot.data();
                       fetchedContacts.push({
                           id: friendUid,
-                          name: friendData.displayName || friendData.username,
+                          name: friendData.firstName || friendData.username,
                           phone: friendData.phone || "",
                       });
                     } else {
