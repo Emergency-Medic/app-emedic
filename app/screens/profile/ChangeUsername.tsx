@@ -1,16 +1,28 @@
 import { View, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native'
 import { Colors } from '@/constants/Colors';
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import BackButton from '@/components/BackButton'
 import { useRouter } from "expo-router";
 import { auth, db } from "@/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, setDoc, deleteDoc } from "firebase/firestore";
 
 export default function ChangeUsername() {
   const [username, setUsername] = useState('')
+  const [oldUsername, setOldUsername] = useState('')
   const [error, setError] = useState('')
   const router = useRouter();
+
+  useEffect(() => {
+    if (auth.currentUser) {
+        const userRef = doc(db, 'users', auth.currentUser.uid);
+        getDoc(userRef).then(docSnap => {
+            if (docSnap.exists()) {
+                setOldUsername(docSnap.data().username);
+            }
+        });
+    }
+}, []);
 
   const updateUsername = async () => {
     setError('')
@@ -20,8 +32,13 @@ export default function ChangeUsername() {
       }
       try {
         if (!auth.currentUser) return
+        await setDoc(doc(db, "usernames", username), { uid: auth.currentUser.uid });
         const userRef = doc(db, 'users', auth.currentUser.uid)
         await updateDoc(userRef, { username: username })
+        if (oldUsername) { // Hanya hapus jika ada username lama
+          const oldUsernameRef = doc(db, 'usernames', oldUsername);
+          await deleteDoc(oldUsernameRef);
+      }
         router.back()
       } catch (error) {
         console.log('Error updating user', error)
