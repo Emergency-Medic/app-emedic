@@ -25,6 +25,9 @@ const EmergencyCallScreen = () => {
     call(args).catch(console.error);
   };
 
+  const getLocation = () => {
+    // Get user's location
+  };
 
   return (
     <View style={styles.container}>
