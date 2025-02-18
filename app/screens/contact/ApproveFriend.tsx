@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Modal, TouchableWithoutFeedback, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Modal, TouchableWithoutFeedback, Alert, ActivityIndicator } from 'react-native'; // Import ActivityIndicator
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -15,19 +15,24 @@ interface FriendRequest {
   id: string;
   senderUid: string;
   senderName: string;
+  senderData: UserData;
   // ... other properties of the friend request 
 }
 
 interface UserData {
   name: string;
+  displayName: string;
+  username: string;
+  phone?: string;  // Pastikan properti phone ada di UserData
+  photoURL?: string;
   // ... properti lain dari data user Anda
 }
 
-// type Contact = {
-//     id: string;
-//     name: string;
-//     phone: string;
-// };
+type Contact = {
+    id: string;
+    name: string;
+    phone: string;
+};
 
 const ApproveFriend: React.FC = () => {
   const router = useRouter();
@@ -35,53 +40,58 @@ const ApproveFriend: React.FC = () => {
   const [selectedRequest, setSelectedRequest] = useState<FriendRequest | null>(null);
   const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
   const user = auth.currentUser;
+  const [loading, setLoading] = useState(true); // State untuk loading
 
   useEffect(() => {
     const fetchFriendRequests = async () => {
         if (user) {
             try {
                 const friendRequestsRef = collection(db, "friend_requests");
-                const q = query(
-                    friendRequestsRef,
-                    where("receiverUid", "==", user.uid),
-                    where("status", "==", "pending")
-                );
+                const q = query(friendRequestsRef, where("receiverUid", "==", user.uid), where("status", "==", "pending"));
                 const querySnapshot = await getDocs(q);
 
-                const requests: FriendRequest[] = []; // Inisialisasi array di luar loop
+                const requests: FriendRequest[] = [];
 
                 for (const currentDoc of querySnapshot.docs) {
-                  const requestData = currentDoc.data();
-                  const senderUid = requestData.senderUid;
-      
-                  try {
-                      const senderRef = doc(db, "users", senderUid);
-                      const senderSnapshot = await getDoc(senderRef);
-                      const senderData = senderSnapshot.data() as UserData; // Type assertion
-      
-                      const friendRequestData = {
-                          id: currentDoc.id,
-                          senderUid: senderUid,
-                          senderName: senderData?.name ?? "Nama Tidak Tersedia", // Optional chaining dan nullish coalescing
-                          // ... other properties
-                      };
-                      requests.push(friendRequestData);
-                  } catch (senderError) {
-                      console.error(`Error getting sender ${senderUid} data:`, senderError);
-                      const friendRequestData = {
-                          id: currentDoc.id,
-                          senderUid: senderUid,
-                          senderName: "Nama Tidak Tersedia",
-                          // ... other properties
-                      };
-                      requests.push(friendRequestData);
-                  }
-              }
-              setFriendRequests(requests);
+                    const requestData = currentDoc.data();
+                    const senderUid = requestData.senderUid;
+
+                    try {
+                        const senderRef = doc(db, "users", senderUid);
+                        const senderSnapshot = await getDoc(senderRef);
+                        const senderData = senderSnapshot.data() as UserData;
+
+                        const senderName = senderData?.displayName ?? senderData?.username ?? senderData?.name ?? "Nama Tidak Tersedia";
+
+                        const friendRequestData = {
+                            id: currentDoc.id,
+                            senderUid: senderUid,
+                            senderName: senderName, // Ini bisa dihapus jika tidak diperlukan
+                            senderData: senderData, // Simpan data user lengkap
+                            // ... other properties
+                        };
+                        requests.push(friendRequestData);
+
+                    } catch (senderError) {
+                        console.error(`Error getting sender ${senderUid} data:`, senderError);
+                        // ... (handle error)
+                        const friendRequestData = {
+                            id: currentDoc.id,
+                            senderUid: senderUid,
+                            senderName: "Nama Tidak Tersedia",
+                            senderData: {} as UserData, // Berikan objek kosong jika error
+                            // ... other properties
+                        };
+                        requests.push(friendRequestData);
+                    }
+                }
+                setFriendRequests(requests);
+                setLoading(false); // Set loading ke false setelah data selesai di load
 
             } catch (error) {
                 console.error("Error fetching friend requests:", error);
                 Alert.alert("Error", "Gagal mengambil daftar permintaan.");
+                setLoading(false); // Set loading ke false jika terjadi error
             }
         }
     };
@@ -140,26 +150,49 @@ const ApproveFriend: React.FC = () => {
   };
 
   const renderContact = ({ item }: { item: FriendRequest }) => {
-      return (
-          <View style={styles.contactCard}>
-              {/* ... (avatar and sender info) */}
-              <View>
-                  <Text>{item.senderName}</Text> {/* Tampilkan nama pengirim */}
-              </View>
-              <View style={styles.actionButtons}>
-                  <TouchableOpacity onPress={() => {
-                      setSelectedRequest(item);
-                      setModalVisible(true);
-                  }} style={styles.iconButtonEdit}>
-                      <Feather name="check" size={18} color="#1AA832" />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => rejectFriendRequest(item.id)} style={styles.iconButtonDelete}>
-                      <MaterialIcons name="delete-outline" size={18} color="#A8201A" />
-                  </TouchableOpacity>
-              </View>
-          </View>
-      );
-  };
+    const sender = item.senderData; // Ambil data user dari item
+
+    return (
+        <View style={styles.contactCard}>
+            <View style={styles.contactInfo}>
+                {/* Tampilkan foto user */}
+                {sender?.photoURL ? ( // Optional chaining untuk menghindari error jika photoURL tidak ada
+                    <Image source={{ uri: sender.photoURL }} style={styles.avatar} />
+                ) : (
+                    <Image source={require('../../../assets/images/icon.png')} style={styles.avatar} />
+                )}
+
+                <View>
+                    {/* Tampilkan nama user (displayName, username, atau name) */}
+                    <Text style={styles.contactName}>
+                        {sender?.displayName || sender?.username || sender?.name || "Nama Tidak Tersedia"}
+                    </Text>
+                    {/* Tampilkan nomor telepon user */}
+                    <Text style={styles.contactPhone}>{sender?.phone || "Nomor Tidak Tersedia"}</Text>
+                </View>
+            </View>
+
+            {/* Tombol-tombol aksi */}
+            <View style={styles.actionButtons}>
+                <TouchableOpacity
+                    onPress={() => {
+                        setSelectedRequest(item);
+                        setModalVisible(true);
+                    }}
+                    style={styles.iconButtonEdit}
+                >
+                    <Feather name="check" size={18} color="#1AA832" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => rejectFriendRequest(item.id)}
+                    style={styles.iconButtonDelete}
+                >
+                    <MaterialIcons name="delete-outline" size={18} color="#A8201A" />
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
+};
 
   const renderHeader = () => (
     <>
@@ -185,13 +218,17 @@ const ApproveFriend: React.FC = () => {
 
   return (
       <View style={styles.container}>
-        <FlatList
-            data={friendRequests}
-            keyExtractor={(item) => item.id}
-            renderItem={renderContact}
-            ListHeaderComponent={renderHeader}
-            contentContainerStyle={styles.contactList}
-        />
+        {loading ? ( // Tampilkan ActivityIndicator saat loading
+                <ActivityIndicator size="large" color={Colors.blue} />
+            ) : (
+                <FlatList
+                    data={friendRequests}
+                    keyExtractor={(item) => item.id}
+                    renderItem={renderContact}
+                    ListHeaderComponent={renderHeader}
+                    contentContainerStyle={styles.contactList}
+                />
+            )}
         <Modal transparent={true} visible={modalVisible} animationType="fade" onRequestClose={() => setModalVisible(false)}>
           <TouchableWithoutFeedback onPressOut={() => setModalVisible(false)}>
               <View style={styles.modalContainer}>
