@@ -120,7 +120,7 @@ const [reminders, setReminders] = useState<RemindersType>({
                   />
                 )}
               />
-                {activeReminderId === item.id && (
+                {activeReminderId === item.id ? (
                   <View style={styles.activeSection}>
                     <View style={styles.activeRow}>
                       <Text style={styles.activeText}>Sudah minum?</Text>
@@ -129,7 +129,7 @@ const [reminders, setReminders] = useState<RemindersType>({
                       </Button>
                     </View>
                   </View>
-                )}
+                ) : null}
               </Card>
             </View>
           </TouchableOpacity>

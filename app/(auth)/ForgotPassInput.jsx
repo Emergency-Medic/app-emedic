@@ -57,7 +57,7 @@ export default function ForgotPassInput() {
             style={styles.input}
             />
         </View>
-        {sent ? 
+        {!!sent ? 
         <Text style={styles.sent}>
           Email untuk reset password sudah dikirim. Silakan cek inbox Anda
         </Text> : null

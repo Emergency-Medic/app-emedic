@@ -107,57 +107,39 @@ const Quiz = () => {
 
         <View style={styles.navigation}>
           {/* Panah ke kanan (jika index ke-0) */}
-          {currentQuestionIndex === 0 && (
+          {currentQuestionIndex === 0 ? (
             <View style={{ flex: 1, alignItems: 'flex-end' }}>
               <TouchableOpacity onPress={handleNext} style={styles.elips}>
                 <Text style={styles.arrow}>{'>'}</Text>
               </TouchableOpacity>
             </View>
-          )}
+          ) : null}
 
           {/* Panah kiri dan kanan (jika bukan index ke-0) */}
-          {currentQuestionIndex > 0 && (
+          {currentQuestionIndex > 0 ? (
             <>
               <View style={{ flex: 1, alignItems: 'flex-start' }}>
                 <TouchableOpacity onPress={handlePrevious} style={styles.elips}>
                   <Text style={styles.arrow}>{'<'}</Text>
                 </TouchableOpacity>
               </View>
-              {currentQuestionIndex < totalQuestions - 1 && (
+              {currentQuestionIndex < totalQuestions - 1 ? (
                 <View style={{ flex: 1, alignItems: 'flex-end' }}>
                   <TouchableOpacity onPress={handleNext} style={styles.elips}>
                     <Text style={styles.arrow}>{'>'}</Text>
                   </TouchableOpacity>
                 </View>
-              )}
+              ) : null}
             </>
-          )}
-          {currentQuestionIndex === totalQuestions - 1 && (
+          ) : null}
+          {currentQuestionIndex === totalQuestions - 1 ? (
             <View style={styles.submitButtonEnding}>
               <TouchableOpacity onPress={() => router.push("./ScoreScreen")} style={styles.submitButton}>
                 <Text style={styles.submitText}>Submit</Text>
               </TouchableOpacity>
             </View>
-          )}
+          ) : null}
         </View>
-
-        {/* <View style={styles.navigation}>
-          <View style={styles.navigationButtons}>
-            {currentQuestionIndex > 0 && (
-              <TouchableOpacity onPress={handlePrevious} style={styles.navButton}>
-                <Text style={styles.navButtonText}>{'<'}</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-
-            <TouchableOpacity onPress={handleNext} style={styles.navButton}>
-              <View style={styles.navigationButtons}>
-                {currentQuestionIndex < totalQuestions - 1 && (
-                  <Text style={styles.navButtonText}>{'>'}</Text>
-                )}
-              </View>
-              </TouchableOpacity>
-        </View> */}
 
       </View>
       </ScrollView>
