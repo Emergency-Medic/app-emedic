@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Alert, View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Modal, TextInput, TouchableWithoutFeedback } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
@@ -26,8 +26,6 @@ const Contactpage: React.FC = () => {
     const [newName, setNewName] = useState('');
     const [newPhone, setNewPhone] = useState('');
     const user = auth.currentUser;
-
-    const isFirstRender = useRef(true); // Gunakan useRef untuk menandai render pertama
 
     useEffect(() => {
       if (user) {
@@ -57,9 +55,9 @@ const Contactpage: React.FC = () => {
                 setContacts(fetchedContacts);
                 setLoading(false);
 
-                if (fetchedContacts.length === 0) {
-                    Alert.alert("Info", "Anda belum mempunyai teman.", [{ text: "OK" }]);
-                }
+                // if (fetchedContacts.length === 0) {
+                //     Alert.alert("Info", "Anda belum mempunyai teman.", [{ text: "OK" }]);
+                // }
             } catch (error) {
                 console.error("Error fetching contacts: ", error);
             }
@@ -111,36 +109,49 @@ const Contactpage: React.FC = () => {
 
   const handleDeleteContact = async () => {
     if (selectedContact && user) {
-      const deletedContactId = selectedContact.id; // Simpan ID kontak yang dihapus
-        const previousContacts = contacts; // Simpan state contacts sebelumnya
-
-        console.log("Selected Contact:", selectedContact); // Debugging
-        console.log("Deleting contact with ID:", deletedContactId); // Debugging
-        try {
-            // Optimistic update
-            setContacts((prevContacts) => prevContacts.filter((contact) => contact.id !== deletedContactId));
-            setModalVisible2(false);
-            Alert.alert("Sukses", "Kontak berhasil dihapus.");
-
-            const contactRef = doc(db, "users", user.uid, "friends", deletedContactId);
-            await deleteDoc(contactRef); // Tunggu sampai data terhapus di firebase
-
-            router.push("./Contactpage");
-
-        } catch (error) {
-            console.error("Error deleting contact: ", error);
-            Alert.alert("Error", "Gagal menghapus kontak. Mengembalikan data.");
-            setContacts(previousContacts); // Kembalikan state jika gagal
+      try {
+        // 1. Query untuk mencari dokumen 'friends' berdasarkan friendUid
+        const friendsRef = collection(db, "users", user.uid, "friends");
+        const q = query(friendsRef, where("friendUid", "==", selectedContact.id)); // selectedContact.id berisi friendUid
+  
+        const querySnapshot = await getDocs(q);
+        
+        if (!querySnapshot.empty) {
+          const docToDelete = querySnapshot.docs[0]; // Ambil dokumen yang akan dihapus
+  
+          // 2. Hapus dokumen 'friends' dari user yang login
+          await deleteDoc(doc(db, "users", user.uid, "friends", docToDelete.id));
+  
+          // 3. Cari dan hapus juga di collection teman yang dihapus
+          const friendsRef2 = collection(db, "users", selectedContact.id, "friends");
+          const q2 = query(friendsRef2, where("friendUid", "==", user.uid));
+          const querySnapshot2 = await getDocs(q2);
+          
+  
+          if (!querySnapshot2.empty) {
+            const docToDelete2 = querySnapshot2.docs[0];
+            await deleteDoc(doc(db, "users", selectedContact.id, "friends", docToDelete2.id));
+          }
+          
+  
+          setContacts((prevContacts) => prevContacts.filter((contact) => contact.id !== selectedContact.id));
+          setModalVisible2(false);
+          setSelectedContact(null);
+          // alert('Teman berhasil dihapus.');
+  
+        } else {
+          console.warn("Dokumen teman tidak ditemukan.");
+          // alert('Gagal menghapus teman. Silakan coba lagi.');
         }
+  
+      } catch (error) {
+        console.error("Error deleting contact: ", error);
+        // alert("Gagal menghapus teman. Silakan coba lagi.");
+      }
     } else {
-        // Handle jika selectedContact atau user null
-        if (!user) {
-            Alert.alert("Perhatian", "Anda harus login untuk menghapus kontak.");
-        } else if (!selectedContact) {
-            Alert.alert("Perhatian", "Tidak ada kontak yang dipilih.");
-        }
+      // ... (handle jika selectedContact atau user null)
     }
-};
+  };
 
 
   const renderContact = ({ item }: { item: Contact }) => (
@@ -159,13 +170,13 @@ const Contactpage: React.FC = () => {
         }} style={styles.iconButtonEdit}>
           <Feather name="edit" size={18} color="#29335C" />
         </TouchableOpacity>
-        <TouchableOpacity
-                onPress={() => {
-                    setSelectedContact(item);
-                    setModalVisible2(true);
-                }}
-                style={styles.iconButtonDelete}
-            >
+        <TouchableOpacity 
+          onPress={() => {
+            setSelectedContact(item);
+            setModalVisible2(true);
+          }} 
+          style={styles.iconButtonDelete}
+        >
           <MaterialIcons name="delete-outline" size={18} color="#A8201A" />
         </TouchableOpacity>
       </View>
