@@ -42,7 +42,7 @@ export default function ChangePhone() {
             onChangeText={setPhoneNumber}
             style={styles.input}
             />
-            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+            {!!error ? <Text style={styles.errorText}>{error}</Text> : null}
         </View>
         <TouchableOpacity style={styles.submit} onPress={updatePhone}>
           <Text style={styles.buttonText}>Konfirmasi</Text>
