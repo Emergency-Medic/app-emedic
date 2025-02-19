@@ -3,6 +3,7 @@ import { Modal, View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedba
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import call from 'react-native-phone-call'; 
+import useLocation from '@/hooks/useLocation';
 
 import { Colors } from '@/constants/Colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -25,9 +26,7 @@ const EmergencyCallScreen = () => {
     call(args).catch(console.error);
   };
 
-  const getLocation = () => {
-    // Get user's location
-  };
+  const { latitude, longitude, city, errorMsg } = useLocation();
 
   return (
     <View style={styles.container}>
@@ -57,7 +56,7 @@ const EmergencyCallScreen = () => {
           {/* Keterangan Lokasi */}
           <View style={styles.locationText}>
             <Text style={styles.location}>
-              Sentul Circuit
+              {city || "Loading..."}
             </Text>
             <Text style={styles.locationInfo}>
               Lokasi terkini
@@ -94,6 +93,7 @@ const EmergencyCallScreen = () => {
       </Text>
       {/* Cancel Button */}
       <View style={styles.buttonContainer}>
+
         <TouchableOpacity onPress={() => router.back()} style={styles.button}>
           <Text style={styles.cancelText}>
             Batal

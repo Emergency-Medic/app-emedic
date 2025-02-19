@@ -6,6 +6,7 @@ import call from 'react-native-phone-call';
 import { Colors } from '@/constants/Colors';
 import { auth, db } from '@/firebaseConfig'
 import { doc, onSnapshot } from "firebase/firestore";
+import useLocation from "@/hooks/useLocation";
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
@@ -47,7 +48,7 @@ const Emergency = () => {
       return () => unsubscribe();  // Cleanup listener on unmount
     }, [user]);
 
-
+    const { latitude, longitude, city, errorMsg } = useLocation();
   return (
     <View style={styles.container}>
       <StatusBar style='dark' translucent={true} />
@@ -76,7 +77,7 @@ const Emergency = () => {
           {/* Keterangan Lokasi */}
           <View style={styles.locationText}>
             <Text style={styles.location}>
-              Sentul Circuit
+              {city || "Loading..."}
             </Text>
             <Text style={styles.locationInfo}>
               Lokasi terkini
