@@ -25,10 +25,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-<<<<<<< HEAD
-// const analytics = getAnalytics(app);
-=======
->>>>>>> d4d933161e66a2dfb21bc003d2d8c597d16db3a0
 const db = getFirestore(app);
 const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
