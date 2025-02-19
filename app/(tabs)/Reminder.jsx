@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableOpacity, Modal, TextInput, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Colors } from "@/constants/Colors";
@@ -9,43 +9,71 @@ import Entypo from "@expo/vector-icons/Entypo";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import MakeSchedule from '../screens/reminder/MakeSchedule'
+import { collection, query, where, getDocs, Timestamp } from "firebase/firestore";
+import { auth, db } from "@/firebaseConfig";
 
-type Reminder = {
-  id: number;
-  time: string;
-  name: string;
-  dose: string;
-};
+// type Reminder = {
+//   id: number;
+//   time: string;
+//   name: string;
+//   dose: string;
+// };
 
-type RemindersType = {
-  [key: string]: Reminder[];
-};
+// type RemindersType = {
+//   [key: string]: Reminder[];
+// };
 
 export default function MedicationReminder() {
   const router = useRouter();
-  const [selectedDate, setSelectedDate] = useState<string>(
+  const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split('T')[0]
   );
   const today = new Date().toISOString().split('T')[0]; // ini buat format tanggal
 
-const [reminders, setReminders] = useState<RemindersType>({
-    [today]: [
-      { id: 1, time: '08:00', name: 'Obat xxx', dose: '1 sct (50 mg)' },
-      { id: 2, time: '12:00', name: 'Obat xxx', dose: '1 sct (50 mg)' },
-    ],
-});
+// const [reminders, setReminders] = useState<RemindersType>({
+//     [today]: [
+//       { id: 1, time: '08:00', name: 'Obat xxx', dose: '1 sct (50 mg)' },
+//       { id: 2, time: '12:00', name: 'Obat xxx', dose: '1 sct (50 mg)' },
+//     ],
+// });
+  const [reminders, setReminders] = useState([]);
 
 
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [editingReminder, setEditingReminder] = useState<Reminder | null>(null);
-  const [activeReminderId, setActiveReminderId] = useState<number | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [editingReminder, setEditingReminder] = useState(null);
+  const [activeReminderId, setActiveReminderId] = useState(null);
 
-  const handleEdit = (reminder: Reminder): void => {
+  useEffect(() => {
+    const fetchReminders = async () => {
+        try {
+            const q = query(collection(db, "schedules"), where("userId", "==", auth.currentUser.uid));
+            const querySnapshot = await getDocs(q);
+            const remindersData = [];
+
+            querySnapshot.forEach(doc => {
+                const data = doc.data();
+                const startDate = data.startDate instanceof Timestamp ? data.startDate.toDate().toISOString().split('T')[0] : null;
+
+                if (startDate === selectedDate) {
+                    remindersData.push({ id: doc.id, ...data });
+                }
+            });
+
+            setReminders(remindersData);
+        } catch (error) {
+            console.error("Error fetching reminders:", error);
+        }
+    };
+
+    fetchReminders();
+}, [selectedDate]);
+  
+  const handleEdit = (reminder) => {
     setEditingReminder(reminder);
     setModalVisible(true);
   };
 
-  const saveEdit = (): void => {
+  const saveEdit = () => {
     if (editingReminder) {
       setReminders((prev) => ({
         ...prev,
@@ -58,14 +86,14 @@ const [reminders, setReminders] = useState<RemindersType>({
     }
   };
 
-  const handleDelete = (id: number): void => {
+  const handleDelete = (id) => {
     setReminders((prev) => ({
       ...prev,
       [selectedDate]: prev[selectedDate]?.filter((item) => item.id !== id) || [],
     }));
   };
 
-  const toggleActive = (id: number): void => {
+  const toggleActive = (id) => {
     setActiveReminderId(activeReminderId === id ? null : id);
   };
 
@@ -82,7 +110,7 @@ const [reminders, setReminders] = useState<RemindersType>({
         </Text>
       </View>
       <Calendar
-        onDayPress={(day: DateData) => setSelectedDate(day.dateString)}
+        onDayPress={(day) => setSelectedDate(day.dateString)}
         markedDates={{ [selectedDate]: { selected: true, marked: true } }}
         style={{ fontFamily: 'regular' }} // masih belum bisa
       />
@@ -93,12 +121,16 @@ const [reminders, setReminders] = useState<RemindersType>({
         </TouchableOpacity>
       </View>
       <FlatList
-        data={reminders[selectedDate] || []}
+        data={reminders}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => toggleActive(item.id)}>
             <View style={styles.rowContainer}>
-              <Text style={styles.timeText}>{item.time}</Text>
+              <View>
+                {item.reminders.map((time, index) => (
+                    <Text key={index} style={styles.timeText}>{time}</Text>
+                ))}
+              </View>
               <Card style={[styles.card, activeReminderId === item.id && styles.activeCard]}>
               <Card.Title
                 left={(props) => (
@@ -107,9 +139,9 @@ const [reminders, setReminders] = useState<RemindersType>({
                     icon={(iconProps) => <MaterialCommunityIcons name='pill' {...iconProps} color={activeReminderId === item.id ? Colors.white : Colors.blue} />}
                   />
                 )}
-                title={item.name}
+                title={item.medName}
                 titleStyle={[styles.titleCard, activeReminderId === item.id && styles.activeTitle]}
-                subtitle={`${item.dose}`}
+                subtitle={`${item.dose} sdm`}
                 subtitleStyle={[styles.subtitle, activeReminderId === item.id && styles.activeSubtitle]}
                 right={(props) => (
                   <Entypo
@@ -140,7 +172,8 @@ const [reminders, setReminders] = useState<RemindersType>({
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Button onPress={() => router.push('../screens/reminder/EditSchedule')}><Text style={styles.buttonText}>Edit</Text></Button>
-            <Button onPress={() => handleDelete(editingReminder?.id!)}><Text style={styles.buttonText}>Hapus</Text></Button>
+            <Button onPress={() => editingReminder?.id ? handleDelete(editingReminder.id) : null}
+            ><Text style={styles.buttonText}>Hapus</Text></Button>
             <Button onPress={() => setModalVisible(false)}><Text style={styles.buttonText}>Batal</Text></Button>
           </View>
         </View>
