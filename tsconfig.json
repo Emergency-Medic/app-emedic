@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-, "app/(tabs)/Emergency.jsx", "app/EmergencyCallScreen.jsx", "app/Homepagelayanan.jsx", "app/viewModels/registerUser.js", "app/(auth)/RegisterScreen.jsx", "app/(auth)/SignInScreen.jsx", "app/screens/MetodePenangan.jsx", "app/EditSchedule.jsx", "app/screens/profile/ChangeName.tsx", "app/screens/profile/ChangeEmail.jsx", "app/screens/profile/ChangePass.jsx", "app/screens/profile/EditProfile.jsx", "app/(auth)/ForgotPassInput.jsx"  ]
+, "app/(tabs)/Emergency.jsx", "app/EmergencyCallScreen.jsx", "app/Homepagelayanan.jsx", "app/viewModels/registerUser.js", "app/(auth)/RegisterScreen.jsx", "app/(auth)/SignInScreen.jsx", "app/screens/MetodePenangan.jsx", "app/EditSchedule.jsx", "app/screens/profile/ChangeName.tsx", "app/screens/profile/ChangeEmail.jsx", "app/screens/profile/ChangePass.jsx", "app/screens/profile/EditProfile.jsx", "app/(auth)/ForgotPassInput.jsx", "app/index.tsx"  ]
 }
