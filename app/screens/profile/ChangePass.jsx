@@ -90,7 +90,7 @@ export default function ChangePass() {
             onChangeText={setOldPass}
             style={styles.input}
             />
-            {errorPass ? <Text style={styles.errorText}>{errorPass}</Text> : null}
+            {!!errorPass ? <Text style={styles.errorText}>{errorPass}</Text> : null}
             <TouchableOpacity onPress={() => setShowOldPass(!showOldPass)} style={styles.eyeIcon}>
               <Feather name={showOldPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
             </TouchableOpacity>
@@ -114,7 +114,7 @@ export default function ChangePass() {
             onChangeText={setnewPass}
             style={styles.input}
             />
-            {errorPassNew ? <Text style={styles.errorText}>{errorPassNew}</Text> : null}
+            {!!errorPassNew ? <Text style={styles.errorText}>{errorPassNew}</Text> : null}
             <TouchableOpacity onPress={() => setShowNewPass(!showNewPass)} style={styles.eyeIcon}>
               <Feather name={showNewPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
             </TouchableOpacity>
@@ -128,7 +128,7 @@ export default function ChangePass() {
             onChangeText={setConfNewPass}
             style={styles.input}
             />
-            {errorPassNewConf ? <Text style={styles.errorText}>{errorPassNewConf}</Text> : null}
+            {!!errorPassNewConf ? <Text style={styles.errorText}>{errorPassNewConf}</Text> : null}
             <TouchableOpacity onPress={() => setShowConfPass(!showConfPass)} style={styles.eyeIcon}>
               <Feather name={showConfPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
             </TouchableOpacity>

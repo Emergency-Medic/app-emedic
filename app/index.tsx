@@ -47,7 +47,7 @@ export default function Index() {
   // }
   return (
       <View>
-        {user ? <Home /> : <MenuAwal />}
+        {!!user ? <Home /> : <MenuAwal />}
       </View>
   );
 }

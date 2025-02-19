@@ -151,14 +151,14 @@ const SendRequest: React.FC = () => {
                   </Text>
                 </View>
                 <View>
-                  {selectedContact && (
+                  {!!selectedContact ? (
                     <>
                     <Text style={styles.modalWarningQuestion}>Anda yakin menambahkan 
                       <Text style = {styles.getContactName}> {selectedContact.name} </Text>
                       kedalam daftar pertemanan anda ? 
                     </Text>
                     </>
-                  )}
+                  ) : null}
                 </View>
                 <View style={styles.answerContent}> 
                 <TouchableOpacity style={styles.meButton} onPress={sendFriendRequest}> {/* Panggil fungsi sendFriendRequest */}
