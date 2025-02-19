@@ -228,12 +228,12 @@ const Contactpage: React.FC = () => {
                     <Image source={require('../../../assets/images/icon.png')} style={styles.avatar} />
                     <View>
                       {/* data kontak */}
-                      {selectedContact && (
+                      {!!selectedContact ? (
                         <>
                           <Text style={styles.contactName}>{selectedContact.name}</Text>
                           <Text style={styles.contactPhone}>{selectedContact.phone}</Text>
                         </>
-                      )}
+                      ) : null}
                     </View>
                   </View>
                   <View style={styles.actionButtons}>
@@ -274,13 +274,13 @@ const Contactpage: React.FC = () => {
                     </Text>
                   </View>
                   <View>
-                  {selectedContact && (
+                  {!!selectedContact ? (
                     <>
                       <Text style={styles.modalWarningQuestion2}>Anda yakin hapus
                       <Text style = {styles.deleteContactName}> {selectedContact.name}</Text> 
                       <Text style = {styles.deleteContactNumber}> ({selectedContact.phone})</Text></Text>
                     </>
-                  )}
+                  ) : null}
                   </View>
                   <View style={styles.answerContent2}> 
                     <TouchableOpacity style={styles.meButton2} onPress={handleDeleteContact}> 
