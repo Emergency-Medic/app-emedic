@@ -200,7 +200,7 @@ export default function RegisterScreen() {
                                 }
                             ]}
                             />
-                            {errors.namaDepan ? <Text style={styles.errorText}>{errors.namaDepan}</Text> : null}
+                            {!!errors.namaDepan ? <Text style={styles.errorText}>{errors.namaDepan}</Text> : null}
                         </View>
                         <View style={styles.wrapdalam}>
                             <Text style={[
@@ -225,7 +225,7 @@ export default function RegisterScreen() {
                                 }
                             ]}
                             />
-                            {errors.namaBelakang ? <Text style={styles.errorText}>{errors.namaBelakang}</Text> : null}
+                            {!!errors.namaBelakang ? <Text style={styles.errorText}>{errors.namaBelakang}</Text> : null}
                         </View>
                     </View>
                     <View style={styles.wrapform}>
@@ -252,7 +252,7 @@ export default function RegisterScreen() {
                             }
                         ]}
                         />
-                        {errors.username ? <Text style={styles.errorText}>{errors.username}</Text> : null}
+                        {!!errors.username ? <Text style={styles.errorText}>{errors.username}</Text> : null}
                     </View>
                     <View style={styles.wrapform}>
                         <Text 
@@ -278,7 +278,7 @@ export default function RegisterScreen() {
                             }
                         ]}
                         />
-                        {errors.phonenum ? <Text style={styles.errorText}>{errors.phonenum}</Text> : null}
+                        {!!errors.phonenum ? <Text style={styles.errorText}>{errors.phonenum}</Text> : null}
                     </View>
                     <View style={styles.wrapform}>
                         <Text style={[
@@ -303,7 +303,7 @@ export default function RegisterScreen() {
                             }
                         ]}
                         />
-                        {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
+                        {!!errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
                     </View>
                     <View style={styles.wrapform}>
                         <Text style={[
@@ -329,7 +329,7 @@ export default function RegisterScreen() {
                         onFocus={() => setPassFocused(true)}
                         onBlur={() => setPassFocused(false)} 
                         />
-                        {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+                        {!!errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
                         <TouchableOpacity onPress={() => setShowPass(!showPass)} style={styles.eyeIcon}>
                             <Feather name={showPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
                         </TouchableOpacity>
@@ -358,7 +358,7 @@ export default function RegisterScreen() {
                             }
                         ]}
                         />
-                        {errors.confPass ? <Text style={styles.errorText}>{errors.confPass}</Text> : null}
+                        {!!errors.confPass ? <Text style={styles.errorText}>{errors.confPass}</Text> : null}
                         <TouchableOpacity onPress={() => setShowConfPass(!showConfPass)} style={styles.eyeIcon}>
                             <Feather name={showConfPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
                         </TouchableOpacity>

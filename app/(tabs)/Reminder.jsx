@@ -153,7 +153,7 @@ export default function MedicationReminder() {
                   />
                 )}
               />
-                {activeReminderId === item.id && (
+                {activeReminderId === item.id ? (
                   <View style={styles.activeSection}>
                     <View style={styles.activeRow}>
                       <Text style={styles.activeText}>Sudah minum?</Text>
@@ -162,7 +162,7 @@ export default function MedicationReminder() {
                       </Button>
                     </View>
                   </View>
-                )}
+                ) : null}
               </Card>
             </View>
           </TouchableOpacity>

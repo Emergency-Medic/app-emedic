@@ -8,7 +8,7 @@ import BackButton from '@/components/BackButton';
 import { useRouter } from "expo-router";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { auth, db } from '@/firebaseConfig';
-import { getDoc, doc, collection, getDocs, updateDoc, addDoc, where, query } from "firebase/firestore";
+import { getDoc, doc, collection, getDocs, updateDoc, addDoc, where, query, setDoc } from "firebase/firestore";
 
 
 interface FriendRequest {
@@ -21,7 +21,7 @@ interface FriendRequest {
 
 interface UserData {
   name: string;
-  displayName: string;
+  firstName: string;
   username: string;
   phone?: string;  // Pastikan properti phone ada di UserData
   photoURL?: string;
@@ -61,7 +61,7 @@ const ApproveFriend: React.FC = () => {
                         const senderSnapshot = await getDoc(senderRef);
                         const senderData = senderSnapshot.data() as UserData;
 
-                        const senderName = senderData?.displayName ?? senderData?.username ?? senderData?.name ?? "Nama Tidak Tersedia";
+                        const senderName = senderData?.firstName ?? senderData?.username ?? senderData?.name ?? "Nama Tidak Tersedia";
 
                         const friendRequestData = {
                             id: currentDoc.id,
@@ -107,6 +107,7 @@ const ApproveFriend: React.FC = () => {
 
               const userFriendsRef = collection(db, "users", user.uid, "friends");
               await addDoc(userFriendsRef, { friendUid: selectedRequest.senderUid });
+              // await setDoc(doc(userFriendsRef, ), { name: friendName })
 
               const senderFriendsRef = collection(db, "users", selectedRequest.senderUid, "friends");
               await addDoc(senderFriendsRef, { friendUid: user.uid });
@@ -163,9 +164,8 @@ const ApproveFriend: React.FC = () => {
                 )}
 
                 <View>
-                    {/* Tampilkan nama user (displayName, username, atau name) */}
                     <Text style={styles.contactName}>
-                        {sender?.displayName || sender?.username || sender?.name || "Nama Tidak Tersedia"}
+                        {sender?.firstName || sender?.username || sender?.name || "Nama Tidak Tersedia"}
                     </Text>
                     {/* Tampilkan nomor telepon user */}
                     <Text style={styles.contactPhone}>{sender?.phone || "Nomor Tidak Tersedia"}</Text>
