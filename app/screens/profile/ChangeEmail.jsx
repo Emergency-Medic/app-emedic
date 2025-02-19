@@ -80,7 +80,7 @@ export default function ChangeEmail() {
             onChangeText={setEmail}
             style={styles.input}
             />
-            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+            {!!error ? <Text style={styles.errorText}>{error}</Text> : null}
         </View>
         <TouchableOpacity style={styles.submit} onPress={handleEmailUpdate}>
           <Text style={styles.buttonText}>Konfirmasi</Text>
@@ -101,7 +101,7 @@ export default function ChangeEmail() {
             onChangeText={setPassword}
             style={styles.input}
             />
-            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+            {!!error ? <Text style={styles.errorText}>{error}</Text> : null}
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
               <Feather name={showPassword ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
             </TouchableOpacity>

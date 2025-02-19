@@ -59,7 +59,7 @@ export default function ChangeUsername() {
             onChangeText={setUsername}
             style={styles.input}
             />
-            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+            {!!error ? <Text style={styles.errorText}>{error}</Text> : null}
         </View>
         <TouchableOpacity style={styles.submit} onPress={updateUsername}>
           <Text style={styles.buttonText}>Konfirmasi</Text>

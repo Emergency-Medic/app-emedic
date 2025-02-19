@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, FlatList, TouchableOpacity, Modal, TextInput, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Colors } from "@/constants/Colors";
+// import { Colors } from "react-native/Libraries/NewAppScreen";
 import { Calendar, DateData } from "react-native-calendars";
 import { Card, IconButton, Button } from "react-native-paper";
 import BackButton from "@/components/BackButton";
@@ -33,6 +34,7 @@ const [reminders, setReminders] = useState<RemindersType>({
       { id: 2, time: '12:00', name: 'Obat xxx', dose: '1 sct (50 mg)' },
     ],
 });
+
 
 
   const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -118,7 +120,7 @@ const [reminders, setReminders] = useState<RemindersType>({
                   />
                 )}
               />
-                {activeReminderId === item.id && (
+                {activeReminderId === item.id ? (
                   <View style={styles.activeSection}>
                     <View style={styles.activeRow}>
                       <Text style={styles.activeText}>Sudah minum?</Text>
@@ -127,7 +129,7 @@ const [reminders, setReminders] = useState<RemindersType>({
                       </Button>
                     </View>
                   </View>
-                )}
+                ) : null}
               </Card>
             </View>
           </TouchableOpacity>
