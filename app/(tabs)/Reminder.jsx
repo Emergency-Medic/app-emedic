@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableOpacity, Modal, TextInput, StyleSheet } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Modal, TextInput, StyleSheet, Alert } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Colors } from "@/constants/Colors";
 import { Calendar, DateData } from "react-native-calendars";
@@ -9,7 +9,7 @@ import Entypo from "@expo/vector-icons/Entypo";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import MakeSchedule from '../screens/reminder/MakeSchedule'
-import { collection, query, where, getDocs, Timestamp, onSnapshot } from "firebase/firestore";
+import { collection, query, where, getDocs, Timestamp, onSnapshot, deleteDoc, doc } from "firebase/firestore";
 import { auth, db } from "@/firebaseConfig";
 import moment from 'moment-timezone';
 
@@ -113,10 +113,14 @@ export default function MedicationReminder() {
     return () => unsubscribe();
 }, [selectedDate]);
   
-  const handleEdit = (reminder) => {
+  const handleDots = (reminder) => {
     setEditingReminder(reminder);
     setModalVisible(true);
   };
+
+  const handleEdit = (item) => {
+    router.push(`/screens/reminder/EditSchedule?id=${item.id}`);
+};
 
   const saveEdit = () => {
     if (editingReminder) {
@@ -131,11 +135,22 @@ export default function MedicationReminder() {
     }
   };
 
-  const handleDelete = (id) => {
-    setReminders((prev) => ({
-      ...prev,
-      [selectedDate]: prev[selectedDate]?.filter((item) => item.id !== id) || [],
-    }));
+  // const handleDelete = (id) => {
+  //   setReminders((prev) => ({
+  //     ...prev,
+  //     [selectedDate]: prev[selectedDate]?.filter((item) => item.id !== id) || [],
+  //   }));
+  // };
+
+  const handleDelete = async (id) => {
+    try {
+        await deleteDoc(doc(db, "schedules", id));
+        Alert.alert("Sukses", "Reminder berhasil dihapus.");
+        setModalVisible(false); // Tutup modal setelah penghapusan
+    } catch (error) {
+        console.error("Error deleting reminder:", error);
+        Alert.alert("Error", "Gagal menghapus reminder. Silakan coba lagi.");
+    }
   };
 
   const toggleActive = (id) => {
@@ -191,12 +206,12 @@ export default function MedicationReminder() {
                 subtitleStyle={[styles.subtitle, activeReminderId === item.id && styles.activeSubtitle]}
                 right={(props) => (
                   <Entypo
-                    {...props}
-                    onPress={() => handleEdit(item)}
-                    name='dots-three-vertical'
-                    size={15}
-                    color={activeReminderId === item.id ? Colors.white : Colors.red}
-                  />
+                            {...props}
+                            onPress={() => handleDots(item)} // Pastikan item.id dikirim
+                            name='dots-three-vertical'
+                            size={15}
+                            color={activeReminderId === item.id ? Colors.white : Colors.red}
+                        />
                 )}
               />
                 {activeReminderId === item.id ? (
@@ -217,7 +232,9 @@ export default function MedicationReminder() {
       <Modal visible={modalVisible} transparent animationType='slide'>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Button onPress={() => router.push('../screens/reminder/EditSchedule')}><Text style={styles.buttonText}>Edit</Text></Button>
+            <Button onPress={() => editingReminder ? handleEdit(editingReminder) : null}>
+                <Text style={styles.buttonText}>Edit</Text>
+            </Button>
             <Button onPress={() => editingReminder?.id ? handleDelete(editingReminder.id) : null}
             ><Text style={styles.buttonText}>Hapus</Text></Button>
             <Button onPress={() => setModalVisible(false)}><Text style={styles.buttonText}>Batal</Text></Button>

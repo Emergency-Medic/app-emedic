@@ -12,10 +12,11 @@ import DateTimePicker from '@react-native-community/datetimepicker'; // Import D
 import { auth, db } from '@/firebaseConfig';
 import { doc, setDoc, collection, addDoc, getDoc, Timestamp } from 'firebase/firestore';
 import { Platform } from 'react-native';
-import { useSearchParams } from 'expo-router';
+import { useLocalSearchParams  } from 'expo-router';
 import { useRouter } from 'expo-router';
 
 const EditSchedule = () => {
+    const params = useLocalSearchParams();
     const [medName, setMedName] = useState('');
     const [dose, setDose] = useState(1);
     const [frequency, setFrequency] = useState(1); //Default frekuensi 1
@@ -32,7 +33,7 @@ const EditSchedule = () => {
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [description, setDescription] = useState('');
     const [checkedItems, setCheckedItems] = useState([]);
-    const { id: scheduleId } = useSearchParams();
+    const { id: scheduleId } = params;
     const router = useRouter();
     useEffect(() => {
         const fetchSchedule = async () => {
@@ -71,6 +72,8 @@ const EditSchedule = () => {
             setTime(new Date());
         }
     };
+
+
 
     const deleteReminder = (index) => {
         const newReminders = [...reminders];
@@ -320,7 +323,7 @@ const EditSchedule = () => {
                     {
                         reminders.map((item, index) => (
                             <View key={index} style={styles.reminderCard}>
-                                <Text style={styles.timeText}>{item.time}</Text>
+                                <Text style={styles.timeText}>{item}</Text>
                                 <View style={styles.switchContainer}>
                                     <View style={styles.checkboxContainer}>
                                         <Checkbox

@@ -7,60 +7,17 @@ import call from 'react-native-phone-call';
 import Swiper from 'react-native-swiper';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { auth, db } from '@/firebaseConfig'
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, getDoc } from "firebase/firestore";
 
 const data = {  
   kategori1: [  
-    {  
-      id: 1,  
-      title: "Penanganan penderita epilepsi",  
-      keywords: "Henti, Jantung, Pernapasan, CPR",  
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('../../assets/images/undraw_injured_9757 1.png'),  
-    },  
-    
-    {  
-      id: 2,  
-      title: "Penanganan penderita epilepsi",  
-      keywords: "Henti, Jantung, Pernapasan, CPR",  
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('../../assets/images/undraw_injured_9757 1.png'),  
-    },  
+    'mimisan', 'terkilirdanmemar'
   ],  
   kategori2: [  
-    {  
-      id: 3,  
-      title: "Penanganan henti jantung",  
-      keywords: "CPR, Pertolongan Pertama",  
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('../../assets/images/undraw_injured_9757 1.png'),  
-    },  
-
-    {  
-      id: 4,  
-      title: "Penanganan penderita epilepsi",  
-      keywords: "Henti, Jantung, Pernapasan, CPR",  
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('../../assets/images/undraw_injured_9757 1.png'),  
-    },  
+    'fraktur', 'lukatusuk', 'pingsan'
   ],  
   kategori3: [  
-    {  
-    
-      id: 5,  
-      title: "Penanganan pernapasan",  
-      keywords: "Asma, Sesak Napas",  
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('../../assets/images/undraw_injured_9757 1.png'),  
-    },
-    
-    {  
-      id: 6,  
-      title: "Penanganan penderita epilepsi",  
-      keywords: "Henti, Jantung, Pernapasan, CPR",  
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-      image: require('../../assets/images/undraw_injured_9757 1.png'),  
-    },  
+   'gigitanular', 'hentijantung', 'kesetrum', 'seranganjantung', 'tersedak' 
   ],  
 };  
 
@@ -69,11 +26,38 @@ export default function Home() {
   const swiperRef = useRef(null);
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('kategori1');
+  const [articles, setArticles] = useState([]);
 
   const [sliderValue, setSliderValue] = useState(new Animated.Value(0));
   const [name, setName] = useState('')
   const user = auth.currentUser
   const [userData, setUserData] = useState(null)
+
+  const fetchData = async () => {
+      const categoryDocuments = data[selectedCategory];  // Menggunakan data[selectedCategory]
+      const fetchedArticles = [];
+    
+      for (const docId of categoryDocuments) {
+        const docRef = doc(db, "articles_no_cat", docId);
+        const docSnap = await getDoc(docRef);
+    
+        if (docSnap.exists()) {
+        const data = docSnap.data();
+        fetchedArticles.push({
+          id: docId,
+          title: data.judul,
+          keywords: data.katakunci,
+          description: data.deskripsi,
+          image: data.gambarPenyakit,
+        });
+        }
+      }
+      setArticles(fetchedArticles);
+    };
+
+    useEffect(() => {
+        fetchData(); // Memanggil fetchData saat kategori berubah
+      }, [selectedCategory]);
 
   useEffect(() => {
     if (!user) return;
@@ -124,27 +108,34 @@ export default function Home() {
       });
 
       const renderCategoryInfo = () => {
-        return data[selectedCategory].map((item)=> {
-          const backgroundColor = item.id % 2 === 0 ? Colors.blue : Colors.red;
+        return articles.map((item)=> {
+          const backgroundColor = articles.indexOf(item) % 2 === 0 ? Colors.blue : Colors.red; // Gunakan index dalam array articles
+          const formattedKeywords = item.keywords.join(', ');
+          const truncateDescription = (description) => {
+            const words = description.split(' ');  // Pisahkan berdasarkan spasi
+            const truncated = words.slice(0, 10).join(' ');  // Ambil 20 kata pertama
+            return words.length > 10 ? truncated + '...' : truncated;  // Jika lebih dari 20 kata, tambahkan "..."
+          };
+
           return (
             <View style={[styles.cart, { backgroundColor }]} key={item.id}> 
               <View style={styles.contain}>
                 <View style={styles.pictureSection}>
                   <MaterialIcons name="verified" size={14} color={Colors.white} />
-                  <Image source={item.image} style={styles.image}/>
+                  <Image source={{ uri: item.image }} style={styles.image} />
                 </View>
                 <View style={styles.textSection}>
                   <Text style={styles.judul}> 
                     {item.title} 
                   </Text>
                   <Text style={styles.kataKunci}>
-                    Kata Kunci: {item.keywords}
+                    Kata Kunci: {formattedKeywords}
                   </Text>
                   <Text style={styles.deskripsi}>
-                    {item.description} 
+                    {truncateDescription(item.description)} 
                   </Text>
       
-                  <TouchableOpacity style={styles.pelajariSection} onPress={() => router.push('/screens/artikel/Articlepage')}> 
+                  <TouchableOpacity style={styles.pelajariSection} onPress={() => router.push(`../screens/artikel/Articlepage?id=${item.id}`)}> 
                     <Text style={styles.pelajariText}> 
                       Pelajari
                     </Text>
@@ -201,7 +192,7 @@ export default function Home() {
         <View style={styles.slide}>
           <ImageBackground
             source={{
-              uri: 'https://images.unsplash.com/photo-1624638760852-8ede1666ab07?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+              uri: 'https://mysiloam-api.siloamhospitals.com/public-asset/website-cms/website-cms-16831818208485759.webp',
             }}
             style={styles.backgroundImage}
             blurRadius={0.5}
@@ -210,12 +201,12 @@ export default function Home() {
           {/* <Text style={styles.headerText}>Tahap Awal Penanganan</Text> */}
           <View style={styles.contentBottomContainer}>
             <View>
-              <Text style={styles.title}>Heading 1</Text>
+              <Text style={styles.title}>Penilaian Awal Situasi</Text>
               <Text style={styles.description}>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                Ketika ingin membantu korban, gunakan langkah-langkah "DRS" ini!
               </Text>
             </View>
-            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/Slider")} style={styles.nextButtonTap}>
+            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/SliderTahapA")} style={styles.nextButtonTap}>
               <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
             </TouchableOpacity>
           </View>
@@ -236,12 +227,12 @@ export default function Home() {
           />
           <View style={styles.contentBottomContainer}>
             <View>
-              <Text style={styles.title}>Heading 2</Text>
+              <Text style={styles.title}>Penanganan Masalah</Text>
               <Text style={styles.description}>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                Setelah menilai situasi, mulai tangani masalah dengan langkah "ABC" ini!
               </Text>
             </View>
-            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/Slider")} style={styles.nextButtonTap}>
+            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/SliderTahapB")} style={styles.nextButtonTap}>
               <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
             </TouchableOpacity>
           </View>
@@ -254,7 +245,7 @@ export default function Home() {
         <View style={styles.slide}>
           <ImageBackground
             source={{
-              uri: 'https://images.unsplash.com/photo-1624638760852-8ede1666ab07?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+              uri: 'https://cdn1-production-images-kly.akamaized.net/ecL6Y9yvV56LSWbAtZM8QhmfnpM=/800x450/smart/filters:quality(75):strip_icc():format(webp)/kly-media-production/medias/5045878/original/059069700_1733900022-1733894601873_tujuan-pertolongan-pertama.jpg',
             }}
             style={styles.backgroundImage}
             blurRadius={0.5}
@@ -262,12 +253,12 @@ export default function Home() {
           />
           <View style={styles.contentBottomContainer}>
             <View>
-              <Text style={styles.title}>Heading 3</Text>
+              <Text style={styles.title}>Pengumpulan Informasi</Text>
               <Text style={styles.description}>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                Setelah korban sadar, lakukan langkah "SAMPLE" ini!
               </Text>
             </View>
-            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/Slider")} style={styles.nextButtonTap}>
+            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/SliderTahapC")} style={styles.nextButtonTap}>
               <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
             </TouchableOpacity>
           </View>
@@ -302,7 +293,6 @@ export default function Home() {
           <TouchableOpacity onPress={() => router.push('../screens/MetodePenangan')}>
             <Text style={styles.lihatSemua}> Lihat Semua</Text>
           </TouchableOpacity>
-          
         </View>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.kategoriSection} contentContainerStyle={styles.kategoriContent}> 
           <TouchableOpacity style={selectedCategory === 'kategori1' ? styles.sectionBerada : styles.section} onPress={() => setSelectedCategory('kategori1')}> 
@@ -514,7 +504,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignContent: 'center', 
     justifyContent: 'center', 
-    paddingHorizontal: 20, 
+    paddingHorizontal: 10, 
     paddingVertical: 10,
     marginLeft: 10,
     gap: 10
@@ -527,13 +517,17 @@ const styles = StyleSheet.create({
   },
   image: { 
     width: 42, 
-    height: 42, 
+    height: 62, 
     justifyContent: 'center', 
     alignItems: 'center', 
+    marginTop: 10,
+    borderRadius: 10,
   },
   textSection: {
-    // marginLeft: 10,  
+    marginLeft: 5,  
     justifyContent: 'flex-start', 
+    marginTop: 5,
+    width: 270,
   },
   judul: {
     color: Colors.white, 
@@ -723,7 +717,7 @@ contentBottomContainer: {
 },
 title: {
   textAlign: 'left',
-  fontSize: 25,
+  fontSize: 20,
   fontFamily: 'bold',
   color: '#fff',
   marginBottom: 10,
@@ -736,6 +730,7 @@ description: {
   color: '#fff',
   lineHeight: 20,
   paddingBottom: 10,
+  width: '300',
 },
 dotStyle: {
   backgroundColor: '#D9D9D9',
