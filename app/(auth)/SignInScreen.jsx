@@ -129,7 +129,7 @@ export default function SignInScreen() {
                             }
                         ]}
                         />
-                        {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
+                        {!!errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
                     </View>
                     <View>
                         <Text style={[
@@ -155,7 +155,7 @@ export default function SignInScreen() {
                         onFocus={() => setPassFocused(true)}
                         onBlur={() => setPassFocused(false)} 
                         />
-                        {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
+                        {!!errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
                         <TouchableOpacity onPress={() => setShowPass(!showPass)} style={styles.eyeIcon}>
                             <Feather name={showPass ? 'eye-off' : 'eye'} size={20} color={Colors.transparencyGrey} />
                         </TouchableOpacity>

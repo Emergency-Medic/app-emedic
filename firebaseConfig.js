@@ -1,8 +1,11 @@
 // Import the functions you need from the SDKs you need
+<<<<<<< HEAD
+import { initializeApp } from "@firebase/app";
+// import { getAnalytics } from "firebase/analytics";
+=======
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+>>>>>>> d4d933161e66a2dfb21bc003d2d8c597d16db3a0
 import { getFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { initializeAuth, getReactNativePersistence } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -17,12 +20,11 @@ const firebaseConfig = {
   storageBucket: "emedic-app-52042.firebasestorage.app",
   messagingSenderId: "382135671168",
   appId: "1:382135671168:web:7d29df6534010f046b0965",
-  measurementId: "G-1GYB0DPP27"
+  measurementId: "G-1GYB0DPP27",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const db = getFirestore(app);
 const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
