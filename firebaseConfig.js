@@ -16,12 +16,11 @@ const firebaseConfig = {
   storageBucket: "emedic-app-52042.firebasestorage.app",
   messagingSenderId: "382135671168",
   appId: "1:382135671168:web:7d29df6534010f046b0965",
-  measurementId: "G-1GYB0DPP27"
+  measurementId: "G-1GYB0DPP27",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
 const db = getFirestore(app);
 const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(AsyncStorage),
