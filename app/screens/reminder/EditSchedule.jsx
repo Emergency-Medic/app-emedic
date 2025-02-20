@@ -12,9 +12,11 @@ import DateTimePicker from '@react-native-community/datetimepicker'; // Import D
 import { auth, db } from '@/firebaseConfig';
 import { doc, setDoc, collection, addDoc, getDoc, Timestamp } from 'firebase/firestore';
 import { Platform } from 'react-native';
-import { useSearchParams } from 'expo-router';
+import { useLocalSearchParams  } from 'expo-router';
+import { useRouter } from 'expo-router';
 
 const EditSchedule = () => {
+    const params = useLocalSearchParams();
     const [medName, setMedName] = useState('');
     const [dose, setDose] = useState(1);
     const [frequency, setFrequency] = useState(1); //Default frekuensi 1
@@ -31,7 +33,8 @@ const EditSchedule = () => {
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [description, setDescription] = useState('');
     const [checkedItems, setCheckedItems] = useState([]);
-    const { id: scheduleId } = useSearchParams();
+    const { id: scheduleId } = params;
+    const router = useRouter();
     useEffect(() => {
         const fetchSchedule = async () => {
             if (scheduleId) {
@@ -65,10 +68,12 @@ const EditSchedule = () => {
 
     const addReminder = () => {
         if (time) {
-        setReminders([...reminders, { time: time.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) }]);
-        setTime(new Date()); // Reset time
+            setReminders([...reminders, time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })]);
+            setTime(new Date());
         }
     };
+
+
 
     const deleteReminder = (index) => {
         const newReminders = [...reminders];
@@ -160,7 +165,7 @@ const EditSchedule = () => {
             setReminders([]);
             setTime(new Date());
             setDescription('');
-
+            router.back()
         } catch (error) {
             console.error("Error saving schedule:", error);
             Alert.alert("Error", "Gagal menyimpan jadwal. Silakan coba lagi.");
@@ -318,7 +323,7 @@ const EditSchedule = () => {
                     {
                         reminders.map((item, index) => (
                             <View key={index} style={styles.reminderCard}>
-                                <Text style={styles.timeText}>{item.time}</Text>
+                                <Text style={styles.timeText}>{item}</Text>
                                 <View style={styles.switchContainer}>
                                     <View style={styles.checkboxContainer}>
                                         <Checkbox
