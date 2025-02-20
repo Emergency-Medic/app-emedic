@@ -1,263 +1,84 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ScrollView, View, Image, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import { useRouter } from "expo-router";
 import { Colors } from '@/constants/Colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { db } from '@/firebaseConfig';
+import { doc, getDoc } from 'firebase/firestore';
 import BackButton from "@/components/BackButton";
+
 const data = {  
 	semuaKategori: [
-		{  
-			id: 1,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},
-		{  
-			id: 2,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		}, 
-		{  
-			id: 3,  
-			title: "Penanganan henti jantung",  
-			keywords: "CPR, Pertolongan Pertama",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},  
-		{  
-			id: 4,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},  
-		{  
-			id: 5,  
-			title: "Penanganan pernapasan",  
-			keywords: "Asma, Sesak Napas",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},
-		{  
-			id: 6,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},  
-		{  
-			id: 7,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},  
-		{  
-			id: 8,
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},  
+		'fraktur', 'gigitanular', 'hentijantung', 'kesetrum', 'lukatusuk', 'mimisan', 'pingsan', 'seranganjantung', 'terkilirdanmemar', 'tersedak'
 	],
 	kategori1: [  
-		{  
-			id: 1,  
-			title: "Penanganan henti jantung",  
-			keywords: "CPR, Pertolongan Pertama",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},  
-		{  
-			id: 2,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},
-		{  
-			id: 3,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},
-		{  
-			id: 4,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		}, 
-		{  
-			id: 5,  
-			title: "Penanganan pernapasan",  
-			keywords: "Asma, Sesak Napas",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},
-		{  
-			id: 6,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},  
-		{  
-			id: 7,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},  
-		{  
-			id: 8,
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		}, 
+		'mimisan', 'terkilirdanmemar'
 	],  
 	kategori2: [  
-		{  
-			id: 1,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},
-		{  
-			id: 2,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		}, 
-		{  
-			id: 3,  
-			title: "Penanganan henti jantung",  
-			keywords: "CPR, Pertolongan Pertama",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},  
-		{  
-			id: 4,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},  
-		{  
-			id: 5,  
-			title: "Penanganan pernapasan",  
-			keywords: "Asma, Sesak Napas",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},
-		{  
-			id: 6,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},  
-		{  
-			id: 7,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},  
-		{  
-			id: 8,
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		}, 
+		'fraktur', 'lukatusuk', 'pingsan'
 	],  
 	kategori3: [  
-		{  
-			id: 1,  
-			title: "Penanganan henti jantung",  
-			keywords: "CPR, Pertolongan Pertama",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},  
-		{  
-			id: 2,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},
-		{  
-			id: 3,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},
-		{  
-			id: 4,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		}, 
-		{  
-			id: 5,  
-			title: "Penanganan pernapasan",  
-			keywords: "Asma, Sesak Napas",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},
-		{  
-			id: 6,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},  
-		{  
-			id: 7,  
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		},  
-		{  
-			id: 8,
-			title: "Penanganan penderita epilepsi",  
-			keywords: "Henti, Jantung, Pernapasan, CPR",  
-			description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",  
-			image: require('../../assets/images/undraw_injured_9757 1.png'),  
-		}, 
+		'gigitanular', 'hentijantung', 'kesetrum', 'seranganjantung', 'tersedak' 
 	],  
 };  
 
 export default function MetodePenangan() {
 	const router = useRouter();
 	const [selectedCategory, setSelectedCategory] = useState('semuaKategori');
+	const [articles, setArticles] = useState([]);
 
+	// Function to fetch data from Firebase for the selected category
+	const fetchData = async () => {
+		const categoryDocuments = data[selectedCategory];  // Menggunakan data[selectedCategory]
+		const fetchedArticles = [];
+	
+		for (const docId of categoryDocuments) {
+		  const docRef = doc(db, "articles_no_cat", docId);
+		  const docSnap = await getDoc(docRef);
+	
+		  if (docSnap.exists()) {
+			const data = docSnap.data();
+			fetchedArticles.push({
+			  id: docId,
+			  title: data.judul,
+			  keywords: data.katakunci,
+			  description: data.deskripsi,
+			  image: data.gambarPenyakit,
+			});
+		  }
+		}
+		setArticles(fetchedArticles);
+	};
+	
+	useEffect(() => {
+		fetchData(); // Memanggil fetchData saat kategori berubah
+	}, [selectedCategory]);
+	
 	const renderCategoryInfo = () => {
-		return data[selectedCategory].map((item) => {
-			const backgroundColor = item.id % 2 === 0 ? Colors.blue : Colors.red;
+		return articles.map((item) => {
+			const backgroundColor = articles.indexOf(item) % 2 === 0 ? Colors.blue : Colors.red; // Gunakan index dalam array articles
+			const formattedKeywords = item.keywords.join(', ');
+			const truncateDescription = (description) => {
+				const words = description.split(' ');  // Pisahkan berdasarkan spasi
+				const truncated = words.slice(0, 10).join(' ');  // Ambil 20 kata pertama
+				return words.length > 10 ? truncated + '...' : truncated;  // Jika lebih dari 20 kata, tambahkan "..."
+			  };
+
 			return ( 
 				<View style={[styles.cart, { backgroundColor }]} key={item.id}> 
 					<View style={styles.pictureSection}>
-						<MaterialIcons name="verified" size={14} color={Colors.white} />
-						<Image source={item.image} style={styles.image} />
+						<MaterialIcons name="verified" size={16} color={Colors.white} />
+						<Image source={{ uri: item.image }} style={styles.image} />
 					</View>
 					<View style={styles.textSection}>
 						<Text style={styles.judul}>{item.title}</Text>
-						<Text style={styles.kataKunci}>Kata Kunci: {item.keywords}</Text>
-						<Text style={styles.deskripsi}>{item.description}</Text>
-						<TouchableOpacity style={styles.pelajariSection} onPress={() => router.push('./artikel/Articlepage')}>
+						<Text style={styles.kataKunci}>Kata Kunci: {formattedKeywords}</Text>
+						<Text style={styles.deskripsi}>{truncateDescription(item.description)}</Text>
+						<TouchableOpacity 
+							style={styles.pelajariSection} 
+							onPress={() => router.push(`../screens/artikel/Articlepage?id=${item.id}`)} // Menambahkan id artikel ke URL
+							>
 							<Text style={styles.pelajariText}>Pelajari</Text>
 							<View style={styles.pelajariIcon}>
 								<MaterialIcons name="article" size={10} color="black" />
@@ -266,7 +87,7 @@ export default function MetodePenangan() {
 					</View>  
 				</View>
 			);
-	}); 
+		}); 
 	}; 
 
 	return (
@@ -369,9 +190,12 @@ const styles = StyleSheet.create({
 		marginLeft: 20, 
 		marginRight: 20,
 		borderRadius: 20,
+		height: '100%'
 	},
 	cartContent: {
 		paddingBottom: 20,
+		justifyContent: 'flex-start',
+		alignItems: 'center'
 	},
 	cart: {
 		width: '100%', 
@@ -382,23 +206,27 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-start', 
 		marginTop: 10, 
 		// paddingHorizontal: 10,
-		padding: 10
+		paddingHorizontal: 25,
+		paddingVertical: 10,
 	}, 
 	pictureSection: {
 		flexDirection: 'column',  
-		alignItems: 'center', 
+		alignItems: 'left', 
 		justifyContent: 'center',
-		marginRight: 10,  
+		marginRight: 15,
 	},
 	image: { 
 		width: 42, 
-		height: 42, 
+		height: 62, 
 		justifyContent: 'center', 
 		alignItems: 'center', 
+		marginTop: 10,
+		borderRadius: 10,
 	},
 	textSection: {
 		flex: 1,
 		justifyContent: 'center', 
+		marginTop: 5,
 	},
 	judul: {
 		color: Colors.white, 
