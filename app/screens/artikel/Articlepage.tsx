@@ -3,11 +3,10 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Button } f
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
 import BackButton from '@/components/BackButton'
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 // import { useEvent } from 'expo';
-import { useVideoPlayer, VideoView } from 'expo-video';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { db } from '@/firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
@@ -19,6 +18,8 @@ import { WebView } from 'react-native-webview';
 
 const Articlepage = () => {
     const router = useRouter();
+    const params = useLocalSearchParams();
+    const {id} = params;
     const [quizStarted, setQuizStarted] = useState(false);
     const [title, setTitle] = useState('');
     const [deskripsi, setDeskripsi] = useState('');
@@ -28,31 +29,44 @@ const Articlepage = () => {
     const [gambarPenyakit, setGambarPenyakit] = useState('');
     const [gambarDos, setGambarDos] = useState('');
     const [video, setVideo] = useState('');
+    
+
     const handlePress = () => {
       router.push('../quiz/Quiz')
       setQuizStarted(true);
     };
-    useEffect(() => {
-      const fetchData = async () => {
-        const docRef = doc(db, "articles_no_cat", "lukatusuk");
-        const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setTitle(data.judul);
-          setDeskripsi(data.deskripsi);
-          setVerifikasi(data.verifikasi);
-          setDos(data["do's"] || []);
-          setDonts(data["dont's"] || []);
-          setGambarPenyakit(data.gambarPenyakit || '');
-          setGambarDos(data["gambarDo's"] || '');
-          setVideo(data.video);
-        } else {
-          console.log("No such document!");
-        }
+    useEffect(() => {
+      if (!id) return;
+      // console.log("Articlepage ID:", id);
+      const fetchData = async () => {
+        if (typeof id !== 'string') {
+          console.error("ID is not a string:", id);
+          return;
+      }
+      try {
+          const docRef = doc(db, "articles_no_cat", id);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+              const data = docSnap.data();
+              setTitle(data.judul);
+              setDeskripsi(data.deskripsi);
+              setVerifikasi(data.verifikasi);
+              setDos(data["do's"] || []);
+              setDonts(data["dont's"] || []);
+              setGambarPenyakit(data.gambarPenyakit || '');
+              setGambarDos(data["gambarDo's"] || '');
+              setVideo(data.video);
+          } else {
+              console.log("No such document!");
+          }
+      } catch (error) {
+          console.error("Error fetching document:", error);
+      }
       };
       fetchData();
-    }, []);
+    }, [id]);
     // video
     // const player = useVideoPlayer(videoSource, player => {
     //   player.loop = true;
