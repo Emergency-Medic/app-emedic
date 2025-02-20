@@ -12,6 +12,7 @@ import DateTimePicker from '@react-native-community/datetimepicker'; // Import D
 import { auth, db } from '@/firebaseConfig';
 import { doc, setDoc, collection, addDoc, getDoc, Timestamp } from 'firebase/firestore';
 import { Platform } from 'react-native';
+import { useRouter } from 'expo-router';
 
 
 const MakeSchedule = () => {
@@ -31,11 +32,12 @@ const MakeSchedule = () => {
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [description, setDescription] = useState('');
     const [checkedItems, setCheckedItems] = useState([]);
+    const router = useRouter();
 
     const addReminder = () => {
         if (time) {
-        setReminders([...reminders, { time: time.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) }]);
-        setTime(new Date()); // Reset time
+            setReminders([...reminders, time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })]);
+            setTime(new Date());
         }
     };
 
@@ -110,7 +112,7 @@ const MakeSchedule = () => {
             setReminders([]);
             setTime(new Date());
             setDescription('');
-
+            router.back()
         } catch (error) {
             console.error("Error saving schedule:", error);
             Alert.alert("Error", "Gagal menyimpan jadwal. Silakan coba lagi.");
@@ -268,7 +270,7 @@ const MakeSchedule = () => {
                     {
                         reminders.map((item, index) => (
                             <View key={index} style={styles.reminderCard}>
-                                <Text style={styles.timeText}>{item.time}</Text>
+                                <Text style={styles.timeText}>{item}</Text>
                                 <View style={styles.switchContainer}>
                                     <View style={styles.checkboxContainer}>
                                         <Checkbox

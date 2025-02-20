@@ -13,6 +13,7 @@ import { auth, db } from '@/firebaseConfig';
 import { doc, setDoc, collection, addDoc, getDoc, Timestamp } from 'firebase/firestore';
 import { Platform } from 'react-native';
 import { useSearchParams } from 'expo-router';
+import { useRouter } from 'expo-router';
 
 const EditSchedule = () => {
     const [medName, setMedName] = useState('');
@@ -32,6 +33,7 @@ const EditSchedule = () => {
     const [description, setDescription] = useState('');
     const [checkedItems, setCheckedItems] = useState([]);
     const { id: scheduleId } = useSearchParams();
+    const router = useRouter();
     useEffect(() => {
         const fetchSchedule = async () => {
             if (scheduleId) {
@@ -65,8 +67,8 @@ const EditSchedule = () => {
 
     const addReminder = () => {
         if (time) {
-        setReminders([...reminders, { time: time.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) }]);
-        setTime(new Date()); // Reset time
+            setReminders([...reminders, time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })]);
+            setTime(new Date());
         }
     };
 
@@ -160,7 +162,7 @@ const EditSchedule = () => {
             setReminders([]);
             setTime(new Date());
             setDescription('');
-
+            router.back()
         } catch (error) {
             console.error("Error saving schedule:", error);
             Alert.alert("Error", "Gagal menyimpan jadwal. Silakan coba lagi.");
