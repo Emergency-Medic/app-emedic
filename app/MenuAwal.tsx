@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import React,{useEffect} from 'react';
 import { useRouter } from "expo-router";
 import { auth, db } from '@/firebaseConfig';
 import { StatusBar } from 'expo-status-bar';
