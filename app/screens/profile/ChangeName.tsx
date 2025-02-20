@@ -50,7 +50,7 @@ export default function ChangeName() {
             onChangeText={setFirstName}
             style={styles.input}
             />
-            {errorFirst ? <Text style={styles.errorText}>{errorFirst}</Text> : null}
+            {!!errorFirst ? <Text style={styles.errorText}>{errorFirst}</Text> : null}
         </View>
         <View style={styles.wrapform}>
           <Text style={styles.titleName}>Nama Belakang</Text>
@@ -60,7 +60,7 @@ export default function ChangeName() {
             onChangeText={setLastName}
             style={styles.input}
             />
-            {errorLast ? <Text style={styles.errorText}>{errorLast}</Text> : null}
+            {!!errorLast ? <Text style={styles.errorText}>{errorLast}</Text> : null}
         </ View>
         <TouchableOpacity style={styles.submit} onPress={updateName}>
           <Text style={styles.buttonText}>Konfirmasi</Text>

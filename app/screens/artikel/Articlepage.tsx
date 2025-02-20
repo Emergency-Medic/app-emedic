@@ -86,7 +86,7 @@ const Articlepage = () => {
             </View>
             {/* video */}
             <View style={styles.videoContainer}>
-            {video ? (
+            {!!video ? (
                 <WebView
                   style={styles.video}
                   source={{ uri: video }}
@@ -113,7 +113,7 @@ const Articlepage = () => {
                     {deskripsi}
                 </Text>
 
-                {gambarPenyakit ? (
+                {!!gambarPenyakit ? (
                   <Image source={{ uri: gambarPenyakit }} style={styles.aedImage} />
                 ) : null}
             </View>
@@ -158,7 +158,7 @@ const Articlepage = () => {
                   <Text style={styles.cardContent}>No Do's available</Text>
                 )}
 
-                {gambarDos ? (
+                {!!gambarDos ? (
                   <Image source={{ uri: gambarDos }} style={styles.aedImage} />
                 ) : null}
             </View>
@@ -170,12 +170,12 @@ const Articlepage = () => {
                       <TouchableOpacity style={styles.quizButton} onPress={handlePress}>
                         <View style={styles.buttonContent}>
                           <Text style={styles.quizButtonText}>Mulai Kuis</Text>
-                          {quizStarted && (
+                          {quizStarted ? (
                             <View style={styles.resultContainer}>
                               <Text style={styles.resultText}>Lihat hasil</Text>
                               <Icon name="check-circle" size={20} color="red" />
                             </View>
-                          )}
+                          ) : null}
                         </View>
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => router.back()} style={styles.finishButton}>

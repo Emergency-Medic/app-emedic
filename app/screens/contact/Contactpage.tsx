@@ -44,7 +44,7 @@ const Contactpage: React.FC = () => {
                       const friendData = friendDocSnapshot.data();
                       fetchedContacts.push({
                           id: friendUid,
-                          name: friendData.displayName || friendData.username,
+                          name: friendData.firstName || friendData.username,
                           phone: friendData.phone || "",
                       });
                     } else {
@@ -55,9 +55,9 @@ const Contactpage: React.FC = () => {
                 setContacts(fetchedContacts);
                 setLoading(false);
 
-                if (fetchedContacts.length === 0) {
-                    Alert.alert("Info", "Anda belum mempunyai teman.", [{ text: "OK" }]);
-                }
+                // if (fetchedContacts.length === 0) {
+                //     Alert.alert("Info", "Anda belum mempunyai teman.", [{ text: "OK" }]);
+                // }
             } catch (error) {
                 console.error("Error fetching contacts: ", error);
             }
@@ -108,26 +108,50 @@ const Contactpage: React.FC = () => {
   };
 
   const handleDeleteContact = async () => {
-    if (selectedContact && user) { // Pastikan selectedContact dan user tidak null
-        const contactRef = doc(db, "users", user.uid, "friends", selectedContact.id);
-        try {
-            await deleteDoc(contactRef);
-            setContacts((prevContacts) => prevContacts.filter((contact) => contact.id !== selectedContact.id));
-            setModalVisible2(false);
-        } catch (error) {
-            console.error("Error deleting contact: ", error);
+    if (selectedContact && user) {
+      try {
+        // 1. Query untuk mencari dokumen 'friends' berdasarkan friendUid
+        const friendsRef = collection(db, "users", user.uid, "friends");
+        const q = query(friendsRef, where("friendUid", "==", selectedContact.id)); // selectedContact.id berisi friendUid
+  
+        const querySnapshot = await getDocs(q);
+        
+        if (!querySnapshot.empty) {
+          const docToDelete = querySnapshot.docs[0]; // Ambil dokumen yang akan dihapus
+  
+          // 2. Hapus dokumen 'friends' dari user yang login
+          await deleteDoc(doc(db, "users", user.uid, "friends", docToDelete.id));
+  
+          // 3. Cari dan hapus juga di collection teman yang dihapus
+          const friendsRef2 = collection(db, "users", selectedContact.id, "friends");
+          const q2 = query(friendsRef2, where("friendUid", "==", user.uid));
+          const querySnapshot2 = await getDocs(q2);
+          
+  
+          if (!querySnapshot2.empty) {
+            const docToDelete2 = querySnapshot2.docs[0];
+            await deleteDoc(doc(db, "users", selectedContact.id, "friends", docToDelete2.id));
+          }
+          
+  
+          setContacts((prevContacts) => prevContacts.filter((contact) => contact.id !== selectedContact.id));
+          setModalVisible2(false);
+          setSelectedContact(null);
+          // alert('Teman berhasil dihapus.');
+  
+        } else {
+          console.warn("Dokumen teman tidak ditemukan.");
+          // alert('Gagal menghapus teman. Silakan coba lagi.');
         }
+  
+      } catch (error) {
+        console.error("Error deleting contact: ", error);
+        // alert("Gagal menghapus teman. Silakan coba lagi.");
+      }
     } else {
-        // Handle jika selectedContact atau user null
-        if (!user) {
-            console.warn("User belum login. Tidak dapat menghapus kontak.");
-            Alert.alert("Perhatian", "Anda harus login untuk menghapus kontak.");
-            // router.push("/login"); // Jika ingin mengarahkan ke halaman login
-        } else if (!selectedContact) {
-            console.warn("Tidak ada kontak yang dipilih");
-        }
+      // ... (handle jika selectedContact atau user null)
     }
-};
+  };
 
 
   const renderContact = ({ item }: { item: Contact }) => (
@@ -204,12 +228,12 @@ const Contactpage: React.FC = () => {
                     <Image source={require('../../../assets/images/icon.png')} style={styles.avatar} />
                     <View>
                       {/* data kontak */}
-                      {selectedContact && (
+                      {!!selectedContact ? (
                         <>
                           <Text style={styles.contactName}>{selectedContact.name}</Text>
                           <Text style={styles.contactPhone}>{selectedContact.phone}</Text>
                         </>
-                      )}
+                      ) : null}
                     </View>
                   </View>
                   <View style={styles.actionButtons}>
@@ -250,16 +274,16 @@ const Contactpage: React.FC = () => {
                     </Text>
                   </View>
                   <View>
-                  {selectedContact && (
+                  {!!selectedContact ? (
                     <>
                       <Text style={styles.modalWarningQuestion2}>Anda yakin hapus
                       <Text style = {styles.deleteContactName}> {selectedContact.name}</Text> 
                       <Text style = {styles.deleteContactNumber}> ({selectedContact.phone})</Text></Text>
                     </>
-                  )}
+                  ) : null}
                   </View>
                   <View style={styles.answerContent2}> 
-                    <TouchableOpacity style={styles.meButton2}> 
+                    <TouchableOpacity style={styles.meButton2} onPress={handleDeleteContact}> 
                       <Text style={styles.yaText} >
                         Ya
                       </Text>
