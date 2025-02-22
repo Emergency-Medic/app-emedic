@@ -10,16 +10,16 @@ import BackButton from "@/components/BackButton";
 
 const data = {  
 	semuaKategori: [
-		'fraktur', 'gigitanular', 'hentijantung', 'kesetrum', 'lukatusuk', 'mimisan', 'pingsan', 'seranganjantung', 'terkilirdanmemar', 'tersedak'
+		'fraktur', 'gigitanular', 'hentijantung', 'kesetrum', 'lukatusuk', 'mimisan', 'pingsan', 'seranganjantung', 'terkilirdanmemar', 'tersedak', 'sakitkepala', 'pendarahan', 'lukabakar'
 	],
 	kategori1: [  
-		'mimisan', 'terkilirdanmemar'
+		'mimisan', 'terkilirdanmemar', 'sakitkepala'
 	],  
 	kategori2: [  
-		'fraktur', 'lukatusuk', 'pingsan'
+		'fraktur', 'lukatusuk', 'pingsan', 'lukabakar'
 	],  
 	kategori3: [  
-		'gigitanular', 'hentijantung', 'kesetrum', 'seranganjantung', 'tersedak' 
+		'gigitanular', 'hentijantung', 'kesetrum', 'seranganjantung', 'tersedak', 'pendarahan' 
 	],  
 };  
 

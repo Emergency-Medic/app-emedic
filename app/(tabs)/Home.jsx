@@ -11,13 +11,13 @@ import { doc, onSnapshot, getDoc } from "firebase/firestore";
 
 const data = {  
   kategori1: [  
-    'mimisan', 'terkilirdanmemar'
+    'mimisan', 'terkilirdanmemar', 'sakitkepala'
   ],  
   kategori2: [  
-    'fraktur', 'lukatusuk', 'pingsan'
+    'fraktur', 'lukatusuk', 'pingsan', 'lukabakar'
   ],  
   kategori3: [  
-   'gigitanular', 'hentijantung', 'kesetrum', 'seranganjantung', 'tersedak' 
+   'gigitanular', 'hentijantung', 'kesetrum', 'seranganjantung', 'tersedak', 'pendarahan' 
   ],  
 };  
 
