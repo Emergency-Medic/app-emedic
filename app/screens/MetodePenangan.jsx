@@ -10,16 +10,16 @@ import BackButton from "@/components/BackButton";
 
 const data = {  
 	semuaKategori: [
-		'fraktur', 'gigitanular', 'hentijantung', 'kesetrum', 'lukatusuk', 'mimisan', 'pingsan', 'seranganjantung', 'terkilirdanmemar', 'tersedak'
+		'fraktur', 'gigitanular', 'hentijantung', 'kesetrum', 'lukatusuk', 'mimisan', 'pingsan', 'seranganjantung', 'terkilirdanmemar', 'tersedak', 'sakitkepala', 'pendarahan', 'lukabakar'
 	],
 	kategori1: [  
-		'mimisan', 'terkilirdanmemar'
+		'mimisan', 'terkilirdanmemar', 'sakitkepala'
 	],  
 	kategori2: [  
-		'fraktur', 'lukatusuk', 'pingsan'
+		'fraktur', 'lukatusuk', 'pingsan', 'lukabakar'
 	],  
 	kategori3: [  
-		'gigitanular', 'hentijantung', 'kesetrum', 'seranganjantung', 'tersedak' 
+		'gigitanular', 'hentijantung', 'kesetrum', 'seranganjantung', 'tersedak', 'pendarahan' 
 	],  
 };  
 
@@ -68,10 +68,13 @@ export default function MetodePenangan() {
 			return ( 
 				<View style={[styles.cart, { backgroundColor }]} key={item.id}> 
 					<View style={styles.pictureSection}>
-						<MaterialIcons name="verified" size={16} color={Colors.white} />
+						
 						<Image source={{ uri: item.image }} style={styles.image} />
 					</View>
 					<View style={styles.textSection}>
+						<View style={styles.verifiedIcon}>
+							<MaterialIcons name="verified" size={20} color="white" />
+						</View>
 						<Text style={styles.judul}>{item.title}</Text>
 						<Text style={styles.kataKunci}>Kata Kunci: {formattedKeywords}</Text>
 						<Text style={styles.deskripsi}>{truncateDescription(item.description)}</Text>
@@ -180,6 +183,14 @@ const styles = StyleSheet.create({
 		fontFamily: 'regular', 
 		color: Colors.white,
 	}, 
+	verifiedIcon: {
+		justifyContent: 'center',
+		alignItems: 'center',
+		position: 'absolute',
+		top: 0,
+		color: '#fff',
+		right: 0,
+	},
 	keterangan: {
 		fontSize: 9, 
 		fontFamily: 'regular', 

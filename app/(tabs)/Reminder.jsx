@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableOpacity, Modal, TextInput, StyleSheet } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Modal, TextInput, StyleSheet, Alert } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Colors } from "@/constants/Colors";
 import { Calendar, DateData } from "react-native-calendars";
@@ -9,8 +9,9 @@ import Entypo from "@expo/vector-icons/Entypo";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import MakeSchedule from '../screens/reminder/MakeSchedule'
-import { collection, query, where, getDocs, Timestamp } from "firebase/firestore";
+import { collection, query, where, getDocs, Timestamp, onSnapshot, deleteDoc, doc } from "firebase/firestore";
 import { auth, db } from "@/firebaseConfig";
+import moment from 'moment-timezone';
 
 // type Reminder = {
 //   id: number;
@@ -42,36 +43,84 @@ export default function MedicationReminder() {
   const [modalVisible, setModalVisible] = useState(false);
   const [editingReminder, setEditingReminder] = useState(null);
   const [activeReminderId, setActiveReminderId] = useState(null);
+  
 
   useEffect(() => {
-    const fetchReminders = async () => {
-        try {
-            const q = query(collection(db, "schedules"), where("userId", "==", auth.currentUser.uid));
-            const querySnapshot = await getDocs(q);
-            const remindersData = [];
+    const q = query(collection(db, "schedules"), where("userId", "==", auth.currentUser.uid));
 
-            querySnapshot.forEach(doc => {
-                const data = doc.data();
-                const startDate = data.startDate instanceof Timestamp ? data.startDate.toDate().toISOString().split('T')[0] : null;
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const remindersData = [];
 
-                if (startDate === selectedDate) {
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const startDateTimestamp = data.startDate;
+            const endDateTimestamp = data.endDate;
+
+            // 1. Konversi ke Moment dengan zona waktu yang spesifik
+            const selectedDateMoment = moment.tz(selectedDate, 'Asia/Jakarta');
+            const startDateMoment = startDateTimestamp instanceof Timestamp
+                ? moment.tz(startDateTimestamp.toDate(), 'Asia/Jakarta')
+                : null;
+            const endDateMoment = endDateTimestamp instanceof Timestamp
+                ? moment.tz(endDateTimestamp.toDate(), 'Asia/Jakarta')
+                : null;
+
+            // 2. Gunakan startOf('day') untuk menghilangkan informasi waktu
+            const selectedDateStart = selectedDateMoment.startOf('day');
+            const startDateStart = startDateMoment ? startDateMoment.startOf('day') : null;
+            const endDateStart = endDateMoment ? endDateMoment.startOf('day') : null;
+
+            // 3. Format tanggal ke YYYY-MM-DD (opsional, tapi disarankan)
+            const selectedDateString = selectedDateStart.format('YYYY-MM-DD');
+            const startDateString = startDateStart ? startDateStart.format('YYYY-MM-DD') : null;
+            const endDateString = endDateStart ? endDateStart.format('YYYY-MM-DD') : null;
+
+            // 4. Lakukan perbandingan tanggal menggunakan string yang diformat
+            if (startDateString && endDateString) {
+                if (selectedDateString >= startDateString && selectedDateString <= endDateString) {
                     remindersData.push({ id: doc.id, ...data });
-                }
-            });
+                } 
+            } else if (startDateString && data.forever) {
+                if (selectedDateString >= startDateString) {
+                    remindersData.push({ id: doc.id, ...data });
+                } 
+            } 
+        });
 
-            setReminders(remindersData);
-        } catch (error) {
-            console.error("Error fetching reminders:", error);
-        }
-    };
+        // Urutkan remindersData berdasarkan waktu (opsional, tapi disarankan)
+        remindersData.sort((a, b) => {
+          // Gabungkan semua jam pengingat dalam array, lalu urutkan
+          const allTimesA = a.reminders ? a.reminders.sort() : [];
+          const allTimesB = b.reminders ? b.reminders.sort() : [];
 
-    fetchReminders();
+          // Bandingkan jam satu per satu
+          for (let i = 0; i < Math.max(allTimesA.length, allTimesB.length); i++) {
+              const timeA = allTimesA[i] || ""; // Handle undefined
+              const timeB = allTimesB[i] || ""; // Handle undefined
+
+              if (timeA < timeB) return -1;
+              if (timeA > timeB) return 1;
+          }
+
+          return 0; // Jika semua jam sama
+      });
+
+        setReminders(remindersData);
+    }, (error) => {
+        console.error("Error listening for reminders:", error);
+    });
+
+    return () => unsubscribe();
 }, [selectedDate]);
   
-  const handleEdit = (reminder) => {
+  const handleDots = (reminder) => {
     setEditingReminder(reminder);
     setModalVisible(true);
   };
+
+  const handleEdit = (item) => {
+    router.push(`/screens/reminder/EditSchedule?id=${item.id}`);
+};
 
   const saveEdit = () => {
     if (editingReminder) {
@@ -86,11 +135,22 @@ export default function MedicationReminder() {
     }
   };
 
-  const handleDelete = (id) => {
-    setReminders((prev) => ({
-      ...prev,
-      [selectedDate]: prev[selectedDate]?.filter((item) => item.id !== id) || [],
-    }));
+  // const handleDelete = (id) => {
+  //   setReminders((prev) => ({
+  //     ...prev,
+  //     [selectedDate]: prev[selectedDate]?.filter((item) => item.id !== id) || [],
+  //   }));
+  // };
+
+  const handleDelete = async (id) => {
+    try {
+        await deleteDoc(doc(db, "schedules", id));
+        Alert.alert("Sukses", "Reminder berhasil dihapus.");
+        setModalVisible(false); // Tutup modal setelah penghapusan
+    } catch (error) {
+        console.error("Error deleting reminder:", error);
+        Alert.alert("Error", "Gagal menghapus reminder. Silakan coba lagi.");
+    }
   };
 
   const toggleActive = (id) => {
@@ -122,6 +182,7 @@ export default function MedicationReminder() {
       </View>
       <FlatList
         data={reminders}
+        style={styles.remindersCOntainer}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => toggleActive(item.id)}>
@@ -145,12 +206,12 @@ export default function MedicationReminder() {
                 subtitleStyle={[styles.subtitle, activeReminderId === item.id && styles.activeSubtitle]}
                 right={(props) => (
                   <Entypo
-                    {...props}
-                    onPress={() => handleEdit(item)}
-                    name='dots-three-vertical'
-                    size={15}
-                    color={activeReminderId === item.id ? Colors.white : Colors.red}
-                  />
+                            {...props}
+                            onPress={() => handleDots(item)} // Pastikan item.id dikirim
+                            name='dots-three-vertical'
+                            size={15}
+                            color={activeReminderId === item.id ? Colors.white : Colors.red}
+                        />
                 )}
               />
                 {activeReminderId === item.id ? (
@@ -171,7 +232,9 @@ export default function MedicationReminder() {
       <Modal visible={modalVisible} transparent animationType='slide'>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Button onPress={() => router.push('../screens/reminder/EditSchedule')}><Text style={styles.buttonText}>Edit</Text></Button>
+            <Button onPress={() => editingReminder ? handleEdit(editingReminder) : null}>
+                <Text style={styles.buttonText}>Edit</Text>
+            </Button>
             <Button onPress={() => editingReminder?.id ? handleDelete(editingReminder.id) : null}
             ><Text style={styles.buttonText}>Hapus</Text></Button>
             <Button onPress={() => setModalVisible(false)}><Text style={styles.buttonText}>Batal</Text></Button>
@@ -205,6 +268,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row', 
     marginTop: 5,
+    marginBottom: 5,
     justifyContent: 'space-between',
     alignItems: 'center',
     alignContent: 'center'
@@ -302,5 +366,8 @@ const styles = StyleSheet.create({
   buttonText: {
     fontFamily: 'bold',
     color: Colors.blue
+  },
+  remindersCOntainer: {
+    marginVertical: 10,
   }
 });
