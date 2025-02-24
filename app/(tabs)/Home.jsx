@@ -11,13 +11,13 @@ import { doc, onSnapshot, getDoc } from "firebase/firestore";
 
 const data = {  
   kategori1: [  
-    'mimisan', 'terkilirdanmemar'
+    'mimisan', 'terkilirdanmemar', 'sakitkepala'
   ],  
   kategori2: [  
-    'fraktur', 'lukatusuk', 'pingsan'
+    'fraktur', 'lukatusuk', 'pingsan', 'lukabakar'
   ],  
   kategori3: [  
-   'gigitanular', 'hentijantung', 'kesetrum', 'seranganjantung', 'tersedak' 
+   'gigitanular', 'hentijantung', 'kesetrum', 'seranganjantung', 'tersedak', 'pendarahan' 
   ],  
 };  
 
@@ -121,10 +121,12 @@ export default function Home() {
             <View style={[styles.cart, { backgroundColor }]} key={item.id}> 
               <View style={styles.contain}>
                 <View style={styles.pictureSection}>
-                  <MaterialIcons name="verified" size={14} color={Colors.white} />
                   <Image source={{ uri: item.image }} style={styles.image} />
                 </View>
                 <View style={styles.textSection}>
+                <View style={styles.verifiedIcon2}>
+                  <MaterialIcons name="verified" size={20} color="white" />
+                </View>
                   <Text style={styles.judul}> 
                     {item.title} 
                   </Text>
@@ -507,7 +509,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10, 
     paddingVertical: 10,
     marginLeft: 10,
-    gap: 10
+    gap: 10,
   }, 
   pictureSection: {
     flexDirection: 'column',  
@@ -527,7 +529,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,  
     justifyContent: 'flex-start', 
     marginTop: 5,
-    width: 270,
+    width: 230,
   },
   judul: {
     color: Colors.white, 
@@ -553,7 +555,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     justifyContent: 'flex-end',  
     // marginRight: 32,
-    marginTop: 10 
+    marginTop: 10,
   }, 
   pelajariText: {
     marginRight: 6, 
@@ -611,7 +613,6 @@ containerkotak: {
 textkotaklayanan: {
     justifyContent: 'center',
     textAlign: 'center',
-    
 },
 textpanggilandarurat: {
     color: '#fff',
@@ -635,8 +636,8 @@ sliderContainer: {
     textAlign:'center',
     // marginTop: 20,
     // backgroundColor: '#fff',
-    height: 50,
-    width: '85%',
+    height: 20,
+    width: '55%',
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -712,16 +713,17 @@ contentBottomContainer: {
   borderRadius: 10,
   flexDirection: 'row',
   flex: 1,
-  paddingHorizontal: 15,
-  paddingVertical: 5,
+  paddingHorizontal: 5,
+  paddingVertical: 8,
 },
 title: {
   textAlign: 'left',
-  fontSize: 20,
+  fontSize: 18,
   fontFamily: 'bold',
   color: '#fff',
   marginBottom: 10,
   marginTop: 5,
+  marginLeft: 5,
 },
 description: {
   textAlign: 'left',
@@ -731,6 +733,7 @@ description: {
   lineHeight: 20,
   paddingBottom: 10,
   width: '300',
+  marginLeft: 5,
 },
 dotStyle: {
   backgroundColor: '#D9D9D9',
@@ -796,7 +799,15 @@ verifiedIcon: {
   position: 'absolute',
   top: 100,
   color: '#fff',
-  right: 10,
+  right: 0,
+},
+verifiedIcon2: {
+  justifyContent: 'center',
+  alignItems: 'center',
+  position: 'absolute',
+  top: 0,
+  color: '#fff',
+  right: 0,
 },
 //   headerText: {
 //     color: '#000',
