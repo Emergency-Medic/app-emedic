@@ -70,7 +70,7 @@ const SliderTahapB = () => {
           <Image
             source={{ uri: gambar_a }}
             style={styles.imageSlider}
-            resizeMode="cover"
+            resizeMode="contain"
             />
             <View>
               <Text style={styles.title}>{judul_a}</Text>
@@ -90,7 +90,7 @@ const SliderTahapB = () => {
           <Image
             source={{ uri: gambar_b }}
             style={styles.imageSlider}
-            resizeMode="cover"
+            resizeMode="contain"
             />
             <View>
               <Text style={styles.title}>{judul_b}</Text>
@@ -110,7 +110,7 @@ const SliderTahapB = () => {
           <Image
             source={{ uri: gambar_c }}
             style={styles.imageSlider}
-            resizeMode="cover"
+            resizeMode="contain"
             />
             <View>
               <Text style={styles.title}>{judul_c}</Text>
@@ -180,8 +180,8 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontFamily: 'bold',
     color: '#000',
-    marginBottom: 10,
-    marginTop: 5,
+    marginBottom: 0,
+    marginTop: 0,
   },
   description: {
     textAlign: 'left',
@@ -250,10 +250,10 @@ const styles = StyleSheet.create({
     fontFamily: 'semibold',
   },
   imageSlider: {
-    height: '120%',
+    height: 300,
     width: '100%',
-    marginBottom: 20,
-    marginTop: 50,
+    marginBottom: 10,
+    marginTop: 30,
   }
 //   headerText: {
 //     color: '#000',

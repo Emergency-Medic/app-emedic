@@ -239,11 +239,16 @@ const styles = StyleSheet.create({
   },
   locationText: {
     marginRight: 16,
+    flexDirection: 'column', // Menumpuk teks secara vertikal
+    alignItems: 'flex-end',
   },
   location: {
     fontSize: 16,
     fontFamily: 'italic',
     color: Colors.red,
+    flexWrap: 'wrap', // Memungkinkan teks berpindah baris
+    width : 150,
+    textAlign: 'right', // Perataan kanan
   },
   locationInfo: {
     fontSize: 12,
