@@ -11,6 +11,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { auth, db } from '@/firebaseConfig';
 import { doc, onSnapshot, collection, addDoc, getDocs, where, query } from "firebase/firestore";
 
+
 type Contact = {
     id: string;
     name: string;
@@ -103,7 +104,7 @@ const SendRequest: React.FC = () => {
     <>
       <StatusBar style="dark" translucent={true} />
       {/* headernya */}
-      <BackButton color={Colors.red} top={44} left={10}/>
+      <BackButton color={Colors.red} top={44} left={10} goHome={true}/>
       <View style={styles.header}>
         <Text style={styles.title}>Halaman Kontak</Text>
       </View>

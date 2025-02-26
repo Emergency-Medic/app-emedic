@@ -61,20 +61,19 @@ export default function MetodePenangan() {
 			const formattedKeywords = item.keywords.join(', ');
 			const truncateDescription = (description) => {
 				const words = description.split(' ');  // Pisahkan berdasarkan spasi
-				const truncated = words.slice(0, 10).join(' ');  // Ambil 20 kata pertama
-				return words.length > 10 ? truncated + '...' : truncated;  // Jika lebih dari 20 kata, tambahkan "..."
+				const truncated = words.slice(0, 7).join(' ');  // Ambil 20 kata pertama
+				return words.length > 7 ? truncated + '...' : truncated;  // Jika lebih dari 20 kata, tambahkan "..."
 			  };
 
 			return ( 
 				<View style={[styles.cart, { backgroundColor }]} key={item.id}> 
 					<View style={styles.pictureSection}>
-						
 						<Image source={{ uri: item.image }} style={styles.image} />
 					</View>
 					<View style={styles.textSection}>
-						<View style={styles.verifiedIcon}>
+						{/* <View style={styles.verifiedIcon}>
 							<MaterialIcons name="verified" size={20} color="white" />
-						</View>
+						</View> */}
 						<Text style={styles.judul}>{item.title}</Text>
 						<Text style={styles.kataKunci}>Kata Kunci: {formattedKeywords}</Text>
 						<Text style={styles.deskripsi}>{truncateDescription(item.description)}</Text>
@@ -88,6 +87,9 @@ export default function MetodePenangan() {
 							</View>
 						</TouchableOpacity>
 					</View>  
+					<View>
+						<MaterialIcons name="verified" size={16} color={Colors.white} style={styles.verifiedContent}/>
+					</View>
 				</View>
 			);
 		}); 
@@ -219,6 +221,7 @@ const styles = StyleSheet.create({
 		// paddingHorizontal: 10,
 		paddingHorizontal: 25,
 		paddingVertical: 10,
+		// position: 'relative',
 	}, 
 	pictureSection: {
 		flexDirection: 'column',  
@@ -231,13 +234,18 @@ const styles = StyleSheet.create({
 		height: 62, 
 		justifyContent: 'center', 
 		alignItems: 'center', 
-		marginTop: 10,
+		// marginTop: 10,
 		borderRadius: 10,
 	},
 	textSection: {
 		flex: 1,
 		justifyContent: 'center', 
 		marginTop: 5,
+	},
+	verifiedContent: {
+		marginBottom: 70,
+		marginLeft: 10,
+		// width: 10,
 	},
 	judul: {
 		color: Colors.white, 
@@ -258,9 +266,11 @@ const styles = StyleSheet.create({
 		marginBottom: 5, 
 	}, 
 	pelajariSection: {
-		flexDirection: 'row', 
-		alignItems: 'center', 
-		justifyContent: 'flex-end',  
+	width: 215,
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'flex-end',  
+    marginRight: 32, 
 	}, 
 	pelajariText: {
 		marginRight: 6, 

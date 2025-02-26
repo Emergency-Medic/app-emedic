@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     fontFamily: 'semibold',
   },
   imageSlider: {
-    height: '150%',
+    height: 300,
     width: '100%',
     marginBottom: 10,
     marginTop: 30,
@@ -342,4 +342,4 @@ const styles = StyleSheet.create({
 //   }
 });
 
-export default SliderTahapC;
+export default SliderTahapC;
