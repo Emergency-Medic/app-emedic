@@ -1,28 +1,39 @@
 import React, { useState, useEffect } from "react";
-import { Modal, View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { Alert, Linking, Modal, View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
-import call from 'react-native-phone-call'; 
+import call from 'react-native-phone-call'; // Phone call
 import { Colors } from '@/constants/Colors';
-import { auth, db } from '@/firebaseConfig'
-import { doc, onSnapshot } from "firebase/firestore";
-import useLocation from "@/hooks/useLocation";
+import { auth, db } from '@/firebaseConfig'; // Firebase
+import { doc, onSnapshot } from "firebase/firestore"; //  Firestore
+import useLocation from "@/hooks/useLocation"; // Custom hook for location
+import * as Notifications from 'expo-notifications'; // Notifications
+import { setNotificationResponseHandler } from 'expo-notifications';
 
+// Icon
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Foundation from '@expo/vector-icons/Foundation';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 const Emergency = () => {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
   const [name, setName] = useState(false);
-  const user = auth.currentUser
+  const user = auth.currentUser; 
 
   const makePhoneCall = () => {
     const args = {
-      number: '112',
+      // number: '112',
       prompt: false,
       skipCanOpen: true
     }
@@ -49,6 +60,121 @@ const Emergency = () => {
     }, [user]);
 
     const { latitude, longitude, city, errorMsg } = useLocation();
+    const [expoPushToken, setExpoPushToken] = useState('');
+
+    useEffect(() => {
+      registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+    }, []);
+
+    const registerForPushNotificationsAsync = async () => {
+      let token;
+      const { status } = await Notifications.getPermissionsAsync();
+      if (status !== 'granted') {
+          alert('No notifications permissions!');
+          return;
+      }
+      token = await Notifications.getExpoPushTokenAsync();
+      console.log(token);
+
+      saveTokenToFirestore(token);
+      return token.data;
+    }
+
+    const saveTokenToFirestore = async (token) => {
+      try{
+        const currentUser = auth.currentUser;
+        await db
+          .collection('users')
+          .doc(currentUser.uid)
+          .update({ expoPushToken: token }, { merge: true });
+      } catch (error) {
+        console.log('Error saving token to Firestore: ', error);
+      }
+    }; 
+
+    const sendPushNotification = async (friendToken, myLocation) => {
+      if(!myLocation || !myLocation.latitude || !myLocation.longitude) {
+        console.log('Invalid location data');
+        return;
+      }
+
+      const message = {
+        to: friendToken,
+        sound: 'default',
+        title: 'Emergency Alert',
+        body: `Your friend needs your help! They are currently at ${city}.`,
+        data: { 
+          latitude: myLocation.latitude,
+          longitude: myLocation.longitude,
+         },
+      };
+
+      try{
+        const response = await fetch('https://exp.host/--/api/v2/push/send', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Accept-encoding': 'gzip, deflate',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(message),
+        });
+
+        if(!response.ok) {
+          const errorData = await response.json();
+          console.log('Failed to send push notification: ', errorData);
+        }
+      } catch(error) {
+        console.log('Error sending push notification: ', error);
+      }  
+    }; 
+
+    const handlePanic = async () => {
+      if (errorMsg) {
+        Alert.alert('Error', errorMsg);
+        return;
+      }
+
+      if(!latitude || !longitude) {
+        Alert.alert('Error', 'Location not found');
+        return;
+      }
+
+      try{
+        const currentUser = auth.currentUser;
+        const friendsSnapshot = await db
+          .collection('users')
+          .doc(currentUser.uid)
+          .collection('friends')
+          .get();
+
+          const friends = friendsSnapshot.docs.map(doc => doc.data());
+          
+          for (const friend of friends) {
+            const friendToken = friend.expoPushToken;
+            if (friendToken) {
+              await sendPushNotification(friendToken, { latitude, longitude});  
+            }
+          }
+
+          Alert.alert('Panic Alert', 'Your friends have been notified!');
+      } catch (error) {
+        console.log('Error sending panic alert: ', error);
+        Alert.alert('Error', 'Failed to send panic alert');
+      }
+    }; 
+
+    useEffect(() => {
+      Notifications.setNotificationHandler(response => {
+        const { latitude, longitude } = response.notification.request.content.data;
+        if (latitude && longitude) {
+          Linking.openURL(`https://maps.google.com/?q=${latitude},${longitude}`); // Perbaikan di sini
+        } else {
+          console.warn("Data lokasi tidak valid dalam notifikasi.");
+        }
+      });
+    }, []);
+
   return (
     <View style={styles.container}>
       <StatusBar style='dark' translucent={true} />
