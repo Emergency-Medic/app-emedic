@@ -198,7 +198,7 @@ const ApproveFriend: React.FC = () => {
     <>
       <StatusBar style="dark" translucent={true} />
       {/* header */}
-      <BackButton color={Colors.red} top={44} left={10}/>
+      <BackButton color={Colors.red} top={44} left={10} goHome={true}/>
       <View style={styles.header}>
         <Text style={styles.title}>Halaman Kontak</Text>
       </View>
