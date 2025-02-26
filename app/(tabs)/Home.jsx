@@ -13,13 +13,13 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 const data = {  
   kategori1: [  
-    'mimisan', 'terkilirdanmemar'
+    'mimisan', 'terkilirdanmemar', 'sakitkepala'
   ],  
   kategori2: [  
-    'fraktur', 'lukatusuk', 'pingsan'
+    'fraktur', 'lukatusuk', 'pingsan', 'lukabakar'
   ],  
   kategori3: [  
-   'gigitanular', 'hentijantung', 'kesetrum', 'seranganjantung', 'tersedak' 
+   'gigitanular', 'hentijantung', 'kesetrum', 'seranganjantung', 'tersedak', 'pendarahan' 
   ],  
 };  
 
@@ -198,6 +198,9 @@ export default function Home() {
                   <Image source={{ uri: item.image }} style={styles.image} />
                 </View>
                 <View style={styles.textSection}>
+                <View style={styles.verifiedIcon2}>
+                  <MaterialIcons name="verified" size={20} color="white" />
+                </View>
                   <Text style={styles.judul}> 
                     {item.title} 
                   </Text>
@@ -710,7 +713,6 @@ containerkotak: {
 textkotaklayanan: {
     justifyContent: 'center',
     textAlign: 'center',
-    
 },
 textpanggilandarurat: {
     color: '#fff',
@@ -734,8 +736,8 @@ sliderContainer: {
     textAlign:'center',
     // marginTop: 20,
     // backgroundColor: '#fff',
-    height: 50,
-    width: '85%',
+    height: 20,
+    width: '55%',
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -898,7 +900,15 @@ verifiedIcon: {
   position: 'absolute',
   top: 100,
   color: '#fff',
-  right: 10,
+  right: 0,
+},
+verifiedIcon2: {
+  justifyContent: 'center',
+  alignItems: 'center',
+  position: 'absolute',
+  top: 0,
+  color: '#fff',
+  right: 0,
 },
 //   headerText: {
 //     color: '#000',
