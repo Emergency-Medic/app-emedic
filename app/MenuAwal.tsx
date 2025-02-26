@@ -1,6 +1,6 @@
 import React,{useEffect} from 'react';
 import { useRouter } from "expo-router";
-import { auth, db } from '@/firebaseConfig';
+import { auth, db } from '../firebaseConfig';
 import { StatusBar } from 'expo-status-bar';
 import { Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 

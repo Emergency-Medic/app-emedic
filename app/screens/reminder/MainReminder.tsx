@@ -87,54 +87,56 @@ const [reminders, setReminders] = useState<RemindersType>({
         markedDates={{ [selectedDate]: { selected: true, marked: true } }}
         style={{ fontFamily: 'regular' }} // masih belum bisa
       />
-      <View style={styles.headerPengingat}>
-        <Text style={styles.header2}>Pengingat Anda</Text>
-        <Text style={styles.addText}>Tambah Baru</Text>
-      </View>
-      <FlatList
-        data={reminders[selectedDate] || []}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => toggleActive(item.id)}>
-            <View style={styles.rowContainer}>
-              <Text style={styles.timeText}>{item.time}</Text>
-              <Card style={[styles.card, activeReminderId === item.id && styles.activeCard]}>
-              <Card.Title
-                left={(props) => (
-                  <IconButton
-                    {...props}
-                    icon={(iconProps) => <MaterialCommunityIcons name='pill' {...iconProps} color={activeReminderId === item.id ? Colors.white : Colors.blue} />}
-                  />
-                )}
-                title={item.name}
-                titleStyle={[styles.titleCard, activeReminderId === item.id && styles.activeTitle]}
-                subtitle={`${item.dose}`}
-                subtitleStyle={[styles.subtitle, activeReminderId === item.id && styles.activeSubtitle]}
-                right={(props) => (
-                  <Entypo
-                    {...props}
-                    onPress={() => handleEdit(item)}
-                    name='dots-three-vertical'
-                    size={15}
-                    color={activeReminderId === item.id ? Colors.white : Colors.red}
-                  />
-                )}
-              />
-                {activeReminderId === item.id ? (
-                  <View style={styles.activeSection}>
-                    <View style={styles.activeRow}>
-                      <Text style={styles.activeText}>Sudah minum?</Text>
-                      <Button mode='contained' onPress={() => setActiveReminderId(null)} style={styles.activeButton}>
-                        <Text style={styles.activeTextButton}>Ya</Text>
-                      </Button>
+      <View style={styles.containerpengingat} >
+        <View style={styles.headerPengingat}>
+          <Text style={styles.header2}>Pengingat Anda</Text>
+          <Text style={styles.addText}>Tambah Baru</Text>
+        </View>
+        <FlatList
+          data={reminders[selectedDate] || []}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => toggleActive(item.id)}>
+              <View style={styles.rowContainer}>
+                <Text style={styles.timeText}>{item.time}</Text>
+                <Card style={[styles.card, activeReminderId === item.id && styles.activeCard]}>
+                <Card.Title
+                  left={(props) => (
+                    <IconButton
+                      {...props}
+                      icon={(iconProps) => <MaterialCommunityIcons name='pill' {...iconProps} color={activeReminderId === item.id ? Colors.white : Colors.blue} />}
+                    />
+                  )}
+                  title={item.name}
+                  titleStyle={[styles.titleCard, activeReminderId === item.id && styles.activeTitle]}
+                  subtitle={`${item.dose}`}
+                  subtitleStyle={[styles.subtitle, activeReminderId === item.id && styles.activeSubtitle]}
+                  right={(props) => (
+                    <Entypo
+                      {...props}
+                      onPress={() => handleEdit(item)}
+                      name='dots-three-vertical'
+                      size={15}
+                      color={activeReminderId === item.id ? Colors.white : Colors.red}
+                    />
+                  )}
+                />
+                  {activeReminderId === item.id ? (
+                    <View style={styles.activeSection}>
+                      <View style={styles.activeRow}>
+                        <Text style={styles.activeText}>Sudah minum?</Text>
+                        <Button mode='contained' onPress={() => setActiveReminderId(null)} style={styles.activeButton}>
+                          <Text style={styles.activeTextButton}>Ya</Text>
+                        </Button>
+                      </View>
                     </View>
-                  </View>
-                ) : null}
-              </Card>
-            </View>
-          </TouchableOpacity>
-        )}
-      />
+                  ) : null}
+                </Card>
+              </View>
+            </TouchableOpacity>
+          )}
+          style={styles.flatListStyle} />
+      </View>
       <Modal visible={modalVisible} transparent animationType='slide'>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -167,8 +169,11 @@ const styles = StyleSheet.create({
     marginTop: 20, 
     color: Colors.blue 
   },
-  headerPengingat: {
+  containerpengingat : {
     flex: 1,
+  },
+  headerPengingat: {
+    // flex: 1,
     flexDirection: 'row', 
     marginTop: 5,
     justifyContent: 'space-between',
@@ -268,5 +273,8 @@ const styles = StyleSheet.create({
   buttonText: {
     fontFamily: 'bold',
     color: Colors.blue
+  },
+  flatListStyle: { // Style untuk FlatList
+    maxHeight: 250, // Atur tinggi maksimum FlatList
   }
 });

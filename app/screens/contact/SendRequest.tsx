@@ -11,6 +11,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { auth, db } from '@/firebaseConfig';
 import { doc, onSnapshot, collection, addDoc, getDocs, where, query } from "firebase/firestore";
 
+
 type Contact = {
     id: string;
     name: string;
