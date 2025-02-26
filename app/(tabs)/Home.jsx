@@ -178,8 +178,8 @@ export default function Home() {
           const formattedKeywords = item.keywords.join(', ');
           const truncateDescription = (description) => {
             const words = description.split(' ');  // Pisahkan berdasarkan spasi
-            const truncated = words.slice(0, 7).join(' ');  // Ambil 20 kata pertama
-            return words.length > 7 ? truncated + '...' : truncated;  // Jika lebih dari 20 kata, tambahkan "..."
+            const truncated = words.slice(0, 6).join(' ');  // Ambil 20 kata pertama
+            return words.length > 6 ? truncated + '...' : truncated;  // Jika lebih dari 20 kata, tambahkan "..."
           };
 
           return (
@@ -198,9 +198,9 @@ export default function Home() {
                   <Image source={{ uri: item.image }} style={styles.image} />
                 </View>
                 <View style={styles.textSection}>
-                <View style={styles.verifiedIcon2}>
+                {/* <View style={styles.verifiedIcon2}>
                   <MaterialIcons name="verified" size={20} color="white" />
-                </View>
+                </View> */}
                   <Text style={styles.judul}> 
                     {item.title} 
                   </Text>
@@ -736,8 +736,8 @@ sliderContainer: {
     textAlign:'center',
     // marginTop: 20,
     // backgroundColor: '#fff',
-    height: 20,
-    width: '55%',
+    height: 50,
+    width: '90%',
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
