@@ -71,9 +71,9 @@ export default function MetodePenangan() {
 						<Image source={{ uri: item.image }} style={styles.image} />
 					</View>
 					<View style={styles.textSection}>
-						<View style={styles.verifiedIcon}>
+						{/* <View style={styles.verifiedIcon}>
 							<MaterialIcons name="verified" size={20} color="white" />
-						</View>
+						</View> */}
 						<Text style={styles.judul}>{item.title}</Text>
 						<Text style={styles.kataKunci}>Kata Kunci: {formattedKeywords}</Text>
 						<Text style={styles.deskripsi}>{truncateDescription(item.description)}</Text>
