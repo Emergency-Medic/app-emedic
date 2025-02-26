@@ -19,7 +19,7 @@ const BackButton: React.FC<BackButtonProps> = ({ color = "black", onPress, top, 
       onPress(); // Jalankan fungsi tambahan jika ada
     } else {
         if (goHome) {
-          router.push("/(tabs)/Home"); // Arahkan ke halaman beranda
+          router.replace("/(tabs)/Home"); // Arahkan ke halaman beranda
       } else {
           router.back(); // Kembali ke layar sebelumnya
     }
