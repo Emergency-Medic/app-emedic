@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Modal, View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { Alert, Linking, Modal, View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
-import call from 'react-native-phone-call'; 
+import call from 'react-native-phone-call'; // Phone call
 import { Colors } from '@/constants/Colors';
-import { auth, db } from '@/firebaseConfig'
-import { doc, onSnapshot } from "firebase/firestore";
-import useLocation from "@/hooks/useLocation";
+import { auth, db } from '@/firebaseConfig'; // Firebase
+import { doc, onSnapshot } from "firebase/firestore"; //  Firestore
+import useLocation from "@/hooks/useLocation"; // Custom hook for location
 
+// Icon
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -18,11 +19,11 @@ const Emergency = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
   const [name, setName] = useState(false);
-  const user = auth.currentUser
+  const user = auth.currentUser; 
 
   const makePhoneCall = () => {
     const args = {
-      number: '112',
+      number: '081278959988',
       prompt: false,
       skipCanOpen: true
     }
@@ -49,6 +50,7 @@ const Emergency = () => {
     }, [user]);
 
     const { latitude, longitude, city, errorMsg } = useLocation();
+
   return (
     <View style={styles.container}>
       <StatusBar style='dark' translucent={true} />
@@ -239,11 +241,16 @@ const styles = StyleSheet.create({
   },
   locationText: {
     marginRight: 16,
+    flexDirection: 'column', // Menumpuk teks secara vertikal
+    alignItems: 'flex-end',
   },
   location: {
     fontSize: 16,
     fontFamily: 'italic',
     color: Colors.red,
+    flexWrap: 'wrap', // Memungkinkan teks berpindah baris
+    width : 150,
+    textAlign: 'right', // Perataan kanan
   },
   locationInfo: {
     fontSize: 12,
