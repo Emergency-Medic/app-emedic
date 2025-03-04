@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { Modal, View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native';
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import call from 'react-native-phone-call'; 
@@ -11,6 +11,7 @@ import Skeleton from 'react-native-reanimated-skeleton';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import * as Notifications from "expo-notifications";
 import Foundation from '@expo/vector-icons/Foundation';
 
 Notifications.setNotificationHandler({
@@ -92,7 +93,7 @@ const Emergency = () => {
 
     const { latitude, longitude, city, errorMsg } = useLocation();
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <StatusBar style='dark' translucent={true} />
       <View style={styles.header}>
         {/* Profile */}
@@ -235,7 +236,7 @@ const Emergency = () => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -383,6 +384,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.red,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 20
   },
   cancelText: {
     color: Colors.white,
