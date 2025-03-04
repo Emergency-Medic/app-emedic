@@ -144,16 +144,6 @@ const MakeSchedule = () => {
                     }
                 }
     
-                // Menjadwalkan notifikasi tambahan 15 menit setelahnya
-                if (checkedItems[reminders.indexOf(reminderTime)]) {
-                    const timeIntervalLater = timeInterval + 900;
-                    const laterNotification = await Notifications.scheduleNotificationAsync({
-                        content,
-                        trigger: { type: "timeInterval", seconds: timeIntervalLater, repeats: false },
-                    });
-    
-                    notificationIds.push(laterNotification);
-                }
             }
             console.log(notificationIds)
             const dataToSave = {
