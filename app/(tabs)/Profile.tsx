@@ -9,7 +9,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { auth, db } from "@/firebaseConfig";
 import { doc, onSnapshot } from "firebase/firestore";
-
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 interface ProfileProps {  
   modalVisible: boolean;  
@@ -18,7 +18,17 @@ interface ProfileProps {
   
 const Profile: React.FC<ProfileProps> = ({ modalVisible, setModalVisible }) => {    
 	const router = useRouter();
-	const handleSignOut = () => {
+	const handleSignOut = async () => {
+		const currentUser = auth.currentUser;
+		if (currentUser) {
+			const isGoogleUser = currentUser.providerData.some(
+                (provider: { providerId: string; }) => provider.providerId === 'google.com'
+            );
+			if (isGoogleUser) {
+				GoogleSignin.configure({});
+				await GoogleSignin.signOut()
+			}
+		}
 		signOut(auth).then(() => {
 			router.replace('/MenuAwal')
 		}).catch((error) => {
@@ -28,6 +38,7 @@ const Profile: React.FC<ProfileProps> = ({ modalVisible, setModalVisible }) => {
 	const [name, setName] = useState('')
 	const [username, setUsername] = useState('')
 	const user = auth.currentUser
+	const [progress, setProgress] = useState(0);
 	
 	  useEffect(() => {
 			if (!user) return;
@@ -40,6 +51,11 @@ const Profile: React.FC<ProfileProps> = ({ modalVisible, setModalVisible }) => {
 				const data = snapshot.data();
 				setName(snapshot.data().firstName);
 				setUsername(snapshot.data().username);
+
+				// kuis progress bar
+				const completedQuizzes = data.completedQuizzes || [];
+				const progressPercentage = (completedQuizzes.length / 13) * 100;
+				setProgress(progressPercentage);
 			  } else {
 				console.log("User does not exist!");
 			  }
@@ -47,6 +63,8 @@ const Profile: React.FC<ProfileProps> = ({ modalVisible, setModalVisible }) => {
 		
 			return () => unsubscribe();  // Cleanup listener on unmount
 		  }, [user]);
+
+		  
 
 	return (    
 		<Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
@@ -75,10 +93,10 @@ const Profile: React.FC<ProfileProps> = ({ modalVisible, setModalVisible }) => {
 						<View style={styles.progresSection}>
 							<View style={styles.progresTextSection}> 
 								<Text style={styles.progress}>Progres Anda keseluruhan: </Text>
-								<Text style={styles.persentage}>0%</Text>
+								<Text style={styles.persentage}>{progress.toFixed(0)}%</Text>
 							</View>
 							<View style={styles.progresBar}>
-								<View style={styles.bar}>
+								<View style={[styles.bar, { width: `${progress}%` }]}>
 								</View> 
 							</View>
 						</View> 
@@ -95,7 +113,6 @@ const Profile: React.FC<ProfileProps> = ({ modalVisible, setModalVisible }) => {
 							<MaterialCommunityIcons name="contacts" size={20} color={Colors.blue} />
 							<Text style={styles.teman}>Teman</Text>
 						</TouchableOpacity>
-						{/* Log Out */}
 						<TouchableOpacity onPress={handleSignOut} style={styles.logOutSection}> 
 							<Text style={styles.logOut}>Log Out</Text>
 						</TouchableOpacity>
@@ -211,14 +228,15 @@ const styles = StyleSheet.create({
 	alignItems: 'flex-start', 
 	justifyContent: 'center', 
 	borderRadius: 20, 
-	elevation: 10,
+	elevation: 1.5,
     shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.1,
     shadowRadius: 10, 
+	paddingHorizontal: 4
   }, 
   bar: {
-	width: 100, 
+	// width: '50%', 
 	height: 2.9,
 	backgroundColor: Colors.red, 
 	borderRadius: 20, 

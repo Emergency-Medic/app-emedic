@@ -6,7 +6,6 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { Colors } from '@/constants/Colors';
 import BackButton from '@/components/BackButton'
-import { Picker } from "@react-native-picker/picker";
 import Checkbox from 'expo-checkbox';
 import DateTimePicker from '@react-native-community/datetimepicker'; // Import DateTimePicker
 import { auth, db } from '@/firebaseConfig';
@@ -34,7 +33,10 @@ const EditSchedule = () => {
     const [description, setDescription] = useState('');
     const [checkedItems, setCheckedItems] = useState([]);
     const { id: scheduleId } = params;
+    const [doseType, setDoseType] = useState('');
     const router = useRouter();
+
+
     useEffect(() => {
         const fetchSchedule = async () => {
             if (scheduleId) {
@@ -53,6 +55,7 @@ const EditSchedule = () => {
                         setForever(data.forever);
                         setReminders(data.reminders);
                         setDescription(data.description);
+                        setDoseType(data.doseType);
                     } else {
                         Alert.alert("Error", "Jadwal tidak ditemukan.");
                     }
@@ -120,7 +123,6 @@ const EditSchedule = () => {
 
             const startDateTimestamp = Timestamp.fromDate(startDate); // Gunakan Timestamp.fromDate
             const endDateTimestamp = forever ? null : Timestamp.fromDate(endDate);
-
             if (scheduleId) {
                 // Update dokumen yang sudah ada
                 const docRef = doc(db, "schedules", scheduleId);
@@ -135,6 +137,7 @@ const EditSchedule = () => {
                     forever,
                     reminders,
                     description,
+                    doseType
                 });
                 Alert.alert("Sukses", "Jadwal berhasil diperbarui!");
             } else {
@@ -246,7 +249,13 @@ const EditSchedule = () => {
                         <TouchableOpacity onPress={() => setDose(dose + 1)} style={styles.doseButton}><Text style={styles.white}>+</Text></TouchableOpacity>
                     </View>
                     
-                    <Text style={styles.frequencyText2}>sdm</Text>
+                    {/* <Text style={styles.frequencyText2}>sdm</Text> */}
+                    <TextInput
+                        style={styles.doseTypeInput}
+                        placeholder="sdm"
+                        value={doseType}
+                        onChangeText={setDoseType}
+                    />
                     <View style={styles.choice}>
                     </View>
 
@@ -559,7 +568,18 @@ const styles = StyleSheet.create({
   selectedTypeButton: {
    borderColor: Colors.red,
    borderWidth: 1
-  }
+  },
+  doseTypeInput: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 20,
+    marginTop: 5,
+    fontFamily: 'regular',
+    width: 60,
+    height: 33,
+    marginLeft: 10,
+    paddingHorizontal: 7
+  },
 });
 
 export default EditSchedule;

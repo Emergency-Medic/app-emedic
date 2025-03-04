@@ -57,7 +57,11 @@ export default function ChangeEmail() {
       router.back();
     } catch (error) {
       console.error(error);
-      setError(error.message); // Tampilkan error ke user
+      if (error.code === 'auth/email-already-in-use') {
+        setError('Email sudah terdaftar di akun lain. Gunakan email lain');
+    } else {
+        setError(error.message); // Tampilkan error ke user
+    }
     } finally {
       setLoading(false);
     }
