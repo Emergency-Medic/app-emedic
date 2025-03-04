@@ -92,7 +92,7 @@ const MakeSchedule = () => {
             const notificationIds = [];
             const now = new Date();
 
-            Notifications.cancelAllScheduledNotificationsAsync()
+            // Notifications.cancelAllScheduledNotificationsAsync()
             for (const reminderTime of reminders) {
                 const [hours, minutes] = reminderTime.split(":").map(Number);
                 // let reminderDate = new Date();
