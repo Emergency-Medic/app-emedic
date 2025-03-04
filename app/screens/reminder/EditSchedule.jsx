@@ -17,24 +17,23 @@ import { useRouter } from 'expo-router';
 const EditSchedule = () => {
     const params = useLocalSearchParams();
     const [medName, setMedName] = useState('');
-    const [dose, setDose] = useState(1);
-    const [frequency, setFrequency] = useState(1); //Default frekuensi 1
-    // date and time
-    const [startDate, setStartDate] = useState(new Date()); // Gunakan date object
-    const [endDate, setEndDate] = useState(new Date()); // Gunakan date object
-    const [showStartDatePicker, setShowStartDatePicker] = useState(false);
-    const [showEndDatePicker, setShowEndDatePicker] = useState(false);
-    // 
-    const [selectedType, setSelectedType] = useState('Tablet'); // State untuk jenis obat
-    const [forever, setForever] = useState(false); // State untuk opsi selamanya
-    const [reminders, setReminders] = useState([]);
-    const [time, setTime] = useState(new Date());
-    const [showTimePicker, setShowTimePicker] = useState(false);
-    const [description, setDescription] = useState('');
-    const [checkedItems, setCheckedItems] = useState([]);
-    const { id: scheduleId } = params;
-    const [doseType, setDoseType] = useState('');
-    const router = useRouter();
+        const [dose, setDose] = useState(1);
+        const [frequency, setFrequency] = useState(1); //Default frekuensi 1
+        // date and time
+        const [startDate, setStartDate] = useState(new Date()); // Gunakan date object
+        const [endDate, setEndDate] = useState(new Date()); // Gunakan date object
+        const [showStartDatePicker, setShowStartDatePicker] = useState(false);
+        const [showEndDatePicker, setShowEndDatePicker] = useState(false);
+        // 
+        const [selectedType, setSelectedType] = useState('Tablet'); // State untuk jenis obat
+        const [forever, setForever] = useState(false); // State untuk opsi selamanya
+        const [reminders, setReminders] = useState([]);
+        const [time, setTime] = useState(new Date());
+        const [showTimePicker, setShowTimePicker] = useState(false);
+        const [description, setDescription] = useState('');
+        const [checkedItems, setCheckedItems] = useState([]);
+        const [doseType, setDoseType] = useState('tablet');
+        const router = useRouter();
 
 
     useEffect(() => {
@@ -140,22 +139,7 @@ const EditSchedule = () => {
                     doseType
                 });
                 Alert.alert("Sukses", "Jadwal berhasil diperbarui!");
-            } else {
-                // Tambah dokumen baru
-                await addDoc(collection(db, "schedules"), {
-                    userId: auth.currentUser.uid,
-                    medName,
-                    dose,
-                    frequency,
-                    type: selectedType,
-                    startDate: startDateTimestamp,
-                    endDate: endDateTimestamp,
-                    forever,
-                    reminders,
-                    description,
-                });
-                Alert.alert("Sukses", "Jadwal berhasil disimpan!");
-            }
+            } 
 
             // Reset state setelah disimpan
             setMedName('');
