@@ -8,16 +8,21 @@ interface BackButtonProps {
   onPress?: () => void; // Aksi tambahan (opsional)
   top?: number;
   left?: number
+  goHome?: boolean; // Tambahkan properti goHome
 }
 
-const BackButton: React.FC<BackButtonProps> = ({ color = "black", onPress, top, left = 25 }) => {
+const BackButton: React.FC<BackButtonProps> = ({ color = "black", onPress, top, left = 25, goHome = false }) => {
   const router = useRouter();
 
   const handlePress = () => {
     if (onPress) {
       onPress(); // Jalankan fungsi tambahan jika ada
     } else {
-      router.back(); // Default: kembali ke layar sebelumnya
+        if (goHome) {
+          router.replace("/(tabs)/Home"); // Arahkan ke halaman beranda
+      } else {
+          router.back(); // Kembali ke layar sebelumnya
+    }
     }
   };
 

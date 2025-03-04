@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
-import { ImageBackground, Modal, ScrollView, View, Image ,  Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Animated, Alert, PanResponder } from 'react-native';
+import { FlatList, ImageBackground, Modal, ScrollView, View, Image ,  Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Animated, Alert, PanResponder } from 'react-native';
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
@@ -7,7 +7,9 @@ import call from 'react-native-phone-call';
 import Swiper from 'react-native-swiper';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { auth, db } from '@/firebaseConfig'
-import { doc, onSnapshot, getDoc } from "firebase/firestore";
+import { doc,onSnapshot,getDoc,collection,query,where,Timestamp,} from "firebase/firestore";
+import moment from "moment-timezone";
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 const data = {  
   kategori1: [  
@@ -27,7 +29,7 @@ export default function Home() {
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('kategori1');
   const [articles, setArticles] = useState([]);
-
+  const [todayReminders, setTodayReminders] = useState([]);
   const [sliderValue, setSliderValue] = useState(new Animated.Value(0));
   const [name, setName] = useState('')
   const user = auth.currentUser
@@ -79,6 +81,69 @@ export default function Home() {
     return () => unsubscribe();  // Cleanup listener on unmount
   }, [user]);
 
+  useEffect(() => {
+    const today = moment.tz("Asia/Jakarta").format("YYYY-MM-DD");
+    const q = query(
+        collection(db, "schedules"),
+        where("userId", "==", auth.currentUser.uid)
+    );
+
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const remindersData = [];
+
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const startDateMoment =
+                data.startDate instanceof Timestamp
+                    ? moment
+                        .tz(data.startDate.toDate(), "Asia/Jakarta")
+                        .startOf("day")
+                    : null;
+            const endDateMoment =
+                data.endDate instanceof Timestamp
+                    ? moment.tz(data.endDate.toDate(), "Asia/Jakarta").startOf("day")
+                    : null;
+            const startDate = startDateMoment
+                ? startDateMoment.format("YYYY-MM-DD")
+                : null;
+            const endDate = endDateMoment
+                ? endDateMoment.format("YYYY-MM-DD")
+                : null;
+
+            if (startDate && endDate) {
+                if (today >= startDate && today <= endDate) {
+                    remindersData.push({ id: doc.id, ...data });
+                }
+            } else if (startDate && data.forever) {
+                if (today >= startDate) {
+                    remindersData.push({ id: doc.id, ...data });
+                }
+            }
+        });
+
+        const todayReminders = remindersData.filter((reminder) => {
+            return reminder.reminders.some((time) => {
+                const reminderMoment = moment.tz(
+                    `${today} ${time}`,
+                    "YYYY-MM-DD HH:mm",
+                    "Asia/Jakarta"
+                );
+                return moment.tz("Asia/Jakarta").diff(reminderMoment, "minutes") >= 0;
+            });
+        });
+
+        todayReminders.sort((a, b) => {
+            const timeA = a.reminders[0] || "";
+            const timeB = b.reminders[0] || "";
+            return timeA.localeCompare(timeB);
+        });
+
+        setTodayReminders(todayReminders);
+    });
+
+    return () => unsubscribe();
+}, []);
+
       const makePhoneCall = () => {
           const args = {
             number: '112',
@@ -108,25 +173,34 @@ export default function Home() {
       });
 
       const renderCategoryInfo = () => {
-        return articles.map((item)=> {
+        return articles.map((item, index)=> {
           const backgroundColor = articles.indexOf(item) % 2 === 0 ? Colors.blue : Colors.red; // Gunakan index dalam array articles
           const formattedKeywords = item.keywords.join(', ');
           const truncateDescription = (description) => {
             const words = description.split(' ');  // Pisahkan berdasarkan spasi
-            const truncated = words.slice(0, 10).join(' ');  // Ambil 20 kata pertama
-            return words.length > 10 ? truncated + '...' : truncated;  // Jika lebih dari 20 kata, tambahkan "..."
+            const truncated = words.slice(0, 6).join(' ');  // Ambil 20 kata pertama
+            return words.length > 6 ? truncated + '...' : truncated;  // Jika lebih dari 20 kata, tambahkan "..."
           };
 
           return (
-            <View style={[styles.cart, { backgroundColor }]} key={item.id}> 
+            <View
+              style={[
+                styles.cart,
+                {
+                  backgroundColor,
+                  marginRight: index < articles.length - 1 ? 10 : 0, // Tambahkan marginRight kecuali item terakhir
+                },
+              ]}
+              key={item.id}
+            >
               <View style={styles.contain}>
                 <View style={styles.pictureSection}>
                   <Image source={{ uri: item.image }} style={styles.image} />
                 </View>
                 <View style={styles.textSection}>
-                <View style={styles.verifiedIcon2}>
+                {/* <View style={styles.verifiedIcon2}>
                   <MaterialIcons name="verified" size={20} color="white" />
-                </View>
+                </View> */}
                   <Text style={styles.judul}> 
                     {item.title} 
                   </Text>
@@ -146,13 +220,16 @@ export default function Home() {
                     </View>
                   </TouchableOpacity>
                 </View>
+                <View>
+                  <MaterialIcons name="verified" size={20} color={Colors.white} style={styles.verifiedContent}/>
+                </View>
               </View>
             </View>
           );
         }); 
       }; 
 
-        return (
+    return (
       <ScrollView contentContainerStyle={styles.container}>
         <StatusBar style='dark' translucent={true} />
         {/* Hello, (name) */}
@@ -212,9 +289,9 @@ export default function Home() {
               <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.verifiedIcon}>
-            <MaterialIcons name="verified" size={24} color="white" />
-        </View>
+            <View style={styles.verifiedIcon}>
+              <MaterialIcons name="verified" size={24} color="white" />
+            </View>
         </View>
 
         {/* Slide 2 */}
@@ -351,41 +428,53 @@ export default function Home() {
             </View>
         </View>
 
-            <Text style={styles.titleTextobat}>Pengingat Obat</Text>
+        <Text style={styles.titleTextobat}>Pengingat Obat</Text>
         {/* Pengingat obat */}
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.cartContainer}>
-          <View style={styles.containerobat}>
-            <View style={styles.cardobat}>
-              <View style={styles.cardContentobat}>
-                <Image
-                  source={require('@/assets/images/Maskot.png')}
-                  style={styles.iconobat}
-                />
-                <View style={styles.textContentobat}>
-                  <Text style={styles.medicineNameobat}>Acetaminophen</Text>
-                  <Text style={styles.timeobat}>08:00 AM</Text>
-                  <Text style={styles.instructionsobat}>For the treatment of headache</Text>
-                  <Text style={styles.dosageobat}>1 before food</Text>
-                </View>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={true} style={styles.cartContainer}>
+        <View style={styles.containerobat}>
+          {todayReminders.length > 0 ? (
+            <FlatList
+                data={todayReminders}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                    <View style={styles.cardobat}>
+                        <View style={styles.cardContentobat}>
+                            {/* Icon Obat */}
+                            <View style={styles.iconContainer}>
+                                {(() => {
+                                    let iconName = 'pill';
+                                    if (item.type === 'Sirup') {
+                                        iconName = 'tint';
+                                    } else if (item.type === 'Tetes') {
+                                        iconName = 'eye-dropper';
+                                    } else if (item.type === 'Injeksi') {
+                                        iconName = 'syringe';
+                                    } else if (item.type === 'Tablet') {
+                                        iconName = 'capsules';
+                                    }
+                                    return (
+                                        <FontAwesome5 name={iconName} size={30} color="#fff" />
+                                    );
+                                })()}
+                            </View>
+                            <View style={styles.textContentobat}>
+                                <Text style={styles.medicineNameobat}>{item.medName}</Text>
+                                <Text style={styles.timeobat}>{item.reminders.join(", ")}</Text>
+                                <Text style={styles.dosageobat}>{item.dose} sdm</Text>
+                            </View>
+                        </View>
+                    </View>
+                )}
+              horizontal={true} // Menampilkan daftar secara horizontal
+              showsHorizontalScrollIndicator={true}
+            />
+            ) : (
+              <View style={styles.noRemindersContainer}>
+                  <MaterialIcons name="notifications-off" size={40} color={Colors.grey} />
+                  <Text style={styles.noRemindersText}>Tidak ada pengingat hari ini</Text>
               </View>
-            </View>
-
-            <View style={styles.cardobat}>
-              <View style={styles.cardContentobat}>
-                
-                <Image
-                  source={require('@/assets/images/Maskot.png')}
-                  style={styles.iconobat}
-                />
-                <View style={styles.textContentobat}>
-                  <Text style={styles.medicineNameobat}>Acetaminophen</Text>
-                  <Text style={styles.timeobat}>08:00 AM</Text>
-                  <Text style={styles.instructionsobat}>For the treatment of headache</Text>
-                  <Text style={styles.dosageobat}>1 before food</Text>
-                </View>
-              </View>
-            </View>
-          </View>    
+            )}
+          </View>   
         </ScrollView>
     </ScrollView>
   ); 
@@ -495,12 +584,17 @@ const styles = StyleSheet.create({
     marginRight: 30,
     borderRadius: 20,
   },
-  cart: {
+    cart: {
     // width: '50%', 
     // height: 110, 
     backgroundColor: Colors.blue,
     borderRadius: 20, 
-    marginLeft: 10, 
+    // flexDirection: 'row',
+    // justifyContent: 'space-between',
+    // paddingHorizontal: 10
+    // flexDirection: 'row',
+    // gap: 150,
+    // marginLeft: 10, 
   }, 
   contain: {
     flexDirection: 'row',
@@ -509,7 +603,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10, 
     paddingVertical: 10,
     marginLeft: 10,
-    gap: 10,
+    gap: 5
   }, 
   pictureSection: {
     flexDirection: 'column',  
@@ -522,20 +616,20 @@ const styles = StyleSheet.create({
     height: 62, 
     justifyContent: 'center', 
     alignItems: 'center', 
-    marginTop: 10,
+    // marginTop:,
     borderRadius: 10,
   },
   textSection: {
     marginLeft: 5,  
     justifyContent: 'flex-start', 
     marginTop: 5,
-    width: 230,
+    width: 214,
   },
   judul: {
     color: Colors.white, 
     fontFamily: 'semibold', 
     fontSize: 12, 
-    marginTop: 10, 
+    marginTop: 5, 
   }, 
   kataKunci: {
     color: Colors.white, 
@@ -548,14 +642,15 @@ const styles = StyleSheet.create({
     fontFamily: 'regular', 
     fontSize: 10, 
     marginTop: 5, 
-    // marginRight: 40, 
+    marginRight: 40, 
   }, 
   pelajariSection: {
+    width: 240,
     flexDirection: 'row', 
     alignItems: 'center', 
     justifyContent: 'flex-end',  
-    // marginRight: 32,
-    marginTop: 10,
+    marginRight: 32,
+    // marginTop: 10 
   }, 
   pelajariText: {
     marginRight: 6, 
@@ -570,6 +665,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white, 
     alignItems: 'center', 
     justifyContent: 'center', 
+  },
+  verifiedContent: {
+      // width:100,
+      marginTop: 10,
+      marginright: 40,
   },
   containerlayanan: {
     justifyContent: 'center',
@@ -636,8 +736,8 @@ sliderContainer: {
     textAlign:'center',
     // marginTop: 20,
     // backgroundColor: '#fff',
-    height: 20,
-    width: '55%',
+    height: 50,
+    width: '90%',
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -683,20 +783,20 @@ containercontent: {
   width: '100%',
   justifyContent: 'center',
   alignItems: 'center',
-  backgroundColor: '#ffffff',
+  backgroundColor: '#fff',
   top:-30
 },
 slide: {
-  height:200,
+  height:205,
   justifyContent: 'center',
   alignItems: 'center',
   backgroundColor: '#fff',
-  margin: 30,
+  margin: 40,
 },
 backgroundImage: {
   // flex: 1,
   width: '100%',
-  height: '90%',
+  height: '95%',
   margin: 40,
   justifyContent: 'center',
   alignItems: 'center',
@@ -709,6 +809,7 @@ contentBottomContainer: {
   // left: 10,
   // right: 10,
   backgroundColor: '#000F48',
+  // backgroundColor: '#000',
   opacity: 0.8,
   borderRadius: 10,
   flexDirection: 'row',
@@ -732,7 +833,7 @@ description: {
   color: '#fff',
   lineHeight: 20,
   paddingBottom: 10,
-  width: '300',
+  width: '250',
   marginLeft: 5,
 },
 dotStyle: {
@@ -820,18 +921,20 @@ verifiedIcon2: {
 // Pengingat obat
 
 containerobat: {
+  // height: '100%',
   // flex: 1,
   justifyContent: 'center',
   // padding: 20,
   backgroundColor: '#fff',
   flexDirection:'row',
+  // flexGrow: 1,
 },
 titleTextobat:{
   fontFamily: 'bold', 
     fontSize: 15, 
     color: Colors.blue,
     marginLeft:20,
-    padding:10
+    paddingTop:10
 },
 cardobat: {
   backgroundColor: '#3A3D77',
@@ -849,6 +952,13 @@ iconobat: {
   width: 40,
   height: 40,
   marginRight: 15,
+},
+iconContainer: {
+  width: 40,
+  height: 40,
+  marginRight: 15,
+  justifyContent: 'center',
+  alignItems: 'center',
 },
 textContentobat: {
   flex: 1,
@@ -871,5 +981,22 @@ dosageobat: {
   fontSize: 14,
   color: '#fff',
   marginTop: 5,
+},
+noRemindersContainer: {
+  justifyContent:'center',
+  alignItems:'center',
+  // margin: 20,
+  width:'350',
+  height: 100,
+},
+noRemindersText: {
+  // height: 100,
+  justifyContent: "center",
+  alignItems: 'center',
+  // backgroundColor: '#000',
+  fontSize: 16,
+  color: Colors.grey,
+  textAlign: 'center',
+  // marginTop: 10,
 },
 }); 

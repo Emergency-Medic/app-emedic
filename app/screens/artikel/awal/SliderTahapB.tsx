@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     fontFamily: 'semibold',
   },
   imageSlider: {
-    height: '120%',
+    height: 300,
     width: '100%',
     marginBottom: 10,
     marginTop: 30,

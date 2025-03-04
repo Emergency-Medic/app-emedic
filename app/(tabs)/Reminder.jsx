@@ -7,6 +7,7 @@ import { Card, IconButton, Button } from "react-native-paper";
 import BackButton from "@/components/BackButton";
 import Entypo from "@expo/vector-icons/Entypo";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { useRouter } from "expo-router";
 import MakeSchedule from '../screens/reminder/MakeSchedule'
 import { collection, query, where, getDocs, Timestamp, onSnapshot, deleteDoc, doc } from "firebase/firestore";
@@ -25,6 +26,7 @@ import moment from 'moment-timezone';
 // };
 
 export default function MedicationReminder() {
+  const [selectedType, setSelectedType] = useState('Tablet'); // State untuk jenis obat
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split('T')[0]
@@ -185,35 +187,59 @@ export default function MedicationReminder() {
         style={styles.remindersCOntainer}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
+          
           <TouchableOpacity onPress={() => toggleActive(item.id)}>
             <View style={styles.rowContainer}>
               <View>
                 {item.reminders.map((time, index) => (
-                    <Text key={index} style={styles.timeText}>{time}</Text>
+                  <Text key={index} style={styles.timeText}>{time}</Text>
                 ))}
               </View>
               <Card style={[styles.card, activeReminderId === item.id && styles.activeCard]}>
-              <Card.Title
-                left={(props) => (
-                  <IconButton
-                    {...props}
-                    icon={(iconProps) => <MaterialCommunityIcons name='pill' {...iconProps} color={activeReminderId === item.id ? Colors.white : Colors.blue} />}
-                  />
-                )}
-                title={item.medName}
-                titleStyle={[styles.titleCard, activeReminderId === item.id && styles.activeTitle]}
-                subtitle={`${item.dose} sdm`}
-                subtitleStyle={[styles.subtitle, activeReminderId === item.id && styles.activeSubtitle]}
-                right={(props) => (
-                  <Entypo
-                            {...props}
-                            onPress={() => handleDots(item)} // Pastikan item.id dikirim
-                            name='dots-three-vertical'
-                            size={15}
-                            color={activeReminderId === item.id ? Colors.white : Colors.red}
-                        />
-                )}
-              />
+                <Card.Title
+                  left={(props) => {
+                    let iconName = 'pill'; // Ikon default
+        
+                    if (item.type === 'Sirup') {
+                      iconName = 'tint'; // Ikon untuk sirup
+                    } else if (item.type === 'Tetes') {
+                      iconName = 'eye-dropper'; // Ikon untuk tetes
+                    } else if (item.type === 'Injeksi') {
+                      iconName = 'syringe'; // Ikon untuk injeksi
+                    } else if(item.type === 'Tablet'){
+                      iconName = 'capsules'
+                    }
+        
+                    return (
+                      <IconButton
+                        {...props}
+                        icon={(iconProps) => (
+                          <FontAwesome5
+                          // name = "heart"
+                            name={iconName}
+                            {...iconProps}
+                            color={activeReminderId === item.id ? Colors.white : Colors.blue}
+                            
+                          />
+                        )}
+                      />
+                    );
+                  }}
+                  title={item.medName}
+                  titleStyle={[styles.titleCard, activeReminderId === item.id && styles.activeTitle]}
+
+                  subtitle={`${item.dose} sdm`}
+                  subtitleStyle={[styles.subtitle, activeReminderId === item.id && styles.activeSubtitle]}
+                  right={(props) => (
+                    <Entypo
+                      {...props}
+                      onPress={() => handleDots(item)}
+                      name='dots-three-vertical'
+                      size={15}
+                      color={activeReminderId === item.id ? Colors.white : Colors.red}
+                    />
+                  )}
+                />
                 {activeReminderId === item.id ? (
                   <View style={styles.activeSection}>
                     <View style={styles.activeRow}>
@@ -265,7 +291,7 @@ const styles = StyleSheet.create({
     color: Colors.blue 
   },
   headerPengingat: {
-    flex: 1,
+    // flex: 1,
     flexDirection: 'row', 
     marginTop: 5,
     marginBottom: 5,
@@ -326,6 +352,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'bold',
     color: Colors.red,
+    marginLeft: 20,
   },
   activeTitle: {
     color: Colors.white,
@@ -334,6 +361,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'light',
     color: '#6C6C6C',
+    marginLeft: 20
   },
   activeSubtitle: {
     color: Colors.white,
