@@ -1,4 +1,3 @@
-// coba tambah
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, FlatList, Alert } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -6,13 +5,15 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { Colors } from '@/constants/Colors';
 import BackButton from '@/components/BackButton'
-import { Picker } from "@react-native-picker/picker";
 import Checkbox from 'expo-checkbox';
 import DateTimePicker from '@react-native-community/datetimepicker'; // Import DateTimePicker
 import { auth, db } from '@/firebaseConfig';
 import { doc, setDoc, collection, addDoc, getDoc, Timestamp } from 'firebase/firestore';
 import { Platform } from 'react-native';
+import * as Notifications from "expo-notifications";
+import * as Device from 'expo-device';
 import { useRouter  } from 'expo-router';
+// import { scheduleNotificationsFromFirestore } from '../../../utils/notifications/scheduleNotificationsFromFirestore'
 
 
 const MakeSchedule = () => {
@@ -32,20 +33,22 @@ const MakeSchedule = () => {
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [description, setDescription] = useState('');
     const [checkedItems, setCheckedItems] = useState([]);
+    const [doseType, setDoseType] = useState('tablet');
     const router = useRouter();
 
     const addReminder = () => {
         if (time) {
-            setReminders([...reminders, time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })]);
+            const formattedTime = time.toLocaleTimeString([], { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                hour12: false  // Pastikan format 24 jam
+            });
+    
+            setReminders([...reminders, formattedTime]);
             setTime(new Date());
         }
     };
-
-    const deleteReminder = (index) => {
-        const newReminders = [...reminders];
-        newReminders.splice(index, 1);
-        setReminders(newReminders);
-    };
+    
 
     const onChangeStartDate = (event, selectedDate) => {
         console.log("onChangeStartDate called", { event, selectedDate });
@@ -75,7 +78,7 @@ const MakeSchedule = () => {
         setShowTimePicker(Platform.OS === 'ios');
         setTime(currentTime);
         setShowTimePicker(false);
-        };
+    };
 
     const saveSchedule = async () => {
         try {
@@ -83,12 +86,78 @@ const MakeSchedule = () => {
                 Alert.alert("Error", "Mohon lengkapi semua data obat dan pengingat.");
                 return;
             }
-
-            const startDateTimestamp = Timestamp.fromDate(startDate); // Gunakan Timestamp.fromDate
+    
+            const startDateTimestamp = Timestamp.fromDate(startDate);
             const endDateTimestamp = forever ? null : Timestamp.fromDate(endDate);
+            const notificationIds = [];
+            const now = new Date();
 
-            await addDoc(collection(db, "schedules"), {
-                userId: auth.currentUser.uid, // Tambahkan userId
+            Notifications.cancelAllScheduledNotificationsAsync()
+            for (const reminderTime of reminders) {
+                const [hours, minutes] = reminderTime.split(":").map(Number);
+                // let reminderDate = new Date();
+                startDate.setHours(hours, minutes, 0, 0);
+                endDate.setHours(hours, minutes, 0, 0)
+                // if (reminderDate < now) {
+                //     reminderDate.setDate(reminderDate.getDate() + 1);
+                // }
+                const content = {
+                    title: "Reminder to take your meds",
+                    body: `Don't forget to take ${medName} (${dose} ${doseType})!`,
+                    sound: "default",
+                };
+    
+                if (forever) {
+                    const notification = await Notifications.scheduleNotificationAsync({
+                        content,
+                        trigger: {
+                            type: Notifications.SchedulableTriggerInputTypes.DAILY,
+                            hour: hours,
+                            minute: minutes,
+                        },
+                    });
+                    notificationIds.push(notification);
+                } else {
+                    let currentReminderDate = new Date(startDate);
+                    console.log('End date: ' + endDate)
+                    console.log('Start date: ' + startDate)
+
+                    while (currentReminderDate <= endDate) {
+                        console.log('Current reminder date: ' + currentReminderDate)
+                        currentReminderDate.setHours(hours, minutes, 0, 0);
+                        const timeInterval = ((currentReminderDate.getTime() - now.getTime()) / 1000);
+                        console.log('Time Interval: ' + timeInterval)
+                        if (timeInterval < 0) {
+                            currentReminderDate.setDate(currentReminderDate.getDate() + 1);
+                            continue;
+                        }
+                        const notification = await Notifications.scheduleNotificationAsync({
+                            content,
+                            trigger: {
+                                type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+                                seconds: timeInterval,
+                                repeats: false
+                            },
+                        });
+                        notificationIds.push(notification);
+                        currentReminderDate.setDate(currentReminderDate.getDate() + 1);
+                    }
+                }
+    
+                // Menjadwalkan notifikasi tambahan 15 menit setelahnya
+                if (checkedItems[reminders.indexOf(reminderTime)]) {
+                    const timeIntervalLater = timeInterval + 900;
+                    const laterNotification = await Notifications.scheduleNotificationAsync({
+                        content,
+                        trigger: { type: "timeInterval", seconds: timeIntervalLater, repeats: false },
+                    });
+    
+                    notificationIds.push(laterNotification);
+                }
+            }
+            console.log(notificationIds)
+            const dataToSave = {
+                userId: auth.currentUser.uid,
                 medName,
                 dose,
                 frequency,
@@ -98,10 +167,15 @@ const MakeSchedule = () => {
                 forever,
                 reminders,
                 description,
-            });
-
+                doseType,
+                notificationIds,
+            };
+            console.log("Data to save:", dataToSave);
+            await addDoc(collection(db, "schedules"), dataToSave);
+    
             Alert.alert("Sukses", "Jadwal berhasil disimpan!");
-            // Reset state setelah disimpan
+    
+            // Reset state
             setMedName('');
             setDose(1);
             setFrequency(1);
@@ -112,12 +186,14 @@ const MakeSchedule = () => {
             setReminders([]);
             setTime(new Date());
             setDescription('');
-            router.back()
+            router.back();
         } catch (error) {
             console.error("Error saving schedule:", error);
             Alert.alert("Error", "Gagal menyimpan jadwal. Silakan coba lagi.");
         }
     };
+    
+        
     const calculateDays = () => {
         const timeDiff = endDate.getTime() - startDate.getTime();
         const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
@@ -155,31 +231,48 @@ const MakeSchedule = () => {
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.typeScroll}>
                     <TouchableOpacity
                         style={[styles.typeButton, { marginLeft: 0 }, selectedType === 'Tablet' && styles.selectedTypeButton]}
-                        onPress={() => setSelectedType('Tablet')}
+                        onPress={() => {
+                            setSelectedType('Tablet')
+                            setDoseType('tablet')    
+                        }
+                            }
                     >
                         <FontAwesome5 name="capsules" size={24} color="black" /><Text>Tablet</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[styles.typeButton, { marginLeft: 0 }, selectedType === 'Sirup' && styles.selectedTypeButton]}
-                        onPress={() => setSelectedType('Sirup')}
+                        onPress={() => {
+                            setSelectedType('Sirup')
+                            setDoseType('sdm')
+                            } 
+                        }
                     >
                         <FontAwesome5 name="tint" size={24} color="black" /><Text>Sirup</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[styles.typeButton, { marginLeft: 0 }, selectedType === 'Tetes' && styles.selectedTypeButton]}
-                        onPress={() => setSelectedType('Tetes')}
+                        onPress={() => {
+                            setSelectedType('Tetes')
+                            setDoseType('tetes')
+                        }}
                     >
                         <FontAwesome5 name="eye-dropper" size={24} color="black" /><Text>Tetes</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[styles.typeButton, { marginLeft: 0 }, selectedType === 'Injeksi' && styles.selectedTypeButton]}
-                        onPress={() => setSelectedType('Injeksi')}
+                        onPress={() => {
+                            setSelectedType('Injeksi')
+                            setDoseType('cc')
+                        }}
                     >
                         <FontAwesome5 name="syringe" size={24} color="black" /><Text>Injeksi</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[styles.typeButton, { marginLeft: 0 }, selectedType === 'Salep' && styles.selectedTypeButton]}
-                        onPress={() => setSelectedType('Salep')}
+                        onPress={() => {
+                            setSelectedType('Salep')
+                            setDoseType('oles')
+                        } }
                     >
                         <FontAwesome5 name="flask" size={24} color="black" /><Text>Salep</Text>
                     </TouchableOpacity>
@@ -193,7 +286,13 @@ const MakeSchedule = () => {
                         <TouchableOpacity onPress={() => setDose(dose + 1)} style={styles.doseButton}><Text style={styles.white}>+</Text></TouchableOpacity>
                     </View>
                     
-                    <Text style={styles.frequencyText2}>sdm</Text>
+                    {/* <Text style={styles.frequencyText2}>sdm</Text> */}
+                    <TextInput
+                        style={styles.doseTypeInput}
+                        placeholder="sdm"
+                        value={doseType}
+                        onChangeText={setDoseType}
+                    />
                     <View style={styles.choice}>
                     </View>
 
@@ -370,6 +469,7 @@ const styles = StyleSheet.create({
     doseContainer: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'flex-start'
         // marginTop: -85,
         // marginBottom: -85,
     },
@@ -379,6 +479,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 15,
     },
+    doseTypeInput: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 20,
+        marginTop: 5,
+        fontFamily: 'regular',
+        width: 60,
+        height: 33,
+        marginLeft: 10,
+        paddingHorizontal: 7
+      },
     doseButton: {
         borderWidth: 1,
         padding: 5,
@@ -506,7 +617,8 @@ const styles = StyleSheet.create({
   selectedTypeButton: {
    borderColor: Colors.red,
    borderWidth: 1
-  }
+  },
+  
 });
 
 export default MakeSchedule;

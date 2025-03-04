@@ -38,8 +38,8 @@ const SendRequest: React.FC = () => {
                         const userData = querySnapshot.docs[0].data();
                         setFoundUser({ // Set user yang ditemukan
                             id: querySnapshot.docs[0].id,
-                            name: userData.displayName || userData.username,
-                            phone: userData.phone || "",
+                            name: userData.firstName || userData.username,
+                            phone: userData.username || "",
                         });
                     } else {
                         setFoundUser(null); // Reset jika tidak ditemukan
@@ -114,7 +114,7 @@ const SendRequest: React.FC = () => {
           <Octicons name="person-add" size={20} color="#29335C" />
         </TouchableOpacity>
         <TextInput
-          placeholder="Input Id"
+          placeholder="Input username"
           value={id}
           onChangeText={setId}
           style={styles.friendCountText}

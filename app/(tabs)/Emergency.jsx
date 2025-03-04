@@ -5,9 +5,9 @@ import { StatusBar } from 'expo-status-bar';
 import call from 'react-native-phone-call'; 
 import { Colors } from '@/constants/Colors';
 import { auth, db } from '@/firebaseConfig'
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, getDocs, collection, getDoc } from "firebase/firestore";
 import useLocation from "@/hooks/useLocation";
-
+import Skeleton from 'react-native-reanimated-skeleton';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -55,6 +55,40 @@ const Emergency = () => {
   
       return () => unsubscribe();  // Cleanup listener on unmount
     }, [user]);
+
+    async function sendEmergencyNotification(userUid, location) {
+      // Ambil daftar teman user
+      const friendsRef = collection(db, `users/${userUid}/friends`);
+      const friendsSnapshot = await getDocs(friendsRef);
+    
+      friendsSnapshot.forEach(async (friendDoc) => {
+        const friendUid = friendDoc.data().friendUid;
+    
+        // Ambil push token teman dari Firestore
+        const friendRef = doc(db, "users", friendUid);
+        const friendSnap = await getDoc(friendRef);
+    
+        if (friendSnap.exists() && friendSnap.data().pushToken) {
+          const pushToken = friendSnap.data().pushToken;
+    
+          // Kirim notifikasi ke teman menggunakan expo-notifications
+          await fetch('https://exp.host/--/api/v2/push/send', {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              to: pushToken,
+              sound: 'default',
+              title: '🚨 Darurat!',
+              body: 'Temanmu dalam bahaya! Klik untuk melihat lokasi.',
+              data: { location }
+            })
+          });
+        }
+      });
+    }
 
     const { latitude, longitude, city, errorMsg } = useLocation();
   return (
@@ -146,7 +180,12 @@ const Emergency = () => {
                   Siapa yang berada dalam keadaan darurat saat ini?
                 </Text>
                 <View style={styles.answerContent}>
-                  <TouchableOpacity style={styles.meButton} onPress={() => setModalVisible2(true)}>
+                  <TouchableOpacity 
+                  style={styles.meButton} 
+                  onPress={() => {
+                    setModalVisible2(true)
+                    sendEmergencyNotification(user.uid, { latitude, longitude });
+                  }}>
                     <Text style={styles.meText} >
                       Saya
                     </Text>
