@@ -1,18 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { Alert, Linking, Modal, View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { Modal, View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
-import call from 'react-native-phone-call'; // Phone call
+import call from 'react-native-phone-call'; 
 import { Colors } from '@/constants/Colors';
-import { auth, db } from '@/firebaseConfig'; // Firebase
-import { doc, onSnapshot } from "firebase/firestore"; //  Firestore
-import useLocation from "@/hooks/useLocation"; // Custom hook for location
+import { auth, db } from '@/firebaseConfig'
+import { doc, onSnapshot } from "firebase/firestore";
+import useLocation from "@/hooks/useLocation";
 
-// Icon
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Foundation from '@expo/vector-icons/Foundation';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 const Emergency = () => {
   const router = useRouter();
@@ -23,7 +30,7 @@ const Emergency = () => {
 
   const makePhoneCall = () => {
     const args = {
-      number: '081278959988',
+      number: '112',
       prompt: false,
       skipCanOpen: true
     }
@@ -50,7 +57,6 @@ const Emergency = () => {
     }, [user]);
 
     const { latitude, longitude, city, errorMsg } = useLocation();
-
   return (
     <View style={styles.container}>
       <StatusBar style='dark' translucent={true} />
@@ -241,6 +247,8 @@ const styles = StyleSheet.create({
   },
   locationText: {
     marginRight: 16,
+    flexDirection: 'column', // Menumpuk teks secara vertikal
+    alignItems: 'flex-end',
     flexDirection: 'column', // Menumpuk teks secara vertikal
     alignItems: 'flex-end',
   },
