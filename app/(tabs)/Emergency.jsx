@@ -58,38 +58,70 @@ const Emergency = () => {
     }, [user]);
 
     async function sendEmergencyNotification(userUid, location) {
-      // Ambil daftar teman user
+      console.log("🔍 Mengambil daftar teman...");
       const friendsRef = collection(db, `users/${userUid}/friends`);
       const friendsSnapshot = await getDocs(friendsRef);
-    
+      const userRef = doc(db, "users", user.uid);
+      
       friendsSnapshot.forEach(async (friendDoc) => {
         const friendUid = friendDoc.data().friendUid;
+        console.log(`📌 Mengambil data teman: ${friendUid}`);
     
-        // Ambil push token teman dari Firestore
         const friendRef = doc(db, "users", friendUid);
         const friendSnap = await getDoc(friendRef);
-        console.log(friendSnap)
-        if (friendSnap.exists() && friendSnap.data().pushToken) {
-          const pushToken = friendSnap.data().pushToken;
     
-          // Kirim notifikasi ke teman menggunakan expo-notifications
-          await fetch('https://exp.host/--/api/v2/push/send', {
-            method: 'POST',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              to: pushToken,
-              sound: 'default',
-              title: '🚨 Darurat!',
-              body: 'Temanmu dalam bahaya! Klik untuk melihat lokasi.',
-              data: { location }
-            })
-          });
+        if (friendSnap.exists()) {
+          const pushToken = friendSnap.data().pushToken;
+          console.log(`✅ Push token ditemukan: ${pushToken}`);
+    
+          if (pushToken) {
+            try {
+              const response = await fetch('https://exp.host/--/api/v2/push/send', {
+                method: 'POST',
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  to: pushToken,
+                  sound: 'default',
+                  title: '🚨 Darurat!',
+                  body: `Temanmu, ${user.displayName} dalam bahaya! Klik untuk melihat lokasi.`,
+                  priority: "high",
+                  data: {
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                    action: "open_map"
+                  },
+                  notification: {  // Tambahkan ini
+                    title: '🚨 Darurat!',
+                    body: `Temanmu, ${user.displayName} dalam bahaya! Klik untuk melihat lokasi.`,
+                    sound: 'default',
+                    priority: "high"
+                  },
+                  android: {
+                    channelId: 'default'
+                  }
+                })
+                
+              });
+    
+              const result = await response.json();
+              console.log("📬 Hasil pengiriman notifikasi:", result);
+    
+              // Simpan push ticket ID untuk cek push receipt nanti
+              if (result.data && result.data.id) {
+                console.log(`📜 Push Ticket ID: ${result.data.id}`);
+              }
+            } catch (error) {
+              console.error("❌ Error saat mengirim notifikasi:", error);
+            }
+          }
+        } else {
+          console.warn(`⚠️ Data teman ${friendUid} tidak ditemukan di Firestore.`);
         }
       });
-    }
+    }    
 
     const { latitude, longitude, city, errorMsg } = useLocation();
   return (
