@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, FlatList, Alert } from 'react-native';
+import Feather from '@expo/vector-icons/Feather';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
@@ -49,6 +50,9 @@ const MakeSchedule = () => {
         }
     };
     
+    const handleDeleteReminder = (indexToRemove) => {
+        setReminders(reminders.filter((_, index) => index !== indexToRemove));
+    };
 
     const onChangeStartDate = (event, selectedDate) => {
         console.log("onChangeStartDate called", { event, selectedDate });
@@ -81,6 +85,11 @@ const MakeSchedule = () => {
     };
 
     const saveSchedule = async () => {
+        // Batalkan semua notifikasi yang belum terkirim
+        // await Notifications.cancelAllScheduledNotificationsAsync();
+
+        // Hapus semua notifikasi yang sudah muncul di Notification Tray
+        // await Notifications.dismissAllNotificationsAsync();
         try {
             if (!medName || !dose || !frequency || !reminders.length) {
                 Alert.alert("Error", "Mohon lengkapi semua data obat dan pengingat.");
@@ -134,9 +143,8 @@ const MakeSchedule = () => {
                         const notification = await Notifications.scheduleNotificationAsync({
                             content,
                             trigger: {
-                                type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-                                seconds: timeInterval,
-                                repeats: false
+                                type: Notifications.SchedulableTriggerInputTypes.DATE,
+                                date: currentReminderDate
                             },
                         });
                         notificationIds.push(notification);
@@ -361,20 +369,15 @@ const MakeSchedule = () => {
                             <View key={index} style={styles.reminderCard}>
                                 <Text style={styles.timeText}>{item}</Text>
                                 <View style={styles.switchContainer}>
-                                    <View style={styles.checkboxContainer}>
-                                        <Checkbox
-                                            value={checkedItems[index] || false}
-                                            onValueChange={() => {
-                                            const newCheckedItems = [...checkedItems];
-                                            newCheckedItems[index] = !newCheckedItems[index]; // Toggle state
-                                            setCheckedItems(newCheckedItems);
-                                            }}
-                                            color={checkedItems[index] ? "#13070C" : undefined}
-                                        />
+                                    <TouchableOpacity 
+                                    style={styles.checkboxContainer}
+                                    onPress={() => handleDeleteReminder(index)}
+                                    >
+                                        <Feather name="trash-2" size={24} color={Colors.blue} />
                                         <Text style={styles.checkboxLabelBlue}>
-                                            Ingatkan saya 15 menit setelahnya
+                                            Hapus
                                         </Text>
-                                    </View>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
                         ))
@@ -408,7 +411,8 @@ const styles = StyleSheet.create({
     checkboxContainer: {
         flexDirection: 'row',
         // marginTop: 5,
-        gap: 7
+        gap: 7,
+        alignItems: 'center'
     },
     checkboxLabelBlue: {
         // marginLeft: 5,
