@@ -1,5 +1,5 @@
 import { useFonts } from "expo-font";
-import { View, Platform, Alert, Linking } from "react-native";
+import { View, Platform, Alert } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import MenuAwal from "./MenuAwal";
 import React, { useEffect, useState } from "react";
@@ -8,14 +8,16 @@ import { auth, db } from '@/firebaseConfig';
 import { useRouter, useRootNavigationState } from "expo-router";
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
-import { collection, doc, setDoc } from 'firebase/firestore';
+import * as Linking from 'expo-linking';
+import { collection, doc, setDoc, getDoc } from 'firebase/firestore';
 
 const Stack = createStackNavigator(); 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
-    shouldSetBadge: false,
+    shouldSetBadge: true,
+    priority:  Notifications.AndroidNotificationPriority.MAX
   }),
 });
 
@@ -38,46 +40,69 @@ export default function index() {
   const rootNavigationState = useRootNavigationState();
 
   useEffect(() => {
+    const setupNotificationChannel = async () => {
+      if (Platform.OS === 'android') {
+        await Notifications.setNotificationChannelAsync('default', {
+          name: 'default',
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: '#FF231F7C',
+        });
+      }
+    };
+  
+    setupNotificationChannel();
+    
     if (!rootNavigationState?.key) return;
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
       setIsLoading(false);
       setUser(user);
-      console.log(auth.currentUser.uid)
-      console.log(user.uid)
-      if (auth.currentUser) {
+      
+      if (user) {
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (!userSnap.exists() || !userSnap.data().pushToken) {
+          // Jika pushToken tidak ada, ulangi pendaftaran notifikasi
+          await registerForPushNotificationsAsync(user.uid);
+        }
+
         setTimeout(() => {
           router.replace("./(tabs)/Home"); // Arahkan ke halaman Home jika sudah login
-      }, 100);
+        }, 100);
       } else {
         setTimeout(() => {
           router.replace("./MenuAwal");
         }, 100);
       }
     });
+
+    
+
     // Fungsi untuk mendaftarkan push notification
-    const registerForPushNotificationsAsync = async () => {
+    const registerForPushNotificationsAsync = async (uid) => {
+      if (!uid) return;
+
       if (Device.isDevice) {
-        const { status: existingStatus } = await Notifications.getPermissionsAsync();
-        let finalStatus = existingStatus;
-        if (existingStatus !== 'granted') {
-          const { status } = await Notifications.requestPermissionsAsync();
-          finalStatus = status;
+        let { status } = await Notifications.getPermissionsAsync();
+        if (status !== 'granted') {
+          const { status: newStatus } = await Notifications.requestPermissionsAsync();
+          status = newStatus;
         }
-        if (finalStatus !== 'granted') {
-          Alert.alert('Gagal mendapatkan token push untuk mengirim notifikasi!');
-          return;
+
+        if (status !== 'granted') {
+          Alert.alert('Gagal mendapatkan token push untuk mengirim notifikasi! Silakan coba lagi.');
+          return registerForPushNotificationsAsync(uid); // Ulangi permintaan izin
         }
+
         const token = (await Notifications.getExpoPushTokenAsync()).data;
-        if (auth.currentUser) {
-          const userRef = doc(db, "users", auth.currentUser.uid);
-          try {
-            await setDoc(userRef, { pushToken: token }, { merge: true });
-            console.log("Push token saved successfully.");
-          } catch (error) {
-            console.error("Error saving push token:", error);
-          }
+        const userRef = doc(db, "users", uid);
+        try {
+          await setDoc(userRef, { pushToken: token }, { merge: true });
+          console.log("Push token saved successfully.");
+        } catch (error) {
+          console.error("Error saving push token:", error);
         }
-        console.log(token);
       } else {
         Alert.alert('Harus menggunakan perangkat fisik untuk push notifications');
       }
@@ -92,23 +117,21 @@ export default function index() {
       }
     };
 
-    registerForPushNotificationsAsync();
-
     // Tambahkan listener untuk notifikasi
     const subscription = Notifications.addNotificationResponseReceivedListener(response => {
       const { latitude, longitude } = response.notification.request.content.data;
       if (latitude && longitude) {
         const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
-        Linking.openURL(url); // Buka Google Maps dengan lokasi darurat
+        Linking.openURL(url);
       }
     });
 
-    // Cleanup semua listener saat komponen di-unmount
     return () => {
       unsubscribe();
       subscription.remove();
     };
-  }, [router]);
+}, [router]);
+
 
   return (
       <View>
