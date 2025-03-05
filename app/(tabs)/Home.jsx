@@ -104,11 +104,10 @@ export default function Home() {
                 data.startDate instanceof Timestamp
                     ? moment
                         .tz(data.startDate.toDate(), "Asia/Jakarta")
-                        .startOf("day")
                     : null;
             const endDateMoment =
                 data.endDate instanceof Timestamp
-                    ? moment.tz(data.endDate.toDate(), "Asia/Jakarta").startOf("day")
+                    ? moment.tz(data.endDate.toDate(), "Asia/Jakarta")
                     : null;
             const startDate = startDateMoment
                 ? startDateMoment.format("YYYY-MM-DD")
@@ -116,28 +115,17 @@ export default function Home() {
             const endDate = endDateMoment
                 ? endDateMoment.format("YYYY-MM-DD")
                 : null;
-
             if (startDate && endDate) {
                 if (today >= startDate && today <= endDate) {
                     remindersData.push({ id: doc.id, ...data });
                 }
-            } else if (startDate && data.forever) {
+            } else if (startDate && endDate === null) {
                 if (today >= startDate) {
                     remindersData.push({ id: doc.id, ...data });
                 }
             }
         });
-
-        const todayReminders = remindersData.filter((reminder) => {
-            return reminder.reminders.some((time) => {
-                const reminderMoment = moment.tz(
-                    `${today} ${time}`,
-                    "YYYY-MM-DD HH:mm",
-                    "Asia/Jakarta"
-                );
-                return moment.tz("Asia/Jakarta").diff(reminderMoment, "minutes") >= 0;
-            });
-        });
+        const todayReminders = remindersData
 
         todayReminders.sort((a, b) => {
             const timeA = a.reminders[0] || "";

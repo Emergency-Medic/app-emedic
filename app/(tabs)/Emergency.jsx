@@ -68,7 +68,7 @@ const Emergency = () => {
         // Ambil push token teman dari Firestore
         const friendRef = doc(db, "users", friendUid);
         const friendSnap = await getDoc(friendRef);
-    
+        console.log(friendSnap)
         if (friendSnap.exists() && friendSnap.data().pushToken) {
           const pushToken = friendSnap.data().pushToken;
     
@@ -184,8 +184,8 @@ const Emergency = () => {
                   <TouchableOpacity 
                   style={styles.meButton} 
                   onPress={() => {
-                    setModalVisible2(true)
                     sendEmergencyNotification(user.uid, { latitude, longitude });
+                    setModalVisible2(true)
                   }}>
                     <Text style={styles.meText} >
                       Saya

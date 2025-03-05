@@ -4,6 +4,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, FlatLi
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import Feather from '@expo/vector-icons/Feather';
 import { Colors } from '@/constants/Colors';
 import BackButton from '@/components/BackButton'
 import Checkbox from 'expo-checkbox';
@@ -13,9 +14,12 @@ import { doc, setDoc, collection, addDoc, getDoc, Timestamp } from 'firebase/fir
 import { Platform } from 'react-native';
 import { useLocalSearchParams  } from 'expo-router';
 import { useRouter } from 'expo-router';
+import * as Notifications from "expo-notifications";
+import * as Device from 'expo-device';
 
 const EditSchedule = () => {
     const params = useLocalSearchParams();
+    const { id: scheduleId } = params
     const [medName, setMedName] = useState('');
         const [dose, setDose] = useState(1);
         const [frequency, setFrequency] = useState(1); //Default frekuensi 1
@@ -28,6 +32,7 @@ const EditSchedule = () => {
         const [selectedType, setSelectedType] = useState('Tablet'); // State untuk jenis obat
         const [forever, setForever] = useState(false); // State untuk opsi selamanya
         const [reminders, setReminders] = useState([]);
+        const [notificationIds, setNotificationIds] = useState([]);
         const [time, setTime] = useState(new Date());
         const [showTimePicker, setShowTimePicker] = useState(false);
         const [description, setDescription] = useState('');
@@ -42,10 +47,11 @@ const EditSchedule = () => {
                 try {
                     const docRef = doc(db, "schedules", scheduleId);
                     const docSnap = await getDoc(docRef);
-
-                    if (docSnap.exists()) {
+                    console.log(docSnap)
+                    if (docSnap.exists()) { 
                         const data = docSnap.data();
                         setMedName(data.medName);
+                        console.log(medName)
                         setDose(data.dose);
                         setFrequency(data.frequency);
                         setStartDate(data.startDate.toDate()); // Ubah Timestamp ke Date
@@ -55,6 +61,9 @@ const EditSchedule = () => {
                         setReminders(data.reminders);
                         setDescription(data.description);
                         setDoseType(data.doseType);
+                        setNotificationIds(data.notificationIds)
+                        setReminders(data.reminders);
+                        console.log(notificationIds)
                     } else {
                         Alert.alert("Error", "Jadwal tidak ditemukan.");
                     }
@@ -70,18 +79,21 @@ const EditSchedule = () => {
 
     const addReminder = () => {
         if (time) {
-            setReminders([...reminders, time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })]);
+            const formattedTime = time.toLocaleTimeString([], { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                hour12: false  // Pastikan format 24 jam
+            });
+    
+            setReminders([...reminders, formattedTime]);
             setTime(new Date());
         }
     };
 
-
-
-    const deleteReminder = (index) => {
-        const newReminders = [...reminders];
-        newReminders.splice(index, 1);
-        setReminders(newReminders);
+    const handleDeleteReminder = (indexToRemove) => {
+        setReminders(reminders.filter((_, index) => index !== indexToRemove));
     };
+
 
     const onChangeStartDate = (event, selectedDate) => {
         console.log("onChangeStartDate called", { event, selectedDate });
@@ -113,19 +125,85 @@ const EditSchedule = () => {
         setShowTimePicker(false);
         };
 
-    const saveSchedule = async () => {
-        try {
-            if (!medName || !dose || !frequency || !reminders.length) {
-                Alert.alert("Error", "Mohon lengkapi semua data obat dan pengingat.");
-                return;
-            }
-
-            const startDateTimestamp = Timestamp.fromDate(startDate); // Gunakan Timestamp.fromDate
-            const endDateTimestamp = forever ? null : Timestamp.fromDate(endDate);
-            if (scheduleId) {
-                // Update dokumen yang sudah ada
-                const docRef = doc(db, "schedules", scheduleId);
-                await setDoc(docRef, {
+        const saveSchedule = async () => {
+            try {
+                if (!medName || !dose || !frequency || !reminders.length) {
+                    Alert.alert("Error", "Mohon lengkapi semua data obat dan pengingat.");
+                    return;
+                }
+        
+                console.log("Sebelum hapus:", notificationIds);
+        
+                // Gunakan variabel lokal untuk menyimpan ID yang tersisa setelah dihapus
+                let updatedNotificationIds = [...notificationIds];
+        
+                await Promise.all(
+                    notificationIds.map(async (notificationId) => {
+                        try {
+                            await Notifications.cancelScheduledNotificationAsync(notificationId);
+                            updatedNotificationIds = updatedNotificationIds.filter(id => id !== notificationId);
+                        } catch (error) {
+                            console.error("Gagal menghapus notifikasi:", notificationId, error);
+                        }
+                    })
+                );
+        
+                // Setelah semua notifikasi dihapus, update state dengan array yang sudah diperbarui
+                setNotificationIds(updatedNotificationIds);
+                console.log("Setelah hapus:", updatedNotificationIds);
+        
+                const startDateTimestamp = Timestamp.fromDate(startDate);
+                const endDateTimestamp = forever ? null : Timestamp.fromDate(endDate);
+                const now = new Date();
+        
+                let newNotificationIds = []; // Gunakan array baru untuk menyimpan ID baru
+        
+                for (const reminderTime of reminders) {
+                    const [hours, minutes] = reminderTime.split(":").map(Number);
+                    startDate.setHours(hours, minutes, 0, 0);
+                    endDate.setHours(hours, minutes, 0, 0);
+        
+                    const content = {
+                        title: "Reminder to take your meds",
+                        body: `Don't forget to take ${medName} (${dose} ${doseType})!`,
+                        sound: "default",
+                    };
+        
+                    if (forever) {
+                        const notification = await Notifications.scheduleNotificationAsync({
+                            content,
+                            trigger: {
+                                type: Notifications.SchedulableTriggerInputTypes.DAILY,
+                                hour: hours,
+                                minute: minutes,
+                            },
+                        });
+                        newNotificationIds.push(notification);
+                    } else {
+                        let currentReminderDate = new Date(startDate);
+        
+                        while (currentReminderDate <= endDate) {
+                            currentReminderDate.setHours(hours, minutes, 0, 0);
+        
+                            const notification = await Notifications.scheduleNotificationAsync({
+                                content,
+                                trigger: {
+                                    type: Notifications.SchedulableTriggerInputTypes.DATE,
+                                    date: currentReminderDate
+                                },
+                            });
+        
+                            newNotificationIds.push(notification);
+                            currentReminderDate.setDate(currentReminderDate.getDate() + 1);
+                        }
+                    }
+                }
+        
+                // Setelah semua notifikasi baru dibuat, update state
+                setNotificationIds(newNotificationIds);
+                console.log("Notifikasi baru:", newNotificationIds);
+        
+                const dataToSave = {
                     userId: auth.currentUser.uid,
                     medName,
                     dose,
@@ -136,28 +214,36 @@ const EditSchedule = () => {
                     forever,
                     reminders,
                     description,
-                    doseType
-                });
-                Alert.alert("Sukses", "Jadwal berhasil diperbarui!");
-            } 
-
-            // Reset state setelah disimpan
-            setMedName('');
-            setDose(1);
-            setFrequency(1);
-            setStartDate(new Date());
-            setEndDate(new Date());
-            setSelectedType('Tablet');
-            setForever(false);
-            setReminders([]);
-            setTime(new Date());
-            setDescription('');
-            router.back()
-        } catch (error) {
-            console.error("Error saving schedule:", error);
-            Alert.alert("Error", "Gagal menyimpan jadwal. Silakan coba lagi.");
-        }
-    };
+                    doseType,
+                    notificationIds: newNotificationIds, // Pastikan data yang disimpan adalah array baru
+                };
+        
+                console.log("Data to save:", dataToSave);
+        
+                if (scheduleId) {
+                    const docRef = doc(db, "schedules", scheduleId);
+                    await setDoc(docRef, dataToSave);
+                    Alert.alert("Sukses", "Jadwal berhasil diperbarui!");
+                }
+        
+                // Reset state setelah disimpan
+                setMedName('');
+                setDose(1);
+                setFrequency(1);
+                setStartDate(new Date());
+                setEndDate(new Date());
+                setSelectedType('Tablet');
+                setForever(false);
+                setReminders([]);
+                setTime(new Date());
+                setDescription('');
+                router.back();
+            } catch (error) {
+                console.error("Error saving schedule:", error);
+                Alert.alert("Error", "Gagal menyimpan jadwal. Silakan coba lagi.");
+            }
+        };
+        
     const calculateDays = () => {
         const timeDiff = endDate.getTime() - startDate.getTime();
         const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
@@ -183,7 +269,7 @@ const EditSchedule = () => {
             </View>
             
             <View style={styles.inContainer}>
-                <Text style={styles.title}>Pengingat Baru</Text>
+                <Text style={styles.title}>Edit Pengingat</Text>
                 <Text style={styles.label}>Nama Obat</Text>
                 <TextInput 
                     style={styles.input}
@@ -313,25 +399,17 @@ const EditSchedule = () => {
                     </TouchableOpacity>
                 </View>
                 <View>
-                    {
+                {
                         reminders.map((item, index) => (
                             <View key={index} style={styles.reminderCard}>
                                 <Text style={styles.timeText}>{item}</Text>
                                 <View style={styles.switchContainer}>
-                                    <View style={styles.checkboxContainer}>
-                                        <Checkbox
-                                            value={checkedItems[index] || false}
-                                            onValueChange={() => {
-                                            const newCheckedItems = [...checkedItems];
-                                            newCheckedItems[index] = !newCheckedItems[index]; // Toggle state
-                                            setCheckedItems(newCheckedItems);
-                                            }}
-                                            color={checkedItems[index] ? "#13070C" : undefined}
-                                        />
+                                    <TouchableOpacity style={styles.checkboxContainer} onPress={() => {handleDeleteReminder(index)}}>
+                                        <Feather name="trash-2" size={24} color={Colors.blue} />
                                         <Text style={styles.checkboxLabelBlue}>
-                                            Ingatkan saya 15 menit setelahnya
+                                            Hapus
                                         </Text>
-                                    </View>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
                         ))
@@ -365,7 +443,8 @@ const styles = StyleSheet.create({
     checkboxContainer: {
         flexDirection: 'row',
         // marginTop: 5,
-        gap: 7
+        gap: 7,
+        alignItems: 'center'
     },
     checkboxLabelBlue: {
         // marginLeft: 5,

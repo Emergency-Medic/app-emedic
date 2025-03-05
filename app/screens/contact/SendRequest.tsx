@@ -139,45 +139,44 @@ const SendRequest: React.FC = () => {
         />
         {/* modal */}
         <Modal transparent={true} visible={modalVisible} animationType="fade" onRequestClose={() => setModalVisible(false)}>
-        <TouchableWithoutFeedback onPressOut={() => setModalVisible(false)}>
-          <View style={styles.modalContainer}>
-            <TouchableWithoutFeedback>
-              <View style={styles.modalCardContent}> 
-                <View style={styles.modalWarningContainer}>
-                  <View style ={styles.modalWarningIcon}>
-                    <AntDesign name="warning" size={16} color={Colors.red} />
+          <TouchableWithoutFeedback onPressOut={() => setModalVisible(false)}>
+            <View style={styles.modalContainer}>
+              <TouchableWithoutFeedback>
+                <View style={styles.modalCardContent}>
+                  <View style={styles.modalWarningContainer}>
+                    <View style ={styles.modalWarningIcon}>
+                      <AntDesign name="warning" size={16} color={Colors.red} />
+                    </View>
+                    <Text style={styles.modalWarningText}>
+                      Peringatan
+                    </Text>
                   </View>
-                  <Text style={styles.modalWarningText}>
-                    Peringatan
-                  </Text>
-                </View>
-                <View>
-                  {!!selectedContact ? (
-                    <>
-                    <Text style={styles.modalWarningQuestion}>Anda yakin menambahkan 
-                      <Text style = {styles.getContactName}> {selectedContact.name} </Text>
-                      kedalam daftar pertemanan anda ? 
-                    </Text>
-                    </>
-                  ) : null}
-                </View>
-                <View style={styles.answerContent}> 
-                <TouchableOpacity style={styles.meButton} onPress={sendFriendRequest}> {/* Panggil fungsi sendFriendRequest */}
-                    <Text style={styles.meText}>
-                        Yakin
-                    </Text>
-                </TouchableOpacity>
-                  <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.otherButton}>
-                    <Text style={styles.otherText}>
-                      Tidak
-                    </Text>
+                  <View>
+                    {!!selectedContact ? (
+                      <View>
+                        <Text style={styles.modalWarningQuestion}>Anda yakin menambahkan </Text>
+                        <Text style={styles.getContactName}>{selectedContact.name}</Text>
+                        <Text style={styles.modalWarningQuestion}> kedalam daftar pertemanan anda?</Text>
+                      </View>
+                    ) : null}
+                  </View>
+                  <View style={styles.answerContent}>
+                  <TouchableOpacity style={styles.meButton} onPress={sendFriendRequest}>
+                      <Text style={styles.meText}>
+                          Yakin
+                      </Text>
                   </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.otherButton}>
+                      <Text style={styles.otherText}>
+                        Tidak
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
+              </TouchableWithoutFeedback>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
         {/* footer */}
         <View style={styles.footer}>
           <TouchableOpacity onPress={() => router.push("./Contactpage")} style={styles.footerButton}>
