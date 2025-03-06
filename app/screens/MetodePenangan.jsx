@@ -7,6 +7,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { db } from '@/firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
 import BackButton from "@/components/BackButton";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const data = {  
 	semuaKategori: [
@@ -27,6 +28,7 @@ export default function MetodePenangan() {
 	const router = useRouter();
 	const [selectedCategory, setSelectedCategory] = useState('semuaKategori');
 	const [articles, setArticles] = useState([]);
+	const [lastReadArticle, setLastReadArticle] = useState(null);
 
 	// Function to fetch data from Firebase for the selected category
 	const fetchData = async () => {
@@ -55,6 +57,24 @@ export default function MetodePenangan() {
 		fetchData(); // Memanggil fetchData saat kategori berubah
 	}, [selectedCategory]);
 	
+	const handleArticlePress = async (item) => {
+        try {
+            await saveLastRead(item); // Simpan artikel yang dibaca
+            router.push({ pathname: '/screens/artikel/Articlepage', params: { id: item.id } }); // Navigasi
+        } catch (error) {
+            console.error("Error saving lastRead:", error);
+        }
+    };
+
+    const saveLastRead = async (article) => {
+        try {
+            await AsyncStorage.setItem('lastRead', JSON.stringify(article));
+            setLastReadArticle(article); // Update state setelah disimpan
+        } catch (error) {
+            console.error("Error saving lastRead:", error);
+        }
+    };
+	
 	const renderCategoryInfo = () => {
 		return articles.map((item) => {
 			const backgroundColor = articles.indexOf(item) % 2 === 0 ? Colors.blue : Colors.red; // Gunakan index dalam array articles
@@ -79,7 +99,7 @@ export default function MetodePenangan() {
 						<Text style={styles.deskripsi}>{truncateDescription(item.description)}</Text>
 						<TouchableOpacity 
 							style={styles.pelajariSection} 
-							onPress={() => router.push(`../screens/artikel/Articlepage?id=${item.id}`)} // Menambahkan id artikel ke URL
+							onPress={() => handleArticlePress(item)}
 							>
 							<Text style={styles.pelajariText}>Pelajari</Text>
 							<View style={styles.pelajariIcon}>
