@@ -1,24 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { Modal, View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { Modal, View, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, ScrollView } from 'react-native';
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import call from 'react-native-phone-call'; 
 import { Colors } from '@/constants/Colors';
 import { auth, db } from '@/firebaseConfig'
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, getDocs, collection, getDoc } from "firebase/firestore";
 import useLocation from "@/hooks/useLocation";
-
+import Skeleton from 'react-native-reanimated-skeleton';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import * as Notifications from "expo-notifications";
 import Foundation from '@expo/vector-icons/Foundation';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 const Emergency = () => {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
   const [name, setName] = useState(false);
-  const user = auth.currentUser
+  const user = auth.currentUser; 
 
   const makePhoneCall = () => {
     const args = {
@@ -48,9 +57,76 @@ const Emergency = () => {
       return () => unsubscribe();  // Cleanup listener on unmount
     }, [user]);
 
+    async function sendEmergencyNotification(userUid, location) {
+      console.log("🔍 Mengambil daftar teman...");
+      const friendsRef = collection(db, `users/${userUid}/friends`);
+      const friendsSnapshot = await getDocs(friendsRef);
+      const userRef = doc(db, "users", user.uid);
+      
+      friendsSnapshot.forEach(async (friendDoc) => {
+        const friendUid = friendDoc.data().friendUid;
+        console.log(`📌 Mengambil data teman: ${friendUid}`);
+    
+        const friendRef = doc(db, "users", friendUid);
+        const friendSnap = await getDoc(friendRef);
+    
+        if (friendSnap.exists()) {
+          const pushToken = friendSnap.data().pushToken;
+          console.log(`✅ Push token ditemukan: ${pushToken}`);
+    
+          if (pushToken) {
+            try {
+              const response = await fetch('https://exp.host/--/api/v2/push/send', {
+                method: 'POST',
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  to: pushToken,
+                  sound: 'alarm.wav',
+                  title: '🚨 Darurat!',
+                  body: `Temanmu, ${user.displayName} dalam bahaya! Klik untuk melihat lokasi.`,
+                  priority: "high",
+                  data: {
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                    action: "open_map"
+                  },
+                  notification: {  // Tambahkan ini
+                    title: '🚨 Darurat!',
+                    body: `Temanmu, ${user.displayName} dalam bahaya! Klik untuk melihat lokasi.`,
+                    sound: 'alarm.wav',
+                    priority: "high"
+                  },
+                  android: {
+                    channelId: 'default',
+                    priority: "high"
+                  }
+                })
+                
+              });
+    
+              const result = await response.json();
+              console.log("📬 Hasil pengiriman notifikasi:", result);
+    
+              // Simpan push ticket ID untuk cek push receipt nanti
+              if (result.data && result.data.id) {
+                console.log(`📜 Push Ticket ID: ${result.data.id}`);
+              }
+            } catch (error) {
+              console.error("❌ Error saat mengirim notifikasi:", error);
+            }
+          }
+        } else {
+          console.warn(`⚠️ Data teman ${friendUid} tidak ditemukan di Firestore.`);
+        }
+      });
+    }    
+
     const { latitude, longitude, city, errorMsg } = useLocation();
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <StatusBar style='dark' translucent={true} />
       <View style={styles.header}>
         {/* Profile */}
@@ -138,7 +214,12 @@ const Emergency = () => {
                   Siapa yang berada dalam keadaan darurat saat ini?
                 </Text>
                 <View style={styles.answerContent}>
-                  <TouchableOpacity style={styles.meButton} onPress={() => setModalVisible2(true)}>
+                  <TouchableOpacity 
+                  style={styles.meButton} 
+                  onPress={() => {
+                    sendEmergencyNotification(user.uid, { latitude, longitude });
+                    setModalVisible2(true)
+                  }}>
                     <Text style={styles.meText} >
                       Saya
                     </Text>
@@ -188,7 +269,7 @@ const Emergency = () => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -239,6 +320,8 @@ const styles = StyleSheet.create({
   },
   locationText: {
     marginRight: 16,
+    flexDirection: 'column', // Menumpuk teks secara vertikal
+    alignItems: 'flex-end',
     flexDirection: 'column', // Menumpuk teks secara vertikal
     alignItems: 'flex-end',
   },
@@ -334,6 +417,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.red,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 20
   },
   cancelText: {
     color: Colors.white,

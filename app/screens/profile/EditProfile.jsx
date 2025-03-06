@@ -13,25 +13,37 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 export default function EditProfile() {
         const [name, setName] = useState('')
         const [username, setUsername] = useState('')
-        const [phone, setPhone] = useState('')
         const [email, setEmail] = useState('')
         const [modalVisible, setModalVisible] = useState(false);
         const user = auth.currentUser
         // const { user, setUser } = useUser()
+        const [showPasswordFields, setShowPasswordFields] = useState(false); // sebenarnya selain dipake buat show password atau ga, bakal buat email juga
+
+        useEffect(() => {
+            const currentUser = auth.currentUser;
+            if (currentUser) {
+                const isGoogleUser = currentUser.providerData.some(
+                (provider) => provider.providerId === 'google.com'
+            );
+            setShowPasswordFields(!isGoogleUser);
+            }
+        }, []);
 
         const handleEmail = async () => {
-            if (auth.currentUser.emailVerified) {
-                router.push('./ChangeEmail')
-                return
-            } else {
-                try {
-                    setModalVisible(true)
-                    await sendEmailVerification(auth.currentUser);
-                    console.log('Email verification sent')
-                } catch (error) {
-                    Alert.alert(error.message)
-                }
-            }
+            // if (auth.currentUser.emailVerified) {
+            //     router.push('./ChangeEmail')
+            //     return
+            // } else {
+            //     try {
+            //         setModalVisible(true)
+            //         await sendEmailVerification(auth.currentUser);
+            //         console.log('Email verification sent')
+            //     } catch (error) {
+            //         Alert.alert(error.message)
+            //     }
+            // }
+            router.push('./ChangeEmail')
+            return
         }
         
         useEffect(() => {
@@ -45,7 +57,6 @@ export default function EditProfile() {
                 const data = snapshot.data();
                 setName(`${snapshot.data().firstName} ${snapshot.data().lastName}`);
                 setUsername(snapshot.data().username);
-                setPhone(snapshot.data().phone);
                 setEmail(snapshot.data().email);
             } else {
                 console.log("User does not exist!");
@@ -93,26 +104,19 @@ export default function EditProfile() {
                     </TouchableOpacity>
                 </View>
 
-                <View style={styles.dataCont}>
-                    <View style={styles.dataText}>
-                        <Text style={styles.dataTitle}>Nomor Telepon</Text>
-                        <Text style={styles.dataSpec}>{phone}</Text>
-                    </View>
-                    <TouchableOpacity onPress={() => router.push('./ChangePhone')} style={styles.editBtn}>
-                        <Feather name="edit" size={14} color={Colors.blue} />
-                    </TouchableOpacity>
-                </View>
-
+                
                 <View style={styles.dataCont}>
                     <View style={styles.dataText}>
                         <Text style={styles.dataTitle}>Alamat Email</Text>
                         <Text style={styles.dataSpec}>{email}</Text>
                     </View>
+                    {showPasswordFields ?
                     <TouchableOpacity onPress={handleEmail} style={styles.editBtn}>
                         <Feather name="edit" size={14} color={Colors.blue} />
-                    </TouchableOpacity>
-                </View>
-
+                    </TouchableOpacity> : null
+                }
+                </View> 
+                {showPasswordFields ?
                 <View style={styles.dataCont}>
                     <View style={styles.dataText}>
                         <Text style={styles.dataTitle}>Kata Sandi</Text>
@@ -121,7 +125,8 @@ export default function EditProfile() {
                     <TouchableOpacity style={styles.editBtn} onPress={() => router.push('./ChangePass')}>
                         <Feather name="edit" size={14} color={Colors.blue} />
                     </TouchableOpacity>
-                </View>
+                </View> : null
+                }
             </View>
         </View>
         <Modal transparent={true} visible={modalVisible} animationType="fade" onRequestClose={() => setModalVisible(false)}>

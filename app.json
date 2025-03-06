@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "app-emedic",
-    "slug": "app-emedic",
+    "slug": "e-medic",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/Splash.png",
@@ -12,31 +12,45 @@
       "supportsTablet": true,
       "config": {
         "googleMapsApiKey": "***REMOVED***"
+      },
+      "bundleIdentifier": "com.anonymous.appemedic",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/Splash.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.anonymous.appemedic",
+      "googleServicesFile": "./google-services.json",
       "config": {
         "googleMaps": {
           "apiKey": "***REMOVED***"
+        },
+        "googleSignIn": {
+          "apiKey": "REDACTED",
+          "certificateHash": "A7:09:16:2C:C5:FC:02:12:CC:7A:CF:5B:7E:52:65:F5:1B:E9:0E:40"
         }
-      }
+      },
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "WAKE_LOCK"
+      ]
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/Splash.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/Splash.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
@@ -48,17 +62,34 @@
           "supportsBackgroundPlayback": true,
           "supportsPictureInPicture": true
         }
-      ], 
+      ],
       [
         "expo-location",
         {
           "location": true,
           "locationAlwaysAndWhenInUsePermission": true
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "androidMode": "default",
+          "allowDeliveryWhileInBackground": true,
+          "sounds": ["./assets/sounds/alarm.wav"]
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "9d6016ef-e73c-4c3b-b785-64f38daf186f"
+      }
+    },
+    "owner": "notanut"
   }
 }
