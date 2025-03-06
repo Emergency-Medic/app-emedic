@@ -10,9 +10,10 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { useRouter } from "expo-router";
 import MakeSchedule from '../screens/reminder/MakeSchedule'
-import { collection, query, where, getDocs, Timestamp, onSnapshot, deleteDoc, doc } from "firebase/firestore";
+import { collection, query, where, getDoc, Timestamp, onSnapshot, deleteDoc, doc } from "firebase/firestore";
 import { auth, db } from "@/firebaseConfig";
 import moment from 'moment-timezone';
+import * as Notifications from 'expo-notifications';
 
 // type Reminder = {
 //   id: number;
@@ -146,17 +147,34 @@ export default function MedicationReminder() {
 
   const handleDelete = async (id) => {
     try {
+        const scheduleDoc = await getDoc(doc(db, "schedules", id)); // Ambil dokumen
+        if (!scheduleDoc.exists()) {
+            Alert.alert("Error", "Reminder tidak ditemukan.");
+            return;
+        }
+
+        const scheduleData = scheduleDoc.data();
+        const notificationIds = scheduleData.notificationIds || [];
+
+        // Hapus dokumen dari database
         await deleteDoc(doc(db, "schedules", id));
-        Alert.alert("Sukses", "Reminder berhasil dihapus.");
-        setModalVisible(false); // Tutup modal setelah penghapusan
+
+        // Hapus semua notifikasi terkait secara paralel (lebih cepat)
+        await Promise.all(notificationIds.map((notificationId) =>
+            Notifications.cancelScheduledNotificationAsync(notificationId)
+        ));
+
+        setModalVisible(false);
+        Alert.alert("Sukses", "Reminder berhasil dihapus!");
     } catch (error) {
         console.error("Error deleting reminder:", error);
         Alert.alert("Error", "Gagal menghapus reminder. Silakan coba lagi.");
     }
   };
 
+
   const toggleActive = (id) => {
-    setActiveReminderId(activeReminderId === id ? null : id);
+    // setActiveReminderId(activeReminderId === id ? null : id);
   };
 
   return (
@@ -208,6 +226,8 @@ export default function MedicationReminder() {
                       iconName = 'syringe'; // Ikon untuk injeksi
                     } else if(item.type === 'Tablet'){
                       iconName = 'capsules'
+                    } else if (item.type === 'Salep') {
+                      iconName = 'flask'
                     }
         
                     return (
@@ -228,7 +248,7 @@ export default function MedicationReminder() {
                   title={item.medName}
                   titleStyle={[styles.titleCard, activeReminderId === item.id && styles.activeTitle]}
 
-                  subtitle={`${item.dose} sdm`}
+                  subtitle={`${item.dose} ${item.doseType}`}
                   subtitleStyle={[styles.subtitle, activeReminderId === item.id && styles.activeSubtitle]}
                   right={(props) => (
                     <Entypo
