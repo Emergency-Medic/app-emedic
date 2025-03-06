@@ -10,6 +10,7 @@ import { auth, db } from '@/firebaseConfig'
 import { doc,onSnapshot,getDoc,collection,query,where,Timestamp,} from "firebase/firestore";
 import moment from "moment-timezone";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const data = {  
   kategori1: [  
@@ -34,6 +35,7 @@ export default function Home() {
   const [name, setName] = useState('')
   const user = auth.currentUser
   const [userData, setUserData] = useState(null)
+  const [lastReadArticle, setLastReadArticle] = useState(null);
 
   const fetchData = async () => {
       const categoryDocuments = data[selectedCategory];  // Menggunakan data[selectedCategory]
@@ -172,54 +174,69 @@ export default function Home() {
           },
       });
 
-      const renderCategoryInfo = () => {
-        return articles.map((item, index)=> {
-          const backgroundColor = articles.indexOf(item) % 2 === 0 ? Colors.blue : Colors.red; // Gunakan index dalam array articles
+      const handleArticlePress = async (item) => {
+        try {
+            await saveLastRead(item);
+            router.push({ pathname: '/screens/artikel/Articlepage', params: { id: item.id } }); // Perbaikan navigasi
+        } catch (error) {
+            console.error("Error saving lastRead:", error);
+        }
+    };
+
+    const saveLastRead = async (article) => {
+        try {
+            await AsyncStorage.setItem('lastRead', JSON.stringify(article));
+            setLastReadArticle(article); // Update state lastReadArticle setelah disimpan
+        } catch (error) {
+            console.error("Error saving lastRead:", error);
+        }
+    };
+
+    const renderCategoryInfo = () => {
+      return articles.map((item, index) => {
+          const backgroundColor = articles.indexOf(item) % 2 === 0 ? Colors.blue : Colors.red;
           const formattedKeywords = item.keywords.join(', ');
           const truncateDescription = (description) => {
-            const words = description.split(' ');  // Pisahkan berdasarkan spasi
-            const truncated = words.slice(0, 6).join(' ');  // Ambil 20 kata pertama
-            return words.length > 6 ? truncated + '...' : truncated;  // Jika lebih dari 20 kata, tambahkan "..."
+              const words = description.split(' ');
+              const truncated = words.slice(0, 6).join(' ');
+              return words.length > 6 ? truncated + '...' : truncated;
           };
-
+  
           return (
-            <View
-              style={[
-                styles.cart,
-                {
-                  backgroundColor,
-                  marginRight: index < articles.length - 1 ? 10 : 0, // Tambahkan marginRight kecuali item terakhir
-                },
-              ]}
-              key={item.id}
-            >
-              <View style={styles.contain}>
-                <View style={styles.pictureSection}>
-                  <Image source={{ uri: item.image }} style={styles.image} />
-                </View>
-                <View style={styles.textSection}>
-                {/* <View style={styles.verifiedIcon2}>
-                  <MaterialIcons name="verified" size={20} color="white" />
-                </View> */}
-                  <Text style={styles.judul}> 
-                    {item.title} 
-                  </Text>
-                  <Text style={styles.kataKunci}>
-                    Kata Kunci: {formattedKeywords}
-                  </Text>
-                  <Text style={styles.deskripsi}>
-                    {truncateDescription(item.description)} 
-                  </Text>
-      
-                  <TouchableOpacity style={styles.pelajariSection} onPress={() => router.push(`../screens/artikel/Articlepage?id=${item.id}`)}> 
-                    <Text style={styles.pelajariText}> 
-                      Pelajari
-                    </Text>
-                    <View style={styles.pelajariIcon}> 
-                      <MaterialIcons name="article" size={10} color="black" />
-                    </View>
-                  </TouchableOpacity>
-                </View>
+              <View
+                  style={[
+                      styles.cart,
+                      {
+                          backgroundColor,
+                          marginRight: index < articles.length - 1 ? 10 : 0,
+                      },
+                  ]}
+                  key={item.id}
+              >
+                  <View style={styles.contain}>
+                      <View style={styles.pictureSection}>
+                          <Image source={{ uri: item.image }} style={styles.image} />
+                      </View>
+                      <View style={styles.textSection}>
+                          <Text style={styles.judul}>
+                              {item.title}
+                          </Text>
+                          <Text style={styles.kataKunci}>
+                              Kata Kunci: {formattedKeywords}
+                          </Text>
+                          <Text style={styles.deskripsi}>
+                              {truncateDescription(item.description)}
+                          </Text>
+  
+                          <TouchableOpacity style={styles.pelajariSection} onPress={() => handleArticlePress(item)}>
+                              <Text style={styles.pelajariText}>
+                                  Pelajari
+                              </Text>
+                              <View style={styles.pelajariIcon}>
+                                  <MaterialIcons name="article" size={10} color="black" />
+                              </View>
+                          </TouchableOpacity>
+                      </View>
                 <View>
                   <MaterialIcons name="verified" size={20} color={Colors.white} style={styles.verifiedContent}/>
                 </View>
@@ -228,6 +245,33 @@ export default function Home() {
           );
         }); 
       }; 
+    
+      const loadLastRead = async () => {
+        try {
+            const storedArticle = await AsyncStorage.getItem('lastRead');
+            if (storedArticle) {
+                try {
+                    const parsedArticle = JSON.parse(storedArticle);
+                    if (typeof parsedArticle === 'object' && parsedArticle !== null && parsedArticle.hasOwnProperty('id') && parsedArticle.hasOwnProperty('title') && parsedArticle.hasOwnProperty('image')) {
+                        setLastReadArticle(parsedArticle);
+                    } else {
+                        console.warn("Data lastRead tidak valid.");
+                        setLastReadArticle(null);
+                    }
+                } catch (parseError) {
+                    console.error("Error parsing lastRead:", parseError);
+                    setLastReadArticle(null);
+                }
+            }
+        } catch (error) {
+            console.error("Error loading lastRead:", error);
+            setLastReadArticle(null);
+        }
+    };
+
+    useEffect(() => {
+        loadLastRead(); // Panggil loadLastRead saat komponen di-mount
+    }, []); // Pastikan hanya dipanggil sekali saat komponen di-mount
 
     return (
       <ScrollView contentContainerStyle={styles.container}>
