@@ -84,7 +84,7 @@ const Emergency = () => {
                 },
                 body: JSON.stringify({
                   to: pushToken,
-                  sound: 'default',
+                  sound: 'alarm.wav',
                   title: '🚨 Darurat!',
                   body: `Temanmu, ${user.displayName} dalam bahaya! Klik untuk melihat lokasi.`,
                   priority: "high",
@@ -96,11 +96,12 @@ const Emergency = () => {
                   notification: {  // Tambahkan ini
                     title: '🚨 Darurat!',
                     body: `Temanmu, ${user.displayName} dalam bahaya! Klik untuk melihat lokasi.`,
-                    sound: 'default',
+                    sound: 'alarm.wav',
                     priority: "high"
                   },
                   android: {
-                    channelId: 'default'
+                    channelId: 'default',
+                    priority: "high"
                   }
                 })
                 

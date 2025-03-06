@@ -69,6 +69,14 @@
           "location": true,
           "locationAlwaysAndWhenInUsePermission": true
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "androidMode": "default",
+          "allowDeliveryWhileInBackground": true,
+          "sounds": ["./assets/sounds/alarm.wav"]
+        }
       ]
     ],
     "experiments": {
