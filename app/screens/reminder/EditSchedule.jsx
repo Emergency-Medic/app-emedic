@@ -167,6 +167,9 @@ const EditSchedule = () => {
                         title: "Reminder to take your meds",
                         body: `Don't forget to take ${medName} (${dose} ${doseType})!`,
                         sound: "default",
+                        android: {
+                            channelId: 'default'
+                        }
                     };
         
                     if (forever) {
@@ -184,7 +187,12 @@ const EditSchedule = () => {
         
                         while (currentReminderDate <= endDate) {
                             currentReminderDate.setHours(hours, minutes, 0, 0);
-        
+                            const timeInterval = ((currentReminderDate.getTime() - now.getTime()) / 1000);
+                            console.log('Time Interval: ' + timeInterval)
+                            if (timeInterval < 0) {
+                                currentReminderDate.setDate(currentReminderDate.getDate() + 1);
+                                continue;
+                            }
                             const notification = await Notifications.scheduleNotificationAsync({
                                 content,
                                 trigger: {

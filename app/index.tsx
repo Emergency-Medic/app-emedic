@@ -10,16 +10,36 @@ import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import * as Linking from 'expo-linking';
 import { collection, doc, setDoc, getDoc } from 'firebase/firestore';
+import * as TaskManager from 'expo-task-manager';
 
-const Stack = createStackNavigator(); 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-    priority:  Notifications.AndroidNotificationPriority.MAX
-  }),
+// Definisikan task untuk menerima notifikasi saat aplikasi mati
+TaskManager.defineTask('MED_REMINDER_HANDLER', async ({ data, error }) => {
+  if (error) return;
+  
+  // Trigger notifikasi saat aplikasi dibuka dari killed state
+  if (data?.notification) {
+    Notifications.presentNotificationAsync({
+      title: data.notification.request.content.title,
+      body: data.notification.request.content.body,
+    });
+  }
 });
+
+console.log("🔧 Setting up notification handler...");
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => {
+    console.log("📩 Notifikasi diterima di foreground!");
+    return {
+      shouldShowAlert: true, 
+      shouldPlaySound: true, 
+      shouldSetBadge: false,
+    };
+  },
+});
+
+console.log("Done")
+
 
 export default function index() {
   useFonts({
@@ -40,19 +60,6 @@ export default function index() {
   const rootNavigationState = useRootNavigationState();
 
   useEffect(() => {
-    const setupNotificationChannel = async () => {
-      if (Platform.OS === 'android') {
-        await Notifications.setNotificationChannelAsync('default', {
-          name: 'default',
-          importance: Notifications.AndroidImportance.MAX,
-          vibrationPattern: [0, 250, 250, 250],
-          lightColor: '#FF231F7C',
-        });
-      }
-    };
-  
-    setupNotificationChannel();
-    
     if (!rootNavigationState?.key) return;
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       setIsLoading(false);
@@ -77,8 +84,45 @@ export default function index() {
       }
     });
 
+    const setupNotificationChannel = async () => {
+      if (Platform.OS === 'android') {
+        await Notifications.setNotificationChannelAsync('default', {
+          name: 'default',
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: '#FF231F7C',
+          sound: 'alarm.wav',
+          enableLights: true,
+          enableVibrate: true,
+          fullScreenIntent: true
+        });
+      }
+    };
     
+    setupNotificationChannel();
+    Notifications.registerTaskAsync('MED_REMINDER_HANDLER');
 
+    // 1️⃣ Setup handler untuk memastikan notifikasi tetap muncul di foreground
+    // Notifications.setNotificationHandler({
+    //   handleNotification: async () => ({
+    //     shouldShowAlert: true, // Menampilkan notifikasi saat di foreground
+    //     shouldPlaySound: true, // Bisa ubah ke false jika tidak ingin suara
+    //     shouldSetBadge: false,
+    //   }),
+    // });
+
+    const checkPermissions = async () => {
+      const { status } = await Notifications.getPermissionsAsync();
+      console.log("🔍 Status izin notifikasi:", status);
+  
+      if (status !== 'granted') {
+        const { status: newStatus } = await Notifications.requestPermissionsAsync();
+        console.log("📌 Status izin setelah permintaan:", newStatus);
+      }
+    };
+  
+    checkPermissions();
+  
     // Fungsi untuk mendaftarkan push notification
     const registerForPushNotificationsAsync = async (uid) => {
       if (!uid) return;
@@ -117,8 +161,16 @@ export default function index() {
       }
     };
 
+    const foregroundSubscription = Notifications.addNotificationReceivedListener(notification => {
+      console.log("🎯 Notifikasi diterima di foreground:", notification);
+  
+      // Untuk menampilkan alert agar notifikasi terlihat
+      Alert.alert(notification.request.content.title, notification.request.content.body);
+    });
+
     // Tambahkan listener untuk notifikasi
     const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log("📩 Notifikasi ditekan:", response);
       const { latitude, longitude } = response.notification.request.content.data;
       if (latitude && longitude) {
         const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
@@ -129,6 +181,7 @@ export default function index() {
     return () => {
       unsubscribe();
       subscription.remove();
+      foregroundSubscription.remove();
     };
 }, [router]);
 

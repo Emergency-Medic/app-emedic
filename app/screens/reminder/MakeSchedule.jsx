@@ -85,11 +85,6 @@ const MakeSchedule = () => {
     };
 
     const saveSchedule = async () => {
-        // Batalkan semua notifikasi yang belum terkirim
-        // await Notifications.cancelAllScheduledNotificationsAsync();
-
-        // Hapus semua notifikasi yang sudah muncul di Notification Tray
-        // await Notifications.dismissAllNotificationsAsync();
         try {
             if (!medName || !dose || !frequency || !reminders.length) {
                 Alert.alert("Error", "Mohon lengkapi semua data obat dan pengingat.");
@@ -114,6 +109,9 @@ const MakeSchedule = () => {
                     title: "Reminder to take your meds",
                     body: `Don't forget to take ${medName} (${dose} ${doseType})!`,
                     sound: "default",
+                    android: {
+                        channelId: 'default'
+                    }
                 };
     
                 if (forever) {
@@ -190,7 +188,6 @@ const MakeSchedule = () => {
             Alert.alert("Error", "Gagal menyimpan jadwal. Silakan coba lagi.");
         }
     };
-    
         
     const calculateDays = () => {
         const timeDiff = endDate.getTime() - startDate.getTime();
