@@ -5,6 +5,9 @@ import { auth, db } from "@/firebaseConfig";
 const useUserData = () => {
   const [user, setUser] = useState(null);
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [completedQuizzes, setCompletedQuizzes] = useState([])
 
   useEffect(() => {
     const currentUser = auth.currentUser;
@@ -16,6 +19,9 @@ const useUserData = () => {
         const data = snapshot.data();
         setUser(data);
         setName(data.firstName);
+        setEmail(data.email);
+        setUsername(data.username);
+        setCompletedQuizzes(data.completedQuizzes);
       } else {
         console.log("User does not exist!");
       }
@@ -24,7 +30,7 @@ const useUserData = () => {
     return () => unsubscribe();
   }, []);
 
-  return { user, name };
+  return { user, name, email, username, completedQuizzes };
 };
 
 export default useUserData;

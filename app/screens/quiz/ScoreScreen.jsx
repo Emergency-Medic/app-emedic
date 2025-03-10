@@ -28,7 +28,6 @@ const ScoreScreen = () => {
           }
       }
     };
-  
 
     const calculateScore = () => {
         let score = 0;

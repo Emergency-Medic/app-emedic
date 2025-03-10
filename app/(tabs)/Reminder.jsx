@@ -15,17 +15,7 @@ import { auth, db } from "@/firebaseConfig";
 import moment from 'moment-timezone';
 import * as Notifications from 'expo-notifications';
 import useReminders from "@/hooks/useReminders";
-
-// type Reminder = {
-//   id: number;
-//   time: string;
-//   name: string;
-//   dose: string;
-// };
-
-// type RemindersType = {
-//   [key: string]: Reminder[];
-// };
+import { deleteNotifications } from "@/utils/notificationUtils";
 
 export default function MedicationReminder() {
   const [selectedType, setSelectedType] = useState('Tablet'); // State untuk jenis obat
@@ -62,10 +52,7 @@ export default function MedicationReminder() {
         // Hapus dokumen dari database
         await deleteDoc(doc(db, "schedules", id));
 
-        // Hapus semua notifikasi terkait secara paralel (lebih cepat)
-        await Promise.all(notificationIds.map((notificationId) =>
-            Notifications.cancelScheduledNotificationAsync(notificationId)
-        ));
+        await deleteNotifications(scheduleData.notificationIds || []);
 
         setModalVisible(false);
         Alert.alert("Sukses", "Reminder berhasil dihapus!");
@@ -73,11 +60,6 @@ export default function MedicationReminder() {
         console.error("Error deleting reminder:", error);
         Alert.alert("Error", "Gagal menghapus reminder. Silakan coba lagi.");
     }
-  };
-
-
-  const toggleActive = (id) => {
-    // setActiveReminderId(activeReminderId === id ? null : id);
   };
 
   return (
@@ -109,7 +91,7 @@ export default function MedicationReminder() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           
-          <TouchableOpacity onPress={() => toggleActive(item.id)}>
+          <TouchableOpacity>
             <View style={styles.rowContainer}>
               <View>
                 {item.reminders.map((time, index) => (

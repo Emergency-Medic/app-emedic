@@ -2,11 +2,12 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Colors } from '@/constants/Colors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ArticleCard = ({ item, isLast }) => {
   const router = useRouter();
   const backgroundColor = item.index % 2 === 0 ? Colors.blue : Colors.red;
-  const formattedKeywords = item.keywords.join(', ');
+  const formattedKeywords = Array.isArray(item.keywords) ? item.keywords.join(', ') : '';
 
   const truncateDescription = (description) => {
     const words = description.split(' ');
@@ -27,7 +28,14 @@ const ArticleCard = ({ item, isLast }) => {
 
           <TouchableOpacity
             style={styles.pelajariSection}
-            onPress={() => router.push(`../screens/artikel/Articlepage?id=${item.id}`)}
+            onPress={async () => {
+              try {
+                await AsyncStorage.setItem('lastRead', JSON.stringify(item));
+                router.push(`../screens/artikel/Articlepage?id=${item.id}`);
+              } catch (error) {
+                console.error("Error saving lastRead:", error);
+              }
+            }}
           >
             <Text style={styles.pelajariText}>Pelajari</Text>
             <View style={styles.pelajariIcon}>
