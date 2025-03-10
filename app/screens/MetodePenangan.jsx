@@ -51,7 +51,7 @@ export default function MetodePenangan() {
 	
 	const renderCategoryInfo = () => {
         return articles.map((item, index) => (
-          <ArticleCard key={item.id} item={{ ...item, index }} isLast={index === articles.length - 1} />
+          <ArticleCard key={item.id} item={{ ...item, index }} isLast={false} />
         ));
     };
 
@@ -81,6 +81,7 @@ export default function MetodePenangan() {
 			<ScrollView 
 				style={styles.cartContainer}
 				contentContainerStyle={styles.cartContent}
+				showsVerticalScrollIndicator={false}
 			>
 				{renderCategoryInfo()}
 			</ScrollView>  

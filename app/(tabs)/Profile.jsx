@@ -11,11 +11,8 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { auth, db } from "@/firebaseConfig";
 import { doc, onSnapshot, getDoc } from "firebase/firestore";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import useUserData from '@/hooks/useUserData'
 
-// interface ProfileProps { 
-//   modalVisible: boolean;  
-//   setModalVisible: (visible: boolean) => void;  
-// }  
   
 const Profile = ({ modalVisible, setModalVisible }) => {    
 	const router = useRouter();
@@ -26,19 +23,18 @@ const Profile = ({ modalVisible, setModalVisible }) => {
 			console.log(error);
 		})
 	}
-	const [name, setName] = useState('')
-	const [username, setUsername] = useState('')
 	const [lastReadArticle, setLastReadArticle] = useState(null)
 	const [modalHeight, setModalHeight] = useState(610);
 	const [articleUpdated, setArticleUpdated] = useState(false);
-	const user = auth.currentUser
+	const { name, username, completedQuizzes } = useUserData(); 
+	const progress = Math.round((completedQuizzes.length / 13) * 100)
 
 	const loadLastRead = useCallback(async () => {
         try {
             const storedArticle = await AsyncStorage.getItem('lastRead');
             const parsedArticle = storedArticle ? JSON.parse(storedArticle) : null;
             setLastReadArticle(parsedArticle); // Directly set the state
-            setModalHeight(parsedArticle ? 610 : 500); // Set modal height based on article
+            setModalHeight(parsedArticle ? 590 : 500); // Set modal height based on article
         } catch (error) {
             console.error("Error loading lastRead:", error);
             setLastReadArticle(null);
@@ -46,29 +42,7 @@ const Profile = ({ modalVisible, setModalVisible }) => {
         }
     }, []);
 	
-	  useEffect(() => {
-			if (!user) return;
-		
-			// Listen to real-time updates on this user's document
-			const userRef = doc(db, "users", user.uid);
-			const unsubscribe = onSnapshot(userRef, async (snapshot) => {
-			  if (snapshot.exists()) {
-				console.log(snapshot.data())
-				const data = snapshot.data();
-				setName(snapshot.data().firstName);
-				setUsername(snapshot.data().username);
-
-			  } else {
-				console.log("User does not exist!");
-			  }
-			});
-	
-			loadLastRead();
-		
-			return () => unsubscribe();  // Cleanup listener on unmount
-		  }, [user, loadLastRead]);
-
-		  useEffect(() => {
+		useEffect(() => {
 			loadLastRead(); // Reload when articleUpdated changes
 		}, [articleUpdated, loadLastRead]); // Add articleUpdated as a dependency
 
@@ -82,8 +56,6 @@ const Profile = ({ modalVisible, setModalVisible }) => {
 				console.error("Error saving lastRead:", error);
 			}
 		};
-
-		
 
 		  const renderLastRead = () => {
 			if (!lastReadArticle) {
@@ -104,9 +76,10 @@ const Profile = ({ modalVisible, setModalVisible }) => {
 	
 			return (
 				<View style={[styles.cart, { backgroundColor: Colors.blue }]}>
-					<View>
+					<Text>
 						<MaterialIcons name="verified" size={20} color={Colors.white} style={styles.verifiedContent} />
-					</View>
+					</Text>
+
 					<View style={styles.cart2}>
 						<Image source={{ uri: lastReadArticle?.image }} style={styles.image} />
 						<Text style={styles.judul}>{lastReadArticle?.title}</Text>
@@ -123,35 +96,22 @@ const Profile = ({ modalVisible, setModalVisible }) => {
 							</View>
 						</TouchableOpacity>
 					</View>
-					
-              
           </View>
       );
   };
-//   const handleResetLastRead = async () => {
-// 		try {
-// 			await AsyncStorage.removeItem('lastRead');
-// 			setLastReadArticle(null);
-// 			setModalHeight(500);
-// 			setArticleUpdated(prev => !prev); // Toggle state to trigger useEffect
-// 			console.log('lastRead data reset successfully!');
-// 		} catch (error) {
-// 			console.error('Error resetting lastRead data:', error);
-// 		}
-// 	};
 
 	return (    
 		<Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
 			<TouchableWithoutFeedback onPressOut={() => setModalVisible(false)}>
-				<View style={styles.modalContainer}>    
-					<View style={[styles.modalContent, { height: modalHeight }]}>  
+				<View style={styles.modalContainer}>
+					<View style={[styles.modalContent, { height: modalHeight }]}>
 						{/* Header */}
 						<View style={styles.header}>
 							<Text style={styles.eMedicId}>Username</Text>
-							<View style={styles.idCircle}> 
+							<View style={styles.idCircle}>
 								<Text style={styles.userId}>{username}</Text>
-							</View>           
-						</View>  
+							</View>
+						</View>
 
 						<TouchableOpacity style={styles.profileSection} onPress={() => router.push('/screens/profile/EditProfile')}>
 							<View style={styles.profileContainer}>
@@ -165,25 +125,22 @@ const Profile = ({ modalVisible, setModalVisible }) => {
 						
 						{/* Progress Section */}
 						<View style={styles.progresSection}>
-							<View style={styles.progresTextSection}> 
+							<View style={styles.progresTextSection}>
 								<Text style={styles.progress}>Progres Anda keseluruhan: </Text>
-								<Text style={styles.persentage}>0%</Text>
+								<Text style={styles.persentage}>{progress}%</Text>
 							</View>
 							<View style={styles.progresBar}>
-								<View style={styles.bar}>
+								<View style={[styles.bar, { width: `${progress}%` }]}>
 								</View> 
 							</View>
-						</View> 
+						</View>
 						
 						{/* Last Read */}
 						<View style={styles.bookmarkContainer}>
-                            <Text style={styles.eMedicId}>Terakhir Dikunjungi</Text> {/* Updated title */}
+                            <Text style={styles.eMedicId}>Terakhir Dikunjungi</Text>
                             <ScrollView style={{marginTop: 10}} contentContainerStyle={{alignItems: 'center'}}>
                                 {renderLastRead()}
                             </ScrollView>
-							{/* <TouchableOpacity style={styles.logOutSection} onPress={handleResetLastRead}>
-							<Text style={styles.logOut}>Reset Terakhir Dibaca</Text>
-							</TouchableOpacity> */}
                         </View>
 						{/* Friend */}
 						<TouchableOpacity style={styles.friendSection} onPress={() => router.push('../screens/contact/Contactpage')}>
@@ -191,13 +148,13 @@ const Profile = ({ modalVisible, setModalVisible }) => {
 							<Text style={styles.teman}>Teman</Text>
 						</TouchableOpacity>
 						{/* Log Out */}
-						<TouchableOpacity onPress={handleSignOut} style={styles.logOutSection}> 
+						<TouchableOpacity onPress={handleSignOut} style={styles.logOutSection}>
 							<Text style={styles.logOut}>Log Out</Text>
 						</TouchableOpacity>
-					</View> 
-				</View>    
-	  		</TouchableWithoutFeedback> 
-    	</Modal>    
+					</View>
+				</View>
+	  		</TouchableWithoutFeedback>
+    	</Modal>
   );    
 };    
   
@@ -210,7 +167,7 @@ const styles = StyleSheet.create({
   },    
   modalContent: {   
     width: 319,
-	height: 610,     
+	height: 400,     
     padding: 20,    
     backgroundColor: '#fff',    
     borderRadius: 10,  
@@ -221,11 +178,12 @@ const styles = StyleSheet.create({
 	flexDirection: 'row', 
 	alignItems: 'center',
 	justifyContent: 'space-between',
-	width: '100%'
+	width: '100%',
+	marginTop: 0
   },
   eMedicId: {
 	fontFamily: 'regular',
-	padding: 20,  
+	paddingVertical: 15,  
     fontSize: 13,    
     color: Colors.blue,    
   },    
@@ -371,10 +329,10 @@ const styles = StyleSheet.create({
 		alignItems: 'flex-start', 
 		justifyContent: 'center', 
 		borderRadius: 20, 
-		elevation: 10,
+		elevation: 2,
 		shadowColor: Colors.black,
 		shadowOffset: { width: 0, height: 10 },
-		shadowOpacity: 0.1,
+		shadowOpacity: 0.05,
 		shadowRadius: 10, 
 	}, 
 	bar: {
@@ -382,6 +340,7 @@ const styles = StyleSheet.create({
 		height: 2.9,
 		backgroundColor: Colors.red, 
 		borderRadius: 20, 
+		marginHorizontal: 5
 	},
 	bookmarkContainer:{
 		flexDirection: 'column', 
