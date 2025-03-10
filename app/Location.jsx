@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ScrollView, View, Image, Text, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Button } from 'react-native';
 import { useNavigation, useRouter } from "expo-router";
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
 import * as Loc from 'expo-location';
+import { useLocalSearchParams } from "expo-router";
 
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -17,7 +18,13 @@ const INITIAL_REGION = {
 };
 
 export default function Location() {
-
+	const { latitude, longitude, formattedAddress, name } = useLocalSearchParams();
+	const [region, setRegion] = useState({
+		latitude: latitude ? parseFloat(latitude) : -6.6000,
+		longitude: longitude ? parseFloat(longitude) : 106.8215,
+		latitudeDelta: 0.02,
+		longitudeDelta: 0.02,
+	  });
 	return(
 		<View style={styles.container}>
 			<StatusBar style="auto" />
@@ -25,9 +32,11 @@ export default function Location() {
 			<MapView 
 				style={styles.maps}  
 				provider={PROVIDER_GOOGLE} 
-				initialRegion={INITIAL_REGION}
+				initialRegion={region}
+				region={region}
 				showsUserLocation
 			/>
+			<Marker coordinate={{ latitude: region.latitude, longitude: region.longitude }} />
 			<View style= {styles.container2}> 
 				<View style={styles.bukaMapsButton}>
 					<TouchableOpacity style={styles.bukaMapsContainer}>
@@ -47,10 +56,10 @@ export default function Location() {
 						</View>
 						<View style={styles.friendInfoText}> 
 							<Text style={styles.keterangan}> 
-								Lokasi Natasya
+								Lokasi {name}
 							</Text>
 							<Text style={styles.subKeterangan}> 
-								Jl.Pakuan No.3, Sumur Batu, Kec.Babakan Madang, Kabupaten Bogor, Jawa Barat 16810
+								{formattedAddress}
 							</Text>
 						</View>
 					</View>

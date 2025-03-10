@@ -14,6 +14,7 @@ import { collection, query, where, getDoc, Timestamp, onSnapshot, deleteDoc, doc
 import { auth, db } from "@/firebaseConfig";
 import moment from 'moment-timezone';
 import * as Notifications from 'expo-notifications';
+import useReminders from "@/hooks/useReminders";
 
 // type Reminder = {
 //   id: number;
@@ -33,88 +34,10 @@ export default function MedicationReminder() {
     new Date().toISOString().split('T')[0]
   );
   const today = new Date().toISOString().split('T')[0]; // ini buat format tanggal
-
-// const [reminders, setReminders] = useState<RemindersType>({
-//     [today]: [
-//       { id: 1, time: '08:00', name: 'Obat xxx', dose: '1 sct (50 mg)' },
-//       { id: 2, time: '12:00', name: 'Obat xxx', dose: '1 sct (50 mg)' },
-//     ],
-// });
-  const [reminders, setReminders] = useState([]);
-
-
+  const reminders = useReminders(selectedDate);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingReminder, setEditingReminder] = useState(null);
   const [activeReminderId, setActiveReminderId] = useState(null);
-  
-
-  useEffect(() => {
-    const q = query(collection(db, "schedules"), where("userId", "==", auth.currentUser.uid));
-
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const remindersData = [];
-
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            const startDateTimestamp = data.startDate;
-            const endDateTimestamp = data.endDate;
-
-            // 1. Konversi ke Moment dengan zona waktu yang spesifik
-            const selectedDateMoment = moment.tz(selectedDate, 'Asia/Jakarta');
-            const startDateMoment = startDateTimestamp instanceof Timestamp
-                ? moment.tz(startDateTimestamp.toDate(), 'Asia/Jakarta')
-                : null;
-            const endDateMoment = endDateTimestamp instanceof Timestamp
-                ? moment.tz(endDateTimestamp.toDate(), 'Asia/Jakarta')
-                : null;
-
-            // 2. Gunakan startOf('day') untuk menghilangkan informasi waktu
-            const selectedDateStart = selectedDateMoment.startOf('day');
-            const startDateStart = startDateMoment ? startDateMoment.startOf('day') : null;
-            const endDateStart = endDateMoment ? endDateMoment.startOf('day') : null;
-
-            // 3. Format tanggal ke YYYY-MM-DD (opsional, tapi disarankan)
-            const selectedDateString = selectedDateStart.format('YYYY-MM-DD');
-            const startDateString = startDateStart ? startDateStart.format('YYYY-MM-DD') : null;
-            const endDateString = endDateStart ? endDateStart.format('YYYY-MM-DD') : null;
-
-            // 4. Lakukan perbandingan tanggal menggunakan string yang diformat
-            if (startDateString && endDateString) {
-                if (selectedDateString >= startDateString && selectedDateString <= endDateString) {
-                    remindersData.push({ id: doc.id, ...data });
-                } 
-            } else if (startDateString && data.forever) {
-                if (selectedDateString >= startDateString) {
-                    remindersData.push({ id: doc.id, ...data });
-                } 
-            } 
-        });
-
-        // Urutkan remindersData berdasarkan waktu (opsional, tapi disarankan)
-        remindersData.sort((a, b) => {
-          // Gabungkan semua jam pengingat dalam array, lalu urutkan
-          const allTimesA = a.reminders ? a.reminders.sort() : [];
-          const allTimesB = b.reminders ? b.reminders.sort() : [];
-
-          // Bandingkan jam satu per satu
-          for (let i = 0; i < Math.max(allTimesA.length, allTimesB.length); i++) {
-              const timeA = allTimesA[i] || ""; // Handle undefined
-              const timeB = allTimesB[i] || ""; // Handle undefined
-
-              if (timeA < timeB) return -1;
-              if (timeA > timeB) return 1;
-          }
-
-          return 0; // Jika semua jam sama
-      });
-
-        setReminders(remindersData);
-    }, (error) => {
-        console.error("Error listening for reminders:", error);
-    });
-
-    return () => unsubscribe();
-}, [selectedDate]);
   
   const handleDots = (reminder) => {
     setEditingReminder(reminder);
@@ -124,26 +47,6 @@ export default function MedicationReminder() {
   const handleEdit = (item) => {
     router.push(`/screens/reminder/EditSchedule?id=${item.id}`);
 };
-
-  const saveEdit = () => {
-    if (editingReminder) {
-      setReminders((prev) => ({
-        ...prev,
-        [selectedDate]: prev[selectedDate]?.map((item) =>
-          item.id === editingReminder.id ? editingReminder : item
-        ) || [],
-      }));
-      setModalVisible(false);
-      setEditingReminder(null);
-    }
-  };
-
-  // const handleDelete = (id) => {
-  //   setReminders((prev) => ({
-  //     ...prev,
-  //     [selectedDate]: prev[selectedDate]?.filter((item) => item.id !== id) || [],
-  //   }));
-  // };
 
   const handleDelete = async (id) => {
     try {

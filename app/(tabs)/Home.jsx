@@ -3,14 +3,17 @@ import { FlatList, ImageBackground, Modal, ScrollView, View, Image ,  Text, Styl
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
-import call from 'react-native-phone-call'; 
+import ArticleCard from "@/components/cards/ArticleCard";
 import Swiper from 'react-native-swiper';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { auth, db } from '@/firebaseConfig'
 import { doc,onSnapshot,getDoc,collection,query,where,Timestamp,} from "firebase/firestore";
 import moment from "moment-timezone";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import Skeleton from 'react-native-reanimated-skeleton';
+import useUserData from '@/hooks/useUserData'
+import { makePhoneCall } from "@/utils/callUtills";
+import useFetchArticles from '@/hooks/useFetchArticles';
+import useReminders from "@/hooks/useReminders";
 
 const data = {  
   kategori1: [  
@@ -25,131 +28,16 @@ const data = {
 };  
 
 export default function Home() {
-
   const swiperRef = useRef(null);
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('kategori1');
-  const [articles, setArticles] = useState([]);
-  const [todayReminders, setTodayReminders] = useState([]);
+  const { articles, isLoading } = useFetchArticles(selectedCategory, data);
+  const todayReminders = useReminders();
   const [sliderValue, setSliderValue] = useState(new Animated.Value(0));
-  const [name, setName] = useState('')
-  const user = auth.currentUser
   const [userData, setUserData] = useState(null)
-  const [isLoading, setIsLoading] = useState(true);
-
-
-  const fetchData = async () => {
-    setIsLoading(true);
-      const categoryDocuments = data[selectedCategory];  // Menggunakan data[selectedCategory]
-      const fetchedArticles = [];
-    
-      for (const docId of categoryDocuments) {
-        const docRef = doc(db, "articles_no_cat", docId);
-        const docSnap = await getDoc(docRef);
-    
-        if (docSnap.exists()) {
-        const data = docSnap.data();
-        fetchedArticles.push({
-          id: docId,
-          title: data.judul,
-          keywords: data.katakunci,
-          description: data.deskripsi,
-          image: data.gambarPenyakit,
-        });
-        }
-      }
-      setArticles(fetchedArticles);
-      setIsLoading(false);
-    };
-
-    useEffect(() => {
-        fetchData(); // Memanggil fetchData saat kategori berubah
-      }, [selectedCategory]);
-
-  useEffect(() => {
-    if (!user) return;
-    setIsLoading(true);
-    // Listen to real-time updates on this user's document
-    const userRef = doc(db, "users", user.uid);
-    const unsubscribe = onSnapshot(userRef, (snapshot) => {
-      if (snapshot.exists()) {
-        console.log(snapshot.data())
-        console.log(snapshot.data().pushToken)
-        const data = snapshot.data();
-        // setUserData({...data});
-        setName(snapshot.data().firstName);
-      } else {
-        console.log("User does not exist!");
-        setUserData(null);
-      }
-    });
-    setIsLoading(false)
-    return () => unsubscribe();  // Cleanup listener on unmount
-  }, [user]);
-
-  useEffect(() => {
-    setIsLoading(true)
-    const today = moment.tz("Asia/Jakarta").format("YYYY-MM-DD");
-    const q = query(
-        collection(db, "schedules"),
-        where("userId", "==", auth.currentUser.uid)
-    );
-
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const remindersData = [];
-
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            const startDateMoment =
-                data.startDate instanceof Timestamp
-                    ? moment
-                        .tz(data.startDate.toDate(), "Asia/Jakarta")
-                    : null;
-            const endDateMoment =
-                data.endDate instanceof Timestamp
-                    ? moment.tz(data.endDate.toDate(), "Asia/Jakarta")
-                    : null;
-            const startDate = startDateMoment
-                ? startDateMoment.format("YYYY-MM-DD")
-                : null;
-            const endDate = endDateMoment
-                ? endDateMoment.format("YYYY-MM-DD")
-                : null;
-            if (startDate && endDate) {
-                if (today >= startDate && today <= endDate) {
-                    remindersData.push({ id: doc.id, ...data });
-                }
-            } else if (startDate && endDate === null) {
-                if (today >= startDate) {
-                    remindersData.push({ id: doc.id, ...data });
-                }
-            }
-        });
-        const todayReminders = remindersData
-
-        todayReminders.sort((a, b) => {
-            const timeA = a.reminders[0] || "";
-            const timeB = b.reminders[0] || "";
-            return timeA.localeCompare(timeB);
-        });
-
-        setTodayReminders(todayReminders);
-    });
-    setIsLoading(false)
-    return () => unsubscribe();
-}, []);
-
-      const makePhoneCall = () => {
-          const args = {
-            number: '112',
-            prompt: false,
-            skipCanOpen: true
-          }
-      
-          call(args).catch(console.error);
-      };
+  const { user, name } = useUserData(); 
   
-      const panResponder = PanResponder.create({
+  const panResponder = PanResponder.create({
           onMoveShouldSetPanResponder: () => true,
           onPanResponderMove: Animated.event(
               [null, { dx: sliderValue }],
@@ -168,64 +56,12 @@ export default function Home() {
       });
 
       const renderCategoryInfo = () => {
-        return articles.map((item, index)=> {
-          const backgroundColor = articles.indexOf(item) % 2 === 0 ? Colors.blue : Colors.red; // Gunakan index dalam array articles
-          const formattedKeywords = item.keywords.join(', ');
-          const truncateDescription = (description) => {
-            const words = description.split(' ');  // Pisahkan berdasarkan spasi
-            const truncated = words.slice(0, 6).join(' ');  // Ambil 20 kata pertama
-            return words.length > 6 ? truncated + '...' : truncated;  // Jika lebih dari 20 kata, tambahkan "..."
-          };
-
-          return (
-            <View
-              style={[
-                styles.cart,
-                {
-                  backgroundColor,
-                  marginRight: index < articles.length - 1 ? 10 : 0, // Tambahkan marginRight kecuali item terakhir
-                },
-              ]}
-              key={item.id}
-            >
-              <View style={styles.contain}>
-                <View style={styles.pictureSection}>
-                  <Image source={{ uri: item.image }} style={styles.image} />
-                </View>
-                <View style={styles.textSection}>
-                {/* <View style={styles.verifiedIcon2}>
-                  <MaterialIcons name="verified" size={20} color="white" />
-                </View> */}
-                  <Text style={styles.judul}> 
-                    {item.title} 
-                  </Text>
-                  <Text style={styles.kataKunci}>
-                    Kata Kunci: {formattedKeywords}
-                  </Text>
-                  <Text style={styles.deskripsi}>
-                    {truncateDescription(item.description)} 
-                  </Text>
-      
-                  <TouchableOpacity style={styles.pelajariSection} onPress={() => router.push(`../screens/artikel/Articlepage?id=${item.id}`)}> 
-                    <Text style={styles.pelajariText}> 
-                      Pelajari
-                    </Text>
-                    <View style={styles.pelajariIcon}> 
-                      <MaterialIcons name="article" size={10} color="black" />
-                    </View>
-                  </TouchableOpacity>
-                </View>
-                <View>
-                  <MaterialIcons name="verified" size={20} color={Colors.white} style={styles.verifiedContent}/>
-                </View>
-              </View>
-            </View>
-          );
-        }); 
-      }; 
+        return articles.map((item, index) => (
+          <ArticleCard key={item.id} item={{ ...item, index }} isLast={index === articles.length - 1} />
+        ));
+      };
 
     return (
-      <Skeleton isLoading={isLoading}>
         <ScrollView contentContainerStyle={styles.container}>
           <StatusBar style='dark' translucent={true} />
           {/* Hello, (name) */}
@@ -244,9 +80,6 @@ export default function Home() {
                 </Text>
               </View>
             </View> 
-            {/* <View style={styles.alarmIcon}> 
-              <MaterialIcons name="alarm" size={20} color= {Colors.blue} />
-            </View> */}
           </View>
 
           {/* Content */}
@@ -342,22 +175,6 @@ export default function Home() {
           </View>
           </View>
           </Swiper>
-
-          {/* Navigation Buttons */}
-          {/* <View style={styles.navigationButtons}>
-          <TouchableOpacity
-            style={styles.prevButton}
-            onPress={() => swiperRef.current.scrollBy(-1)}
-          >
-            <Text style={styles.buttonText}>{'<'}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.nextButton}
-            onPress={() => swiperRef.current.scrollBy(1)}
-          >
-            <Text style={styles.buttonText}>{'>'}</Text>
-          </TouchableOpacity>
-          </View> */}
           </View>
 
 
@@ -465,11 +282,10 @@ export default function Home() {
               <Text style={styles.noRemindersText}>Tidak ada pengingat hari ini</Text>
             </View>
           )}
-
             </View>   
           </ScrollView>
       </ScrollView>
-      </Skeleton>
+   
   ); 
 }; 
 
@@ -577,17 +393,9 @@ const styles = StyleSheet.create({
     marginRight: 30,
     borderRadius: 20,
   },
-    cart: {
-    // width: '50%', 
-    // height: 110, 
+  cart: {
     backgroundColor: Colors.blue,
     borderRadius: 20, 
-    // flexDirection: 'row',
-    // justifyContent: 'space-between',
-    // paddingHorizontal: 10
-    // flexDirection: 'row',
-    // gap: 150,
-    // marginLeft: 10, 
   }, 
   contain: {
     flexDirection: 'row',
