@@ -3,7 +3,6 @@ import { Colors } from '@/constants/Colors';
 import BackButton from '@/components/BackButton'
 import { Image, View, Text, StyleSheet, ImageBackground, TouchableOpacity, FlatList , ScrollView} from 'react-native';
 import Swiper from 'react-native-swiper';
-// import BackButton from '@/components/BackButton';
 import { router, useLocalSearchParams } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';

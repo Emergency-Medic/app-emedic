@@ -3,6 +3,7 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 const LastReadArticle = ({ article, onPress }) => {
   if (!article) {
@@ -70,6 +71,51 @@ const styles = StyleSheet.create({
     verifiedContent: { // Style verifiedContent dipindahkan dari Home.jsx
         marginTop: 0,
         marginRight: 0,
+    },
+    image: {
+		width: 138,
+		height: 80, 
+		marginLeft: 5,
+	}, 
+    judul: { // Style judul dipindahkan dari Home.jsx
+        color: Colors.white,
+        fontFamily: 'semibold',
+        fontSize: 12,
+        marginTop: 5,
+    },
+    deskripsi: { // Style deskripsi dipindahkan dari Home.jsx
+        color: Colors.white,
+        fontFamily: 'regular',
+        fontSize: 10,
+        marginTop: 5,
+        marginRight: 40,
+    },
+    pelajariSection: { // Style pelajariSection dipindahkan dari Home.jsx
+        width: 240,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        marginRight: 32,
+    },
+    pelajariText: { // Style pelajariText dipindahkan dari Home.jsx
+        marginRight: 6,
+        fontFamily: 'semibold',
+        fontSize: 12,
+        color: Colors.white,
+    },
+    pelajariIcon: { // Style pelajariIcon dipindahkan dari Home.jsx
+        width: 20,
+        height: 20,
+        borderRadius: 20,
+        backgroundColor: Colors.white,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    kataKunci: { // Style kataKunci dipindahkan dari Home.jsx
+        color: Colors.white,
+        fontFamily: 'italic',
+        fontSize: 8,
+        marginTop: 3,
     },
 });
 
