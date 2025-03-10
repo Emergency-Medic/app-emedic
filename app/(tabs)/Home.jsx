@@ -55,6 +55,24 @@ export default function Home() {
           },
       });
 
+      const handleArticlePress = async (item) => {
+        try {
+            await saveLastRead(item);
+            router.push({ pathname: '/screens/artikel/Articlepage', params: { id: item.id } }); // Perbaikan navigasi
+        } catch (error) {
+            console.error("Error saving lastRead:", error);
+        }
+    };
+
+    const saveLastRead = async (article) => {
+        try {
+            await AsyncStorage.setItem('lastRead', JSON.stringify(article));
+            setLastReadArticle(article); // Update state lastReadArticle setelah disimpan
+        } catch (error) {
+            console.error("Error saving lastRead:", error);
+        }
+    };
+
       const renderCategoryInfo = () => {
         return articles.map((item, index) => (
           <ArticleCard key={item.id} item={{ ...item, index }} isLast={index === articles.length - 1} />
