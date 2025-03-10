@@ -1,31 +1,53 @@
 import { useFonts } from "expo-font";
-import { View, Platform, Alert } from "react-native";
+import { View, Platform, Alert, AppRegistry } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import MenuAwal from "./MenuAwal";
 import React, { useEffect, useState } from "react";
 import Home from "./(tabs)/Home";
-import { auth, db } from '@/firebaseConfig';
+import { auth, db, app } from '@/firebaseConfig';
 import { useRouter, useRootNavigationState } from "expo-router";
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import * as Linking from 'expo-linking';
 import { collection, doc, setDoc, getDoc } from 'firebase/firestore';
 import * as TaskManager from 'expo-task-manager';
+import { getMessaging, onBackgroundMessage } from 'firebase/messaging';
+import messaging from '@react-native-firebase/messaging';
 
-// Definisikan task untuk menerima notifikasi saat aplikasi mati
-TaskManager.defineTask('MED_REMINDER_HANDLER', async ({ data, error }) => {
-  if (error) return;
-  
-  // Trigger notifikasi saat aplikasi dibuka dari killed state
-  if (data?.notification) {
-    Notifications.presentNotificationAsync({
-      title: data.notification.request.content.title,
-      body: data.notification.request.content.body,
-    });
+// const messaging = getMessaging(); // Gunakan API modular
+// onBackgroundMessage(messaging, async (remoteMessage) => {
+//   console.log('Message handled in the background!', remoteMessage);
+// });
+
+messaging().setBackgroundMessageHandler(async remoteMessage => {
+  console.log('Message handled in the background!', remoteMessage);
+});
+
+Notifications.addNotificationResponseReceivedListener(response => {
+  const { latitude, longitude, action } = response.notification.request.content.data;
+
+  if (action === "open_map" && latitude && longitude) {
+    const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
+    Linking.openURL(url);
   }
 });
 
-console.log("🔧 Setting up notification handler...");
+const BACKGROUND_NOTIFICATION_TASK = 'BACKGROUND-NOTIFICATION-TASK';
+
+// Definisikan task untuk menerima notifikasi saat aplikasi mati
+TaskManager.defineTask(
+  BACKGROUND_NOTIFICATION_TASK,
+  ({ data, error, executionInfo }) => {
+    if (error) {
+      console.log("error occurred");
+    }
+    if (data) {
+      console.log("data-----", data);
+    }
+  }
+);
+
+Notifications.registerTaskAsync(BACKGROUND_NOTIFICATION_TASK);
 
 Notifications.setNotificationHandler({
   handleNotification: async () => {
@@ -56,10 +78,10 @@ export default function index() {
 
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true); // Track if loading or checking auth state
-  const [user, setUser] = useState<any>(null); // Track the authenticated user
+  const [user, setUser] = useState(null); // Track the authenticated user
   const rootNavigationState = useRootNavigationState();
 
-  useEffect(() => {
+  useEffect( () => {
     if (!rootNavigationState?.key) return;
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       setIsLoading(false);
@@ -84,6 +106,16 @@ export default function index() {
       }
     });
 
+    const unsubs = messaging().onMessage(async remoteMessage => {
+      if (remoteMessage?.data?.action === "open_map") {
+        const { latitude, longitude } = remoteMessage.data;
+        const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
+        Linking.openURL(url);
+      }
+    });
+
+    // return unsubs;
+
     const setupNotificationChannel = async () => {
       if (Platform.OS === 'android') {
         await Notifications.setNotificationChannelAsync('default', {
@@ -98,18 +130,13 @@ export default function index() {
         });
       }
     };
+
+    // const channels = await Notifications.getNotificationChannelsAsync();
+    // console.log("🔊 Notifikasi Channels:", channels);
+
     
     setupNotificationChannel();
     Notifications.registerTaskAsync('MED_REMINDER_HANDLER');
-
-    // 1️⃣ Setup handler untuk memastikan notifikasi tetap muncul di foreground
-    // Notifications.setNotificationHandler({
-    //   handleNotification: async () => ({
-    //     shouldShowAlert: true, // Menampilkan notifikasi saat di foreground
-    //     shouldPlaySound: true, // Bisa ubah ke false jika tidak ingin suara
-    //     shouldSetBadge: false,
-    //   }),
-    // });
 
     const checkPermissions = async () => {
       const { status } = await Notifications.getPermissionsAsync();
@@ -171,17 +198,25 @@ export default function index() {
     // Tambahkan listener untuk notifikasi
     const subscription = Notifications.addNotificationResponseReceivedListener(response => {
       console.log("📩 Notifikasi ditekan:", response);
-      const { latitude, longitude } = response.notification.request.content.data;
+      const { latitude, longitude, formattedAddress, name } = response.notification.request.content.data;
+      console.log(latitude, longitude)
       if (latitude && longitude) {
         const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
         Linking.openURL(url);
       }
+      // if (latitude && longitude) {
+      //   router.push({
+      //     pathname: "/Location",
+      //     params: { latitude, longitude, formattedAddress, name },
+      //   });
+      // }
     });
 
     return () => {
       unsubscribe();
       subscription.remove();
       foregroundSubscription.remove();
+      unsubs
     };
 }, [router]);
 
@@ -192,3 +227,4 @@ export default function index() {
       </View>
   );
 }
+AppRegistry.registerComponent('index', () => index);

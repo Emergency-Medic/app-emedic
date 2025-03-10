@@ -30,18 +30,6 @@ export default function EditProfile() {
         }, []);
 
         const handleEmail = async () => {
-            // if (auth.currentUser.emailVerified) {
-            //     router.push('./ChangeEmail')
-            //     return
-            // } else {
-            //     try {
-            //         setModalVisible(true)
-            //         await sendEmailVerification(auth.currentUser);
-            //         console.log('Email verification sent')
-            //     } catch (error) {
-            //         Alert.alert(error.message)
-            //     }
-            // }
             router.push('./ChangeEmail')
             return
         }
