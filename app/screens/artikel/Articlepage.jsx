@@ -10,7 +10,6 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { auth, db } from '@/firebaseConfig';
 import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 import { WebView } from 'react-native-webview';
-import Skeleton from 'react-native-reanimated-skeleton';
 
 const Articlepage = () => {
     const router = useRouter();
@@ -103,9 +102,8 @@ const Articlepage = () => {
       setIsLoading(false)
       fetchData();
     }, [id]);
-    
+
     return (
-      <Skeleton isLoading={isLoading}>
         <ScrollView style={styles.allwrap}>
             <BackButton top={45} color={Colors.red} goHome={true}/>
             <StatusBar style='dark' translucent={true}/>
@@ -222,9 +220,9 @@ const Articlepage = () => {
                       </TouchableOpacity>
             </View>
         </ScrollView>
-      </Skeleton>
     )
 }
+
 const styles = StyleSheet.create({
     allwrap: {
       height: '100%',
