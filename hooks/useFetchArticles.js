@@ -24,6 +24,12 @@ const useFetchArticles = (selectedCategory, data) => {
             keywords: docData.katakunci,
             description: docData.deskripsi,
             image: docData.gambarPenyakit,
+            description: docData.deskripsi,
+            verified: docData.verifikasi,
+            dos: data["do's"] || [],
+            donts: data["dont's"] || [],
+            gambarDos: data["gambarDo's"] || '',
+            video: data.video || '',
           });
         }
       }

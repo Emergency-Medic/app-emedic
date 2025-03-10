@@ -103,12 +103,7 @@ const Articlepage = () => {
       setIsLoading(false)
       fetchData();
     }, [id]);
-    // video
-    // const player = useVideoPlayer(videoSource, player => {
-    //   player.loop = true;
-    //   player.play();
-    // });
-    // const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
+    
     return (
       <Skeleton isLoading={isLoading}>
         <ScrollView style={styles.allwrap}>
