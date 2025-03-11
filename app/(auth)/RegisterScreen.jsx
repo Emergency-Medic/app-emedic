@@ -5,17 +5,16 @@ import BackButton from '@/components/BackButton'
 import { StatusBar } from 'expo-status-bar'
 import { Colors } from '@/constants/Colors'
 import Feather from '@expo/vector-icons/Feather'
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { doc, setDoc, collection, addDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebaseConfig';
-import { signInWithGoogle, handleGoogleSignIn, signInUser } from "../services/authService";
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 
 export default function RegisterScreen() {
     const [namaDepan, setNamaDepan] = useState('')
     const [namaBelakang, setNamaBelakang] = useState('')
     const [username, setUsername] = useState('')
-    const [phonenum, setPhonenum] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confPass, setConfPass] = useState('')
@@ -26,7 +25,6 @@ export default function RegisterScreen() {
     const [firstFocused, setFirstFocused] = useState(false);
     const [lastFocused, setLastFocused] = useState(false);
     const [unameFocused, setUnameFocused] = useState(false)
-    const [phoneFocused, setPhoneFocused] = useState(false);
     const [emailFocused, setEmailFocused] = useState(false);
     const [passFocused, setPassFocused] = useState(false);
     const [confPassFocused, setConfPassFocused] = useState(false);
@@ -37,30 +35,96 @@ export default function RegisterScreen() {
 
     const DEFAULT_PROFILE_PIC = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
 
-    // useEffect(() => {
-    //         handleGoogleSignIn();
-    //       }, []);
-        
-    //     const handleGSignIn = async () => {
-    //         try {
-    //           await signInWithGoogle();
-    //         } catch (error) {
-    //           Alert.alert("Login Error", error.message);
-    //         }
-    //     };
+    useEffect(() => {
+            const configureGoogleSignIn = async () => {
+              try {
+                GoogleSignin.configure({
+                  webClientId: "382135671168-a2p2o5embfj3euqqlb429sksfs8uoi01.apps.googleusercontent.com", 
+                  
+                  offlineAccess: true,
+                  forceCodeForRefreshToken: true,
+                  scopes: ['profile', 'email'], 
+                });
+              } catch (error) {
+                console.error("Google Sign-In configuration error:", error);
+              }
+            };
+          
+            configureGoogleSignIn();
+          }, []); // Empty dependency array means this runs only once on mount
+          
+    
+        const handleGoogleSignIn = async () => {
+            try {
+            await GoogleSignin.hasPlayServices();
+            await GoogleSignin.signOut();
+            const userInfo = await GoogleSignin.signIn();
+            console.log("Google Sign-In result:", userInfo);
+            console.log("Google Sign-In result:", userInfo.data);
+    
+            if (!userInfo.data.idToken) {
+                throw new Error("Google Sign-In failed (no idToken).");
+            }
+    
+            const googleCredential = GoogleAuthProvider.credential(userInfo.data.idToken);
+            const userCredential = await signInWithCredential(auth, googleCredential);
+                console.log("Firebase sign-in successful:", userCredential);
+              const user = userCredential.user;
+          
+              // Cek apakah data pengguna sudah ada di Firestore
+              const userDocRef = doc(db, "users", user.uid);
+              const userDocSnapshot = await getDoc(userDocRef);
+          
+              if (!userDocSnapshot.exists()) {
+                // Tambahkan data pengguna ke Firestore jika belum ada
+                const username = user.email.split('@')[0]; // Ambil username dari email
+                const usernameDocRef = doc(db, "usernames", username);
+                const usernameDocSnapshot = await getDoc(usernameDocRef);
+          
+                if (usernameDocSnapshot.exists()) {
+                  // Username sudah digunakan, tambahkan angka random di belakangnya
+                  const randomNum = Math.floor(Math.random() * 1000);
+                  const newUsername = `${username}${randomNum}`
+                  await setDoc(doc(db, "users", user.uid), {
+                    uid: user.uid,
+                    firstName: user.displayName ? user.displayName.split(' ')[0] : '',
+                    lastName: user.displayName ? user.displayName.split(' ')[1] : '',
+                    username: newUsername,
+                    email: user.email,
+                    profilePic: user.photoURL || DEFAULT_PROFILE_PIC,
+                    createdAt: new Date().toISOString(),
+                  });
+                  await setDoc(doc(db, "usernames", newUsername), { uid: user.uid });
+          
+                } else {
+                  await setDoc(doc(db, "users", user.uid), {
+                    uid: user.uid,
+                    firstName: user.displayName ? user.displayName.split(' ')[0] : '',
+                    lastName: user.displayName ? user.displayName.split(' ')[1] : '',
+                    username: username,
+                    email: user.email,
+                    profilePic: user.photoURL || DEFAULT_PROFILE_PIC,
+                    createdAt: new Date().toISOString(),
+                  });
+                  await setDoc(doc(db, "usernames", username), { uid: user.uid });
+                }
+          
+              }
+          
+              Alert.alert('Success', 'Google Sign-In successful!');
+              router.replace('../(tabs)/Home'); // Navigasi ke halaman home
+            } catch (error) {
+              console.error('Google Sign-In error:', error);
+              Alert.alert('Error', 'Google Sign-In failed.');
+            }
+          };
 
-    const formatPhoneNumber = (phone) => {
-        if (phone.startsWith('0')) {
-          return `+62${phone.slice(1)}`;
-        }
-        return phone; // Jika sudah dalam format internasional (+62), tidak perlu diubah
-      };
 
     // memeriksa apakah username sudah digunakan
     const checkUsernameExists = async (username) => {
         const usersRef = collection(db, "users");
         const q = query(usersRef, where("username", "==", username));
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await getDoc(q);
         return !querySnapshot.empty; // Jika ada hasil, berarti username sudah dipakai
     };
 
@@ -74,11 +138,6 @@ export default function RegisterScreen() {
             errors.username = 'Username wajib diisi';
         } 
 
-        if (!phonenum.trim()) {
-            errors.phonenum = "Nomor telepon wajib diisi";
-        } else if (!/^(?:\+62|0)8[1-9][0-9]{6,10}$/.test(phonenum)) {
-            errors.phonenum = "Nomor telepon harus dimulai dari +62 atau 0 dan memiliki panjang 8-12 digit";
-        }
         if (!email.trim()) {
             errors.email = "Email wajib diisi";
         } else if (!/\S+@\S+\.\S+/.test(email)) {
@@ -98,7 +157,7 @@ export default function RegisterScreen() {
     };
             
 
-    const registerUser = async (firstName, lastName, username, phone, email, password) => {
+    const registerUser = async (firstName, lastName, username, email, password) => {
         try {
           // 1. Check if username exists
           const usernameDocRef = doc(db, "usernames", username);
@@ -122,7 +181,6 @@ export default function RegisterScreen() {
               firstName: firstName,
               lastName: lastName,
               username: username,
-              phone: formatPhoneNumber(phone),
               email: email,
               profilePic:  DEFAULT_PROFILE_PIC,
               createdAt: new Date().toISOString(),
@@ -145,7 +203,7 @@ export default function RegisterScreen() {
         if (!isValid) return;
         
         try {
-          await registerUser(namaDepan, namaBelakang, username, phonenum, email, password);
+          await registerUser(namaDepan, namaBelakang, username, email, password);
         //   Alert.alert("Success", "User registered successfully!");
           router.replace('../(tabs)/Home')
         } catch (error) {
@@ -254,32 +312,7 @@ export default function RegisterScreen() {
                         />
                         {!!errors.username ? <Text style={styles.errorText}>{errors.username}</Text> : null}
                     </View>
-                    <View style={styles.wrapform}>
-                        <Text 
-                        style={[
-                            styles.titleName,
-                            phoneFocused && {
-                                color: Colors.red,
-                                fontFamily: 'regular'
-                            }
-                        ]}>
-                            No. Telepon
-                        </Text>
-                        <TextInput
-                        placeholder='Isi dengan nomor telepon Anda'
-                        value={phonenum}
-                        onFocus={() => setPhoneFocused(true)}
-                        onBlur={() => setPhoneFocused(false)} 
-                        onChangeText={setPhonenum}
-                        style={[
-                            styles.input,
-                            phoneFocused && {
-                                borderColor: Colors.red,
-                            }
-                        ]}
-                        />
-                        {!!errors.phonenum ? <Text style={styles.errorText}>{errors.phonenum}</Text> : null}
-                    </View>
+
                     <View style={styles.wrapform}>
                         <Text style={[
                             styles.titleName,
@@ -380,7 +413,7 @@ export default function RegisterScreen() {
 
                 <View>
                     <Text style= {styles.atau}>atau</Text>
-                    <TouchableOpacity style={styles.google}>
+                    <TouchableOpacity onPress={handleGoogleSignIn} style={styles.google}>
                         <Image source={require('../../assets/images/sign in/google.png')} style={styles.googleImg}></Image>
                         <Text style={styles.googletxt}>Daftar dengan Google</Text>
                     </TouchableOpacity>

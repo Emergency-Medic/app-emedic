@@ -45,7 +45,7 @@ const Contactpage: React.FC = () => {
                       fetchedContacts.push({
                           id: friendUid,
                           name: friendData.firstName || friendData.username,
-                          phone: friendData.phone || "",
+                          phone: friendData.username || "",
                       });
                     } else {
                         console.warn(`Data user dengan UID ${friendUid} tidak ditemukan.`);

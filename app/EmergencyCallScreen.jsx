@@ -4,28 +4,19 @@ import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import call from 'react-native-phone-call'; 
 import useLocation from '@/hooks/useLocation';
-
 import { Colors } from '@/constants/Colors';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Foundation from '@expo/vector-icons/Foundation';
+import EmergencyButton from '../components/buttons/EmergencyButton'
+import CustomModal from '@/components/modals/CustomModal'
+import { makePhoneCall } from "@/utils/callUtills";
+
 
 const EmergencyCallScreen = () => {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
-
-  const makePhoneCall = () => {
-    const args = {
-      number: '112',
-      prompt: false,
-      skipCanOpen: true
-    }
-
-    call(args).catch(console.error);
-  };
-
   const { latitude, longitude, city, errorMsg } = useLocation();
 
   return (
@@ -73,11 +64,7 @@ const EmergencyCallScreen = () => {
         </Text>
 
         {/* Emergency Button */}
-        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.emergencyButton}>
-          <View style={styles.circle}>
-            <Foundation name="telephone" size={100} color={Colors.white} style={styles.callIcon} />
-          </View>
-        </TouchableOpacity>
+        <EmergencyButton onPress={() => setModalVisible(true)} />
       </View>
       {/* Warning Section*/}
       <View style={styles.warningContainer}>
@@ -102,39 +89,15 @@ const EmergencyCallScreen = () => {
       </View>
       
       {/* Modal 2 Section */}
-      <Modal transparent={true} visible={modalVisible} animationType="fade" onRequestClose={() => setModalVisible(false)}>
-        <TouchableWithoutFeedback onPressOut={() => setModalVisible(false)}>
-          <View style={styles.modalContainer2}>
-            <TouchableWithoutFeedback>
-              <View style={styles.modalCardContent2}>
-                <View style={styles.modalWarningContainer2}>
-                  <View style={styles.modalWarningIcon2}>
-                    <AntDesign name="warning" size={16} color={Colors.red} />
-                  </View>
-                  <Text style={styles.modalWarningText2}>
-                    Peringatan
-                  </Text>
-                </View>
-                <Text style={styles.modalWarningQuestion2}>
-                  Yakin lanjutkan panggilan?
-                </Text>
-                <View style={styles.answerContent2}>
-                  <TouchableOpacity style={styles.meButton2} onPress={makePhoneCall}>
-                    <Text style={styles.yaText}>
-                      Ya
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.otherButton2} onPress={() => setModalVisible(false)}>
-                    <Text style={styles.tidakText}>
-                      Tidak
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
+      <CustomModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        title="Peringatan"
+        question="Yakin lanjutkan panggilan?"
+        confirmText="Ya"
+        cancelText="Tidak"
+        onConfirm={makePhoneCall}
+      />
     </View>
   );
 };
@@ -212,32 +175,6 @@ const styles = StyleSheet.create({
     fontFamily: 'italic',
     color: Colors.grey,
     marginBottom: 42,
-  },
-  emergencyButton: {
-    width: 250,
-    height: 250,
-    borderRadius: 360,
-    backgroundColor: Colors.white,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 43,
-    elevation: 10,
-    shadowColor: Colors.black,
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-  },
-  circle: {
-    width: 210,
-    height: 210,
-    borderRadius: 360,
-    backgroundColor: Colors.red,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  callIcon: {
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   warningContainer: {
     flexDirection: 'row',
