@@ -1,41 +1,66 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Button, TouchableOpacity, Image } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Articlepage from '../artikel/Articlepage';
-
-type RootStackParamList = {
-  Score: undefined;
-  AnswerSummary: undefined;
-};
-
-type ScoreScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Score'>;
-type ScoreScreenRouteProp = RouteProp<RootStackParamList, 'Score'>;
-
-type Props = {
-  navigation: ScoreScreenNavigationProp;
-  route: ScoreScreenRouteProp;
-};
+import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { db, auth } from "@/firebaseConfig";
 
 const ScoreScreen = () => {
+  const params = useLocalSearchParams();
+    const { id, questions, userAnswers } = params;
+    const parsedQuestions = JSON.parse(questions);
+    const parsedUserAnswers = JSON.parse(userAnswers);
+    const user = auth.currentUser
+
+    const updateUserProgress = async (userId, articleId, score) => {
+      const userRef = doc(db, "users", userId);
+      const userDoc = await getDoc(userRef);
+  
+      if (userDoc.exists()) {
+          let completedQuizzes = userDoc.data().completedQuizzes || [];
+  
+          if (score === 100 && !completedQuizzes.includes(articleId)) {
+              completedQuizzes.push(articleId);
+              await updateDoc(userRef, { completedQuizzes });
+          }
+      }
+    };
+
+    const calculateScore = () => {
+        let score = 0;
+        parsedQuestions.forEach((question, index) => {
+            if (question.correctAnswer === parsedUserAnswers[index]) {
+                score++;
+            }
+        });
+        return (score / parsedQuestions.length) * 100;
+    };
+
+    const score = calculateScore();
+    const articleId = id; // Gunakan ID artikel dari params
+
+    useEffect(() => {
+        if (user && score === 100) {
+            updateUserProgress(user.uid, articleId, score);
+        }
+    }, [user, score]);
+
   return (
     <View style={styles.container}>
       <View style={styles.navigationButtons2}>
-        <TouchableOpacity onPress={() => router.replace('../artikel/Articlepage')} style={styles.skipButton}>
-          <Text style={styles.skipText}>Skip {'>'}{'>'}</Text>
-        </TouchableOpacity>
       </View>
       <View style={styles.bluebackground}>
-        <Text style={styles.title}>SELAMAT !!</Text>
+        <Text style={styles.title}>{score < 100 ? 'COBA LAGI' : 'SELAMAT!'}</Text>
         <View style={styles.profileIcon}>
           <FontAwesome name="trophy" size={150} color="#FFB636" />
         </View>
         <Text style={styles.score}>Nilai Anda :</Text>
         
         <View style={styles.scoreContainer}>
-          <Text style={styles.scoreValue}>80</Text>
+          <Text style={styles.scoreValue}>{score}</Text>
           <Text style={styles.scoreTotal}>/ 100</Text>
         </View>
       </View>
@@ -48,13 +73,21 @@ const ScoreScreen = () => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.push("./Summary")}
+          onPress={() =>
+            router.push({
+                pathname: './Summary',
+                params: { questions: questions, userAnswers: userAnswers, id: id },
+            })
+        }
         >
           <Text style={styles.buttonText}>Lihat Jawaban {'>'}</Text>
       </TouchableOpacity>
       </View>
       
-      <TouchableOpacity style={styles.DoneButton} onPress={() => router.replace('../artikel/Articlepage')}>
+      <TouchableOpacity 
+      style={styles.DoneButton} 
+      onPress={() => router.replace(`../artikel/Articlepage?id=${articleId}`)}
+      >
         <Text style={styles.buttonTextWhite}>Selesai</Text>
       </TouchableOpacity>
     </View>
