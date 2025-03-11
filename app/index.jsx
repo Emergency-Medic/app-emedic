@@ -1,5 +1,5 @@
 import { useFonts } from "expo-font";
-import { View, Platform, Alert, AppRegistry, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Platform, Alert, AppRegistry } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import MenuAwal from "./MenuAwal";
 import React, { useEffect, useState } from "react";
@@ -13,7 +13,6 @@ import { collection, doc, setDoc, getDoc } from 'firebase/firestore';
 import * as TaskManager from 'expo-task-manager';
 import { getMessaging, onBackgroundMessage } from 'firebase/messaging';
 import messaging from '@react-native-firebase/messaging';
-import { Colors } from '@/constants/Colors';
 
 // const messaging = getMessaging(); // Gunakan API modular
 // onBackgroundMessage(messaging, async (remoteMessage) => {
@@ -25,14 +24,11 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
 });
 
 Notifications.addNotificationResponseReceivedListener(response => {
-  console.log(response.notification.request.content.data)
-  if (response.notification.request.content.data) {
-    const { latitude, longitude, action } = response.notification.request.content.data;
-  
-    if (action === "open_map" && latitude && longitude) {
-      const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
-      Linking.openURL(url);
-    }
+  const { latitude, longitude, action } = response.notification.request.content.data;
+
+  if (action === "open_map" && latitude && longitude) {
+    const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
+    Linking.openURL(url);
   }
 });
 
@@ -86,10 +82,8 @@ export default function index() {
   const rootNavigationState = useRootNavigationState();
 
   useEffect( () => {
-    console.log("rootNavigationState:", rootNavigationState);
     if (!rootNavigationState?.key) return;
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      console.log("Auth state changed. User:", user); 
       setIsLoading(false);
       setUser(user);
       
@@ -102,31 +96,25 @@ export default function index() {
           await registerForPushNotificationsAsync(user.uid);
         }
 
-        // setTimeout(() => {
-        //   console.log("Redirecting to Home...");
-        //   router.replace("/(tabs)/Home"); // Arahkan ke halaman Home jika sudah login
-        // }, 1000);
-        console.log("Redirecting to Home...");
-        router.replace("/(tabs)/Home");
+        setTimeout(() => {
+          router.replace("./(tabs)/Home"); // Arahkan ke halaman Home jika sudah login
+        }, 100);
       } else {
-        console.log("Redirecting to Menu Awal...");
-        router.replace("./MenuAwal");
+        setTimeout(() => {
+          router.replace("./MenuAwal");
+        }, 100);
       }
     });
 
-    const unsubs = messaging().setBackgroundMessageHandler(async remoteMessage => {
-      console.log('Message handled in the background!', remoteMessage);
-    
-      const { latitude, longitude, action } = remoteMessage?.data || {};
-    
-      if (action === "open_map" && latitude && longitude) {
+    const unsubs = messaging().onMessage(async remoteMessage => {
+      if (remoteMessage?.data?.action === "open_map") {
+        const { latitude, longitude } = remoteMessage.data;
         const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
         Linking.openURL(url);
-      } else {
-        console.warn("⚠️ Background message tidak memiliki data lokasi!");
       }
     });
-    
+
+    // return unsubs;
 
     const setupNotificationChannel = async () => {
       if (Platform.OS === 'android') {
@@ -210,14 +198,18 @@ export default function index() {
     // Tambahkan listener untuk notifikasi
     const subscription = Notifications.addNotificationResponseReceivedListener(response => {
       console.log("📩 Notifikasi ditekan:", response);
-      if (response.notification.request.content.data) {
-        const { latitude, longitude, formattedAddress, name } = response.notification.request.content.data;
-        console.log(latitude, longitude)
-        if (latitude && longitude) {
-          const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
-          Linking.openURL(url);
-        }
+      const { latitude, longitude, formattedAddress, name } = response.notification.request.content.data;
+      console.log(latitude, longitude)
+      if (latitude && longitude) {
+        const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
+        Linking.openURL(url);
       }
+      // if (latitude && longitude) {
+      //   router.push({
+      //     pathname: "/Location",
+      //     params: { latitude, longitude, formattedAddress, name },
+      //   });
+      // }
     });
 
     return () => {
@@ -226,32 +218,13 @@ export default function index() {
       foregroundSubscription.remove();
       unsubs
     };
-}, [router, rootNavigationState]);
-
-
+}, [router]);
 
 
   return (
-    <View>
-    {isLoading ? (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color={Colors.blue} animating={true}/>
+      <View>
+        {!!user ? <Home /> : <MenuAwal />}
       </View>
-    ) : (
-      !!user ? <Home /> : <MenuAwal />
-    )}
-  </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: Colors.white,
-    height: '100%'
-  }
-})
-
 AppRegistry.registerComponent('index', () => index);

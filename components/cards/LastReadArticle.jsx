@@ -117,6 +117,19 @@ const styles = StyleSheet.create({
         fontSize: 8,
         marginTop: 3,
     },
+    noRemindersContainer: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%', // Occupy full width
+      height: 100,
+    },
+    noRemindersText: {
+      fontSize: 12,
+      color: Colors.grey,
+      textAlign: 'center',
+      fontFamily: 'regular',
+      marginTop: 10,
+    },
 });
 
 export default LastReadArticle;
