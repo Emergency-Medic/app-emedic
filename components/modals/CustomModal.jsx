@@ -10,7 +10,8 @@ const CustomModal = ({
   question, 
   onConfirm, 
   confirmText = "Ya", 
-  cancelText = "Tidak" 
+  cancelText = "Tidak",
+  onOthers 
 }) => {
   return (
     <Modal transparent={true} visible={visible} animationType="fade" onRequestClose={onClose}>
@@ -29,7 +30,7 @@ const CustomModal = ({
                 <TouchableOpacity style={styles.meButton} onPress={onConfirm}>
                   <Text style={styles.yaText}>{confirmText}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.otherButton} onPress={onClose}>
+                <TouchableOpacity style={styles.otherButton} onPress={onOthers}>
                   <Text style={styles.tidakText}>{cancelText}</Text>
                 </TouchableOpacity>
               </View>
