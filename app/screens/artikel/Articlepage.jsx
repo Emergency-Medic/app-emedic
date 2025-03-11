@@ -1,225 +1,131 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Button } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
-import BackButton from '@/components/BackButton'
-import { useRouter, useLocalSearchParams } from "expo-router";
+import BackButton from '@/components/BackButton';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { auth, db } from '@/firebaseConfig';
-import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 import { WebView } from 'react-native-webview';
+import Skeleton from 'react-native-reanimated-skeleton';
+import useFetchArticleData from '@/hooks/useFetchArticleData';
+import useFetchQuizData from '@/hooks/useFetchQuizData';
 
 const Articlepage = () => {
-    const router = useRouter();
-    const params = useLocalSearchParams();
-    const {id} = params;
-    const [quizStarted, setQuizStarted] = useState(false);
-    const [title, setTitle] = useState('');
-    const [deskripsi, setDeskripsi] = useState('');
-    const [verifikasi, setVerifikasi] = useState('');
-    const [dos, setDos] = useState([]);
-    const [donts, setDonts] = useState([]);
-    const [gambarPenyakit, setGambarPenyakit] = useState('');
-    const [gambarDos, setGambarDos] = useState('');
-    const [video, setVideo] = useState('');
-    const userId = auth.currentUser.uid
-    const [questions, setQuestions] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+  const params = useLocalSearchParams();
+  const { id } = params;
 
-    const handlePress = () => {
-      router.push(`../quiz/Quiz?id=${id}`)
-      setQuizStarted(true);
-    };
+  const { title, deskripsi, verifikasi, dos, donts, gambarPenyakit, gambarDos, video, isLoading: isArticleLoading } = useFetchArticleData(id);
+  const { quizStarted, questions, isLoading: isQuizLoading } = useFetchQuizData(id);
 
-    useEffect(() => {
-      setIsLoading(true)
-      const checkQuizStatus = async () => {
-          if (userId) {
-              try {
-                  const quizDocRef = doc(db, 'userAnswers', userId, 'articleAnswers', id);
-                  const quizDoc = await getDoc(quizDocRef);
-                  if (quizDoc.exists() && quizDoc.data().completed) {
-                      setQuizStarted(true);
-                  }
-              } catch (error) {
-                  console.error('Error checking quiz status:', error);
-              }
-          }
-      };
-      checkQuizStatus();
-
-      const fetchQuestions = async () => {
-          try {
-              const questionsCollection = collection(db, 'articles_no_cat', id, 'questions');
-              const questionSnapshot = await getDocs(questionsCollection);
-              const questionList = questionSnapshot.docs.map((doc) => ({
-                  id: doc.id,
-                  ...doc.data(),
-              }));
-              console.log(questionList)
-              setQuestions(questionList);
-          } catch (error) {
-              console.error('Error fetching questions:', error);
-          }
-      };
-      fetchQuestions();
-      setIsLoading(false)
-  }, [userId, id]);
-
-    useEffect(() => {
-      console.log(id)
-      setIsLoading(true)
-      if (!id) return;
-      // console.log("Articlepage ID:", id);
-      const fetchData = async () => {
-        if (typeof id !== 'string') {
-          console.error("ID is not a string:", id);
-          return;
-      }
-      try {
-          const docRef = doc(db, "articles_no_cat", id);
-          const docSnap = await getDoc(docRef);
-
-          if (docSnap.exists()) {
-              const data = docSnap.data();
-              setTitle(data.judul);
-              setDeskripsi(data.deskripsi);
-              setVerifikasi(data.verifikasi);
-              setDos(data["do's"] || []);
-              setDonts(data["dont's"] || []);
-              setGambarPenyakit(data.gambarPenyakit || '');
-              setGambarDos(data["gambarDo's"] || '');
-              setVideo(data.video);
-          } else {
-              console.log("No such document!");
-          }
-      } catch (error) {
-          console.error("Error fetching document:", error);
-      }
-      };
-      setIsLoading(false)
-      fetchData();
-    }, [id]);
+  const handlePress = () => {
+    router.push(`../quiz/Quiz?id=${id}`);
+  };
 
     return (
-        <ScrollView style={styles.allwrap}>
-            <BackButton top={45} color={Colors.red} goHome={true}/>
-            <StatusBar style='dark' translucent={true}/>
-            <View style={styles.header}>
-                <View style={styles.container}>
-                    <View>
-                    </View>
-                    <Text style={styles.title}>Halaman Materi</Text>
+      <ScrollView style={styles.allwrap}>
+      <BackButton top={45} color={Colors.red} goHome={true} />
+      <StatusBar style="dark" translucent={true} />
+      <View style={styles.header}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Halaman Materi</Text>
+        </View>
+      </View>
+
+      {/* Video Section */}
+      <View style={styles.videoContainer}>
+        {!!video ? (
+          <WebView style={styles.video} source={{ uri: video }} javaScriptEnabled={true} domStorageEnabled={true} />
+        ) : (
+          <Text>Video loading..</Text>
+        )}
+      </View>
+
+      {/* Article Content */}
+      <View style={styles.container}>
+        <View style={styles.containerTitle}>
+          <View style={styles.titleRow}>
+            <Text style={styles.sectionTitle}>{title}</Text>
+            <MaterialIcons name="verified" size={20} color="#007bff" style={styles.verifiedIcon} />
+          </View>
+        </View>
+        <Text style={styles.verified}>
+          Diverifikasi oleh: <Text style={styles.verifiedname}>{verifikasi}</Text>
+        </Text>
+        <Text style={styles.description}>{deskripsi}</Text>
+
+        {!!gambarPenyakit && <Image source={{ uri: gambarPenyakit }} style={styles.aedImage} />}
+      </View>
+
+      {/* Do's and Don'ts Section */}
+      <View style={styles.container}>
+        <Text style={styles.sectionHeader}>Dont's</Text>
+        {donts.length > 0 ? (
+          donts.map((item, index) => (
+            <View key={index} style={styles.card}>
+              <View>
+                <View style={styles.iconContainer}>
+                  <MaterialCommunityIcons name="debug-step-into" size={24} color="#A8201A" />
                 </View>
-            </View>
-            {/* video */}
-            <View style={styles.videoContainer}>
-            {!!video ? (
-                <WebView
-                  style={styles.video}
-                  source={{ uri: video }}
-                  javaScriptEnabled={true}
-                  domStorageEnabled={true}
-                />
-              ) : (
-                <Text>Video loading..</Text>
-              )}
-            </View>
-            <View style={styles.container}>
-                <View style={styles.containerTitle}>
-                    <View style={styles.titleRow}>
-                    <Text style={styles.sectionTitle}>{title}</Text>
-                        <MaterialIcons name="verified" size={20} color="#007bff" style={styles.verifiedIcon} />
-                    </View>
+                <View style={styles.textContainer}>
+                  <Text style={styles.cardTitle}>Peringatan {index + 1}</Text>
+                  <Text style={styles.cardContent}>{item}</Text>
                 </View>
-                <Text style={styles.verified}>Diverifikasi oleh : 
-                  <Text style={styles.verifiedname}>
-                   {verifikasi}
-                  </Text>
-                </Text>
-                <Text style={styles.description}>
-                    {deskripsi}
-                </Text>
-
-                {!!gambarPenyakit ? (
-                  <Image source={{ uri: gambarPenyakit }} style={styles.aedImage} />
-                ) : null}
+              </View>
             </View>
+          ))
+        ) : (
+          <Text style={styles.cardContent}>No Dont's available</Text>
+        )}
 
-            <View style={styles.container}>
-                {/* Penanganan Section */}
-                <Text style={styles.sectionHeader}>Dont's</Text>
-                {donts.length > 0 ? (
-                  donts.map((item, index) => (
-                    <View key={index} style={styles.card}>
-                      <View>
-                        <View style={styles.iconContainer}>
-                          <MaterialCommunityIcons name="debug-step-into" size={24} color="#A8201A" />
-                        </View>
-                        <View style={styles.textContainer}>
-                          <Text style={styles.cardTitle}>Peringatan {index + 1}</Text>
-                          <Text style={styles.cardContent}>{item}</Text>
-                        </View>
-                      </View>
-                    </View>
-                  ))
-                ) : (
-                  <Text style={styles.cardContent}>No Do's available</Text>
-                )}
-
-                <Text style={styles.sectionHeader}>Do's</Text>
-                {dos.length > 0 ? (
-                  dos.map((item, index) => (
-                    <View key={index} style={styles.card}>
-                      <View>
-                        <View style={styles.iconContainer}>
-                          <MaterialCommunityIcons name="debug-step-into" size={24} color="#A8201A" />
-                        </View>
-                        <View style={styles.textContainer}>
-                          <Text style={styles.cardTitle}>Langkah {index + 1}</Text>
-                          <Text style={styles.cardContent}>{item}</Text>
-                        </View>
-                      </View>
-                    </View>
-                  ))
-                ) : (
-                  <Text style={styles.cardContent}>No Do's available</Text>
-                )}
-
-                {!!gambarDos ? (
-                  <Image source={{ uri: gambarDos }} style={styles.aedImage} />
-                ) : null}
+        <Text style={styles.sectionHeader}>Do's</Text>
+        {dos.length > 0 ? (
+          dos.map((item, index) => (
+            <View key={index} style={styles.card}>
+              <View>
+                <View style={styles.iconContainer}>
+                  <MaterialCommunityIcons name="debug-step-into" size={24} color="#A8201A" />
+                </View>
+                <View style={styles.textContainer}>
+                  <Text style={styles.cardTitle}>Langkah {index + 1}</Text>
+                  <Text style={styles.cardContent}>{item}</Text>
+                </View>
+              </View>
             </View>
+          ))
+        ) : (
+          <Text style={styles.cardContent}>No Do's available</Text>
+        )}
 
-            <View style={styles.container}>
-                <Text style={styles.footerText}>
-                        Sudah paham? Yuk kita coba kerjakan kuis ini untuk mempersiapkan diri kalian di tengah situasi darurat!
-                      </Text>
-                      <TouchableOpacity style={styles.quizButton} onPress={handlePress}>
-                        <View style={styles.buttonContent}>
-                          <Text style={styles.quizButtonText}>Mulai Kuis</Text>
-                        </View>
-                          {quizStarted ? (
-                            <TouchableOpacity 
-                            style={styles.resultContainer}
-                            onPress={() =>
-                                        router.push({
-                                            pathname: '../quiz/Summary',
-                                            params: { questions: JSON.stringify(questions), id: id },
-                                        })}
-                            >
-                              <Text style={styles.resultText}>Lihat hasil</Text>
-                              <Icon name="check-circle" size={20} color={Colors.red} />
-                            </TouchableOpacity>
-                          ) : null}
-                      </TouchableOpacity>
-                      <TouchableOpacity onPress={() => router.back()} style={styles.finishButton}>
-                        <Text style={styles.finishButtonText}>Selesai</Text>
-                      </TouchableOpacity>
-            </View>
-        </ScrollView>
+        {!!gambarDos && <Image source={{ uri: gambarDos }} style={styles.aedImage} />}
+      </View>
+
+      {/* Quiz Section */}
+      <View style={styles.container}>
+        <Text style={styles.footerText}>
+          Sudah paham? Yuk kita coba kerjakan kuis ini untuk mempersiapkan diri kalian di tengah situasi darurat!
+        </Text>
+        <TouchableOpacity style={styles.quizButton} onPress={handlePress}>
+          <View style={styles.buttonContent}>
+            <Text style={styles.quizButtonText}>Mulai Kuis</Text>
+          </View>
+          {quizStarted && (
+            <TouchableOpacity
+              style={styles.resultContainer}
+              onPress={() => router.push({ pathname: '../quiz/Summary', params: { questions: JSON.stringify(questions), id: id } })}
+            >
+              <Text style={styles.resultText}>Lihat hasil</Text>
+              <Icon name="check-circle" size={20} color={Colors.red} />
+            </TouchableOpacity>
+          )}
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.back()} style={styles.finishButton}>
+          <Text style={styles.finishButtonText}>Selesai</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
     )
 }
 

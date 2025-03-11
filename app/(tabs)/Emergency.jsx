@@ -31,9 +31,9 @@ const Emergency = () => {
         {/* Profile */}
         <View style={styles.profileSection}>
           {/* Foto */}
-          <View style={styles.profileIcon}>
+          <TouchableOpacity onPress={() => router.push('/screens/profile/EditProfile')} style={styles.profileIcon}>
             <MaterialIcons name="person-outline" size={18} color={Colors.grey} />
-          </View>
+          </TouchableOpacity>
           {/* Keterangan profile */}
           <View style={styles.profileText}>
             <Text style={styles.name}>

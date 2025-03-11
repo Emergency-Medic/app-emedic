@@ -6,13 +6,14 @@ import { Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
 const MenuAwal = () => {
     const router = useRouter();
-    useEffect(() => {
-        if (auth.currentUser) {
-            setTimeout(() => {
-                router.replace("./(tabs)/Home"); // Arahkan ke halaman Home jika sudah login
-            }, 100);
-        }
-      }, [router]);
+    // useEffect(() => {
+    //     console.log(auth.currentUser)
+    //     if (auth.currentUser) {
+    //         setTimeout(() => {
+    //             router.replace("./(tabs)/Home"); // Arahkan ke halaman Home jika sudah login
+    //         }, 1000);
+    //     }
+    //   }, [router]);
     return (
         <View style={styles.container}>
             <StatusBar style='dark'/>
