@@ -67,7 +67,7 @@ export default function Home() {
           {/* Hello, (name) */}
           <View style={styles.header}> 
             <View style={styles.profileSection}> 
-              <TouchableOpacity style={styles.profileIcon}>
+              <TouchableOpacity style={styles.profileIcon} onPress={() => router.push('/screens/profile/EditProfile')}>
                 <MaterialIcons name="person-outline" size={18} color={Colors.grey} />
               </TouchableOpacity>
               {/* Greating Section */}

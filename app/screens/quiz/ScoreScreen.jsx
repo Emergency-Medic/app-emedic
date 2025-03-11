@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Button, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, Button, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -7,6 +7,8 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Articlepage from '../artikel/Articlepage';
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { db, auth } from "@/firebaseConfig";
+import useCalculateScore from '@/hooks/useCalculateScore';
+import useUpdateUserProgress from '@/hooks/useUpdateUserProgress';
 
 const ScoreScreen = () => {
   const params = useLocalSearchParams();
@@ -15,38 +17,14 @@ const ScoreScreen = () => {
     const parsedUserAnswers = JSON.parse(userAnswers);
     const user = auth.currentUser
 
-    const updateUserProgress = async (userId, articleId, score) => {
-      const userRef = doc(db, "users", userId);
-      const userDoc = await getDoc(userRef);
-  
-      if (userDoc.exists()) {
-          let completedQuizzes = userDoc.data().completedQuizzes || [];
-  
-          if (score === 100 && !completedQuizzes.includes(articleId)) {
-              completedQuizzes.push(articleId);
-              await updateDoc(userRef, { completedQuizzes });
-          }
-      }
-    };
+    const score = useCalculateScore(parsedQuestions, parsedUserAnswers);
+  const { updateUserProgress } = useUpdateUserProgress(user?.uid, id, score);
 
-    const calculateScore = () => {
-        let score = 0;
-        parsedQuestions.forEach((question, index) => {
-            if (question.correctAnswer === parsedUserAnswers[index]) {
-                score++;
-            }
-        });
-        return (score / parsedQuestions.length) * 100;
-    };
-
-    const score = calculateScore();
-    const articleId = id; // Gunakan ID artikel dari params
-
-    useEffect(() => {
-        if (user && score === 100) {
-            updateUserProgress(user.uid, articleId, score);
-        }
-    }, [user, score]);
+  useEffect(() => {
+    if (user && score === 100) {
+      updateUserProgress();
+    }
+  }, [user, score, updateUserProgress]);
 
   return (
     <View style={styles.container}>

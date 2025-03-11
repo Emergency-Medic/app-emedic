@@ -120,14 +120,6 @@ export default function RegisterScreen() {
           };
 
 
-    // memeriksa apakah username sudah digunakan
-    const checkUsernameExists = async (username) => {
-        const usersRef = collection(db, "users");
-        const q = query(usersRef, where("username", "==", username));
-        const querySnapshot = await getDoc(q);
-        return !querySnapshot.empty; // Jika ada hasil, berarti username sudah dipakai
-    };
-
     const validateForm = async () => {
         setErrors({})
         let errors = {}

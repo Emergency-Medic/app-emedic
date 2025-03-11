@@ -8,45 +8,17 @@ import BackButton from '@/components/BackButton'
 import { db, auth } from '@/firebaseConfig';
 import { Colors } from '@/constants/Colors';
 import { collection, getDoc, doc, setDoc } from 'firebase/firestore';
+import useFetchUserAnswers from '@/hooks/useFetchUserAnswers';
+import useCalculateScore from '@/hooks/useCalculateScore';
 
 const Summary = () => {
     const params = useLocalSearchParams();
-    const { questions, quizStarted  } = params;
+    const { id, questions, quizStarted  } = params;
     const parsedQuestions = JSON.parse(questions);
-    const [userAnswers, setUserAnswers] = useState([]);
     const userId = auth.currentUser ? auth.currentUser.uid : 'guest';
-    const articleId = params.id; 
-    const [score, setScore] = useState(0);
+    const { userAnswers, isLoading } = useFetchUserAnswers(userId, id);
+  const score = useCalculateScore(parsedQuestions, userAnswers);
 
-    useEffect(() => {
-      console.log(params.id)
-        const fetchUserAnswers = async () => {
-            try {
-                const quizDocRef = doc(db, 'userAnswers', userId, 'articleAnswers', articleId);
-                const quizDoc = await getDoc(quizDocRef);
-                if (quizDoc.exists()) {
-                  const data = quizDoc.data();
-                  console.log(data.answers)
-                    setUserAnswers(data.answers);
-                    calculateScore(data.answers);
-                }
-            } catch (error) {
-                console.error('Error fetching user answers:', error);
-            }
-        };
-        fetchUserAnswers();
-    }, [userId, articleId]);
-
-    const calculateScore = (answers) => {
-        let correctAnswers = 0;
-        parsedQuestions.forEach((question, index) => {
-            if (question.correctAnswer === answers[index]) {
-                correctAnswers++;
-            }
-        });
-        const calculatedScore = (correctAnswers / parsedQuestions.length) * 100;
-        setScore(calculatedScore);
-    };
   return (
     <ScrollView style={styles.allwrap}>
       <BackButton top={45} color={Colors.red}/>
@@ -97,7 +69,7 @@ const Summary = () => {
                     </View>
                 ))}
 
-    <TouchableOpacity style={styles.DoneButton} onPress={() => router.replace(`../artikel/Articlepage?id=${articleId}`)}>
+    <TouchableOpacity style={styles.DoneButton} onPress={() => router.replace(`../artikel/Articlepage?id=${id}`)}>
               <Text style={styles.buttonTextWhite}>Selesai</Text>
     </TouchableOpacity>
       

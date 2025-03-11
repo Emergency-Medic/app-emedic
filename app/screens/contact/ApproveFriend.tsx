@@ -206,7 +206,7 @@ const ApproveFriend: React.FC = () => {
       <View style={styles.friendCount}>
         <Text style={styles.friendCountText}>Daftar Permintaan Teman</Text>
         <View style={styles.friendCountBadge}>
-          <Text style={styles.friendCountNumber}>{friendRequests.length}/10</Text>{/* Gunakan friendRequests.length pengganti dari contact nya*/}
+          <Text style={styles.friendCountNumber}>{friendRequests.length}/10</Text>
         </View>
       </View>
       <View style={styles.listTitleWrapper}>
