@@ -26,10 +26,6 @@ const useFetchArticles = (selectedCategory, data) => {
             image: docData.gambarPenyakit,
             description: docData.deskripsi,
             verified: docData.verifikasi,
-            dos: data["do's"] || [],
-            donts: data["dont's"] || [],
-            gambarDos: data["gambarDo's"] || '',
-            video: data.video || '',
           });
         }
       }

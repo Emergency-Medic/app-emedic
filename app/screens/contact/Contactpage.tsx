@@ -20,11 +20,8 @@ const Contactpage: React.FC = () => {
   const router = useRouter();
     const [contacts, setContacts] = useState<Contact[]>([]);
     const [loading, setLoading] = useState(true);
-    const [modalVisible, setModalVisible] = useState(false);
     const [modalVisible2, setModalVisible2] = useState(false);
     const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
-    const [newName, setNewName] = useState('');
-    const [newPhone, setNewPhone] = useState('');
     const user = auth.currentUser;
 
     useEffect(() => {
@@ -54,10 +51,6 @@ const Contactpage: React.FC = () => {
 
                 setContacts(fetchedContacts);
                 setLoading(false);
-
-                // if (fetchedContacts.length === 0) {
-                //     Alert.alert("Info", "Anda belum mempunyai teman.", [{ text: "OK" }]);
-                // }
             } catch (error) {
                 console.error("Error fetching contacts: ", error);
             }
@@ -69,48 +62,15 @@ const Contactpage: React.FC = () => {
       }else {
         // Tampilkan pesan atau arahkan ke halaman login
         Alert.alert("Anda belum login", "Silakan login untuk melihat teman Anda.", [
-          { text: "OK", onPress: () => router.push("/(auth)/SignInScreen") }, // Ganti /login dengan path ke halaman login Anda
+          { text: "OK", onPress: () => router.push("/(auth)/SignInScreen") },
         ]);
       }
     }, [user]); // Tambahkan user sebagai dependency
 
-    const handleEditContact = async () => {
-      if (selectedContact && user) { // Pastikan selectedContact dan user tidak null
-          const contactRef = doc(db, "users", user.uid, "friends", selectedContact.id);
-          try {
-              await updateDoc(contactRef, {
-                  name: newName || selectedContact.name,
-                  phone: newPhone || selectedContact.phone,
-              });
-              setContacts((prevContacts) =>
-                  prevContacts.map((contact) =>
-                      contact.id === selectedContact.id
-                          ? { ...contact, name: newName || contact.name, phone: newPhone || contact.phone }
-                          : contact
-                  )
-              );
-              setModalVisible(false);
-          } catch (error) {
-              console.error("Error updating contact: ", error);
-          }
-      } else {
-          // Handle jika selectedContact atau user null.  Misalnya:
-          if (!user) {
-              console.warn("User belum login. Tidak dapat mengedit kontak.");
-              // Atau tampilkan alert:
-              Alert.alert("Perhatian", "Anda harus login untuk mengedit kontak.");
-              // Atau navigasi ke halaman login:
-              // router.push("/login");
-          } else if (!selectedContact) {
-            console.warn("Tidak ada kontak yang dipilih")
-          }
-      }
-  };
 
   const handleDeleteContact = async () => {
     if (selectedContact && user) {
       try {
-        // 1. Query untuk mencari dokumen 'friends' berdasarkan friendUid
         const friendsRef = collection(db, "users", user.uid, "friends");
         const q = query(friendsRef, where("friendUid", "==", selectedContact.id)); // selectedContact.id berisi friendUid
   
@@ -164,12 +124,6 @@ const Contactpage: React.FC = () => {
         </View>
       </View>
       <View style={styles.actionButtons}>
-        <TouchableOpacity onPress={() => {
-          setSelectedContact(item); 
-          setModalVisible(true);
-        }} style={styles.iconButtonEdit}>
-          <Feather name="edit" size={18} color="#29335C" />
-        </TouchableOpacity>
         <TouchableOpacity 
           onPress={() => {
             setSelectedContact(item);
@@ -217,49 +171,7 @@ const Contactpage: React.FC = () => {
         ListHeaderComponent={renderHeader}
         contentContainerStyle={styles.contactList}
       />
-      {/* modal */}
-      <Modal transparent={true} visible={modalVisible} animationType="fade" onRequestClose={() => setModalVisible(false)}>
-        <TouchableWithoutFeedback onPressOut={() => setModalVisible(false)}>
-          <View style={styles.modalContainer}>
-            <TouchableWithoutFeedback>
-              <View style={styles.modalCardContent}> 
-                <View style={styles.contactCard2}>
-                  <View style={styles.contactInfo}>
-                    <Image source={require('../../../assets/images/icon.png')} style={styles.avatar} />
-                    <View>
-                      {/* data kontak */}
-                      {!!selectedContact ? (
-                        <>
-                          <Text style={styles.contactName}>{selectedContact.name}</Text>
-                          <Text style={styles.contactPhone}>{selectedContact.phone}</Text>
-                        </>
-                      ) : null}
-                    </View>
-                  </View>
-                  <View style={styles.actionButtons}>
-                    <TouchableOpacity style={styles.iconButtonEdit}>
-                      <Feather name="edit" size={18} color="#29335C" />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                <View style={styles.answerContent}> 
-                  <TouchableOpacity style={styles.meButton} onPress={() => setModalVisible2(true)}> 
-                    <Text style={styles.meText} >
-                      Simpan
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.otherButton} onPressOut={() => setModalVisible(false)}>
-                    <Text style={styles.otherText}>
-                      Batalkan
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-      {/* Modal 2 Section */}
+      {/* Modal Section */}
       <Modal transparent={true} visible={modalVisible2} animationType="fade" onRequestClose={() => setModalVisible2(false)}>
         <TouchableWithoutFeedback onPressOut={() => setModalVisible2(false)}>
           <View style={styles.modalContainer2}>
@@ -419,12 +331,6 @@ const styles = StyleSheet.create({
   },
   actionButtons: {
     flexDirection: 'row',
-  },
-  iconButtonEdit: {
-    backgroundColor: '#B8D8FF',
-    borderRadius: 50,
-    padding: 6,
-    marginLeft: 6,
   },
   iconButtonDelete: {
     backgroundColor: '#FFB8B8',

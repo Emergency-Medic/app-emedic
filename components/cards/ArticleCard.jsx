@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const ArticleCard = ({ item, isLast }) => {
   const router = useRouter();
   const backgroundColor = item.index % 2 === 0 ? Colors.blue : Colors.red;
-  const formattedKeywords = Array.isArray(item.keywords) ? item.keywords.join(', ') : '';
+  const formattedKeywords = item.keywords.join(', ');
 
   const truncateDescription = (description) => {
     const words = description.split(' ');
