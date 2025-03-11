@@ -1,65 +1,62 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Colors } from '@/constants/Colors';
+import BackButton from '@/components/BackButton'
 import { Image, View, Text, StyleSheet, ImageBackground, TouchableOpacity, FlatList , ScrollView} from 'react-native';
 import Swiper from 'react-native-swiper';
-// import BackButton from '@/components/BackButton';
-import { router, useRouter } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import * as Progress from 'react-native-progress';
+import { db, auth } from '@/firebaseConfig';
+import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
+
 
 const Quiz = () => {
+  const params = useLocalSearchParams();
+  const { id } = params;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-
-  const questions = [
-    {
-      question: 'Yang harus dilakukan pertama kali ketika ingin melakukan CPR adalah...',
-      options: [
-        'A. Posisikan tangan di dada korban',
-        'B. Beri napas buatan ke mulut korban',
-        'C. Cek denyut nadi korban',
-        'D. Langsung tekan di area dada korban'
-      ]
-    },
-    {
-      question: 'Langkah pertama sebelum menyentuh korban adalah...',
-      options: [
-        'A. Memastikan area sekitar aman',
-        'B. Langsung memanggil bantuan',
-        'C. Mengecek respons korban',
-        'D. Memberikan tekanan dada'
-      ]
-    },
-    {
-      question: 'Ketika memberikan napas buatan, posisi kepala korban harus...',
-      options: [
-        'A. Menunduk',
-        'B. Tegak lurus',
-        'C. Ditekuk ke belakang',
-        'D. Dimiringkan'
-      ]
-    },
-    {
-      question: 'Berapa rasio tekanan dada dan napas buatan yang benar?',
-      options: [
-        'A. 15:1',
-        'B. 30:2',
-        'C. 20:2',
-        'D. 10:1'
-      ]
-    },
-    {
-      question: 'Jika korban mulai bernapas spontan, langkah selanjutnya adalah...',
-      options: [
-        'A. Melanjutkan tekanan dada',
-        'B. Memiringkan posisi korban',
-        'C. Memberikan napas buatan lagi',
-        'D. Membawa korban ke rumah sakit'
-      ]
-    }
-  ];
+  const [questions, setQuestions] = useState([]);
+  const [userAnswers, setUserAnswers] = useState([]);
+  const userId = auth.currentUser.uid
 
   const totalQuestions = questions.length;
+
+  useEffect(() => {
+    console.log("Fetching questions... ID:", id);  // 🔍 Debugging
+    
+    if (!id) {
+        console.log("ID belum tersedia");
+        return;
+    }
+    const fetchQuestions = async () => {
+        try {
+            const questionsCollection = collection(db, 'articles_no_cat', id, 'questions');
+            const questionSnapshot = await getDocs(questionsCollection);
+            if (questionSnapshot.empty) {
+              console.log("Tidak ada dokumen dalam subkoleksi 'questions'.");
+              return;
+          }
+            const questionList = questionSnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            console.log('Fetched Questions:', questionList);
+            setQuestions(questionList);
+        } catch (error) {
+            console.error('Error fetching questions:', error);
+        }
+    };
+    fetchQuestions();
+}, [id]);
+
+const handleAnswer = (answerIndex) => {
+  const newAnswers = [...userAnswers];
+  newAnswers[currentQuestionIndex] = answerIndex;
+  setUserAnswers(newAnswers);
+  console.log("📌 Jawaban pengguna:", newAnswers);
+  handleNext()
+};
+
 
   const handleNext = () => {
     if (currentQuestionIndex < totalQuestions - 1) {
@@ -73,8 +70,34 @@ const Quiz = () => {
     }
   };
 
+  const saveAnswersToFirestore = async () => {
+    try {
+        if (auth.currentUser) {
+          console.log('User Answers to Save:', userAnswers);
+          console.log(userId)
+          console.log(id)
+          const quizDocRef = doc(db, 'userAnswers', userId, 'articleAnswers', id);
+          await setDoc(quizDocRef, {
+              answers: userAnswers,
+              completed: true, // Set status kuis selesai
+          });
+          router.push({
+              pathname: './ScoreScreen',
+              params: {
+                  questions: JSON.stringify(questions),
+                  userAnswers: JSON.stringify(userAnswers),
+                  id: id
+              },
+          });
+        }
+    } catch (error) {
+        console.error('Error saving answers:', error);
+    }
+};
+
     return (
       <ScrollView style={styles.allwrap}>
+        <BackButton top={45} color={Colors.red}/>
       <View style={styles.container}>
         {/* <BackButton color={Colors.red} top={45}/> */}
         <Text style={styles.progressText}>
@@ -88,31 +111,51 @@ const Quiz = () => {
       />
       
       
-        <View style={styles.navigationButtons2}>
+        {/* <View style={styles.navigationButtons2}>
             <TouchableOpacity onPress={() => router.back()} style={styles.skipButton}>
                 <Text style={styles.skipText}>Skip {'>'}{'>'}</Text>
             </TouchableOpacity>
-        </View>
+        </View> */}
         
-        <Text style={styles.textSoal}>{questions[currentQuestionIndex].question}</Text>
-        
-        {/* Answer Options */}
-        <View style={styles.containerjawaban}>
-          {questions[currentQuestionIndex].options.map((option, index) => (
-            <TouchableOpacity key={index} style={styles.cardContent}>
-              <Text>{option}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+          {questions.length > 0 ? (
+            <>
+              <Text style={styles.textSoal}>{questions[currentQuestionIndex].text}</Text>
+
+              <View style={styles.containerjawaban}>
+                {questions[currentQuestionIndex].options.map((option, index) => (
+                  <TouchableOpacity 
+                  key={index} 
+                  style={[
+                    styles.cardContent, 
+                    userAnswers[currentQuestionIndex] === index ? styles.selectedAnswer : null
+                  ]} 
+                  onPress={() => handleAnswer(index)}>
+                    <Text style={styles.optionText}>{option}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </>
+          ) : (
+            <Text>Loading questions...</Text> // Tampilkan pesan loading sementara
+          )}
 
         <View style={styles.navigation}>
           {/* Panah ke kanan (jika index ke-0) */}
           {currentQuestionIndex === 0 ? (
+            <>
+            {userAnswers.length === questions.length && !userAnswers.includes(undefined) ? (
+              <View style={styles.submitButtonEnding}>
+                <TouchableOpacity onPress={saveAnswersToFirestore} style={styles.submitButton}>
+                  <Text style={styles.submitText}>Submit</Text>
+                </TouchableOpacity>
+              </View>
+            ) : null}
             <View style={{ flex: 1, alignItems: 'flex-end' }}>
               <TouchableOpacity onPress={handleNext} style={styles.elips}>
                 <Text style={styles.arrow}>{'>'}</Text>
               </TouchableOpacity>
             </View>
+            </>
           ) : null}
 
           {/* Panah kiri dan kanan (jika bukan index ke-0) */}
@@ -123,22 +166,25 @@ const Quiz = () => {
                   <Text style={styles.arrow}>{'<'}</Text>
                 </TouchableOpacity>
               </View>
+              {userAnswers.length === questions.length && !userAnswers.includes(undefined) ? (
+              <View style={styles.submitButtonEnding}>
+                <TouchableOpacity onPress={saveAnswersToFirestore} style={styles.submitButton}>
+                  <Text style={styles.submitText}>Submit</Text>
+                </TouchableOpacity>
+              </View>
+            ) : null}
               {currentQuestionIndex < totalQuestions - 1 ? (
+                <>
                 <View style={{ flex: 1, alignItems: 'flex-end' }}>
                   <TouchableOpacity onPress={handleNext} style={styles.elips}>
                     <Text style={styles.arrow}>{'>'}</Text>
                   </TouchableOpacity>
                 </View>
+                </>
               ) : null}
             </>
           ) : null}
-          {currentQuestionIndex === totalQuestions - 1 ? (
-            <View style={styles.submitButtonEnding}>
-              <TouchableOpacity onPress={() => router.push("./ScoreScreen")} style={styles.submitButton}>
-                <Text style={styles.submitText}>Submit</Text>
-              </TouchableOpacity>
-            </View>
-          ) : null}
+          
         </View>
 
       </View>
@@ -185,6 +231,9 @@ const styles = StyleSheet.create({
       fontFamily: 'semibold',
       fontSize: 20,
     },
+    optionText : {
+      fontFamily: 'regular'
+    },
     containerjawaban: {
       height: '50%',
       width: '80%',
@@ -199,9 +248,16 @@ const styles = StyleSheet.create({
       backgroundColor:'#fff',
       borderRadius:20,
       justifyContent:'center',
-      paddingLeft:'8%',
+      paddingHorizontal:'8%',
       shadowColor:'#000',
-      elevation: 5,
+      elevation: 2,
+      borderWidth: 1,
+      borderColor: Colors.white,
+      borderWidth: 1
+    },
+    selectedAnswer : {
+      borderColor: Colors.blue,
+      backgroundColor: Colors.lightBlue
     },
     navigationButtons: {
       backgroundColor: '#A8201A',

@@ -5,9 +5,10 @@ import BackButton from '@/components/BackButton'
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
 import Feather from '@expo/vector-icons/Feather';
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/firebaseConfig";
-import { signInWithGoogle, handleGoogleSignIn, signInUser } from "../services/authService";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithCredential } from "firebase/auth";
+import { doc, setDoc, collection, addDoc, getDoc } from 'firebase/firestore';
+import { auth, db } from "@/firebaseConfig";
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 export default function SignInScreen() {
 
@@ -19,18 +20,91 @@ export default function SignInScreen() {
     const router = useRouter();
 
     const [errors, setErrors] = useState({});
+    const DEFAULT_PROFILE_PIC = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
 
-    // useEffect(() => {
-    //     handleGoogleSignIn();
-    //   }, []);
-    
-    // const handleGSignIn = async () => {
-    //     try {
-    //       await signInWithGoogle();
-    //     } catch (error) {
-    //       Alert.alert("Login Error", error.message);
-    //     }
-    // };
+    useEffect(() => {
+        const configureGoogleSignIn = async () => {
+          try {
+            GoogleSignin.configure({
+              webClientId: "382135671168-a2p2o5embfj3euqqlb429sksfs8uoi01.apps.googleusercontent.com", 
+              
+              offlineAccess: true,
+              forceCodeForRefreshToken: true,
+              scopes: ['profile', 'email'], 
+            });
+          } catch (error) {
+            console.error("Google Sign-In configuration error:", error);
+          }
+        };
+      
+        configureGoogleSignIn();
+      }, []); // Empty dependency array means this runs only once on mount
+      
+
+    const handleGoogleSignIn = async () => {
+        try {
+        await GoogleSignin.hasPlayServices();
+        await GoogleSignin.signOut();
+        const userInfo = await GoogleSignin.signIn();
+        console.log("Google Sign-In result:", userInfo);
+        console.log("Google Sign-In result:", userInfo.data);
+
+        if (!userInfo.data.idToken) {
+            throw new Error("Google Sign-In failed (no idToken).");
+        }
+
+        const googleCredential = GoogleAuthProvider.credential(userInfo.data.idToken);
+        const userCredential = await signInWithCredential(auth, googleCredential);
+            console.log("Firebase sign-in successful:", userCredential);
+          const user = userCredential.user;
+      
+          // Cek apakah data pengguna sudah ada di Firestore
+          const userDocRef = doc(db, "users", user.uid);
+          const userDocSnapshot = await getDoc(userDocRef);
+      
+          if (!userDocSnapshot.exists()) {
+            // Tambahkan data pengguna ke Firestore jika belum ada
+            const username = user.email.split('@')[0]; // Ambil username dari email
+            const usernameDocRef = doc(db, "usernames", username);
+            const usernameDocSnapshot = await getDoc(usernameDocRef);
+      
+            if (usernameDocSnapshot.exists()) {
+              // Username sudah digunakan, tambahkan angka random di belakangnya
+              const randomNum = Math.floor(Math.random() * 1000);
+              const newUsername = `${username}${randomNum}`
+              await setDoc(doc(db, "users", user.uid), {
+                uid: user.uid,
+                firstName: user.displayName ? user.displayName.split(' ')[0] : '',
+                lastName: user.displayName ? user.displayName.split(' ')[1] : '',
+                username: newUsername,
+                email: user.email,
+                profilePic: user.photoURL || DEFAULT_PROFILE_PIC,
+                createdAt: new Date().toISOString(),
+              });
+              await setDoc(doc(db, "usernames", newUsername), { uid: user.uid });
+      
+            } else {
+              await setDoc(doc(db, "users", user.uid), {
+                uid: user.uid,
+                firstName: user.displayName ? user.displayName.split(' ')[0] : '',
+                lastName: user.displayName ? user.displayName.split(' ')[1] : '',
+                username: username,
+                email: user.email,
+                profilePic: user.photoURL || DEFAULT_PROFILE_PIC,
+                createdAt: new Date().toISOString(),
+              });
+              await setDoc(doc(db, "usernames", username), { uid: user.uid });
+            }
+      
+          }
+      
+          Alert.alert('Success', 'Google Sign-In successful!');
+          router.replace('../(tabs)/Home'); // Navigasi ke halaman home
+        } catch (error) {
+          console.error('Google Sign-In error:', error);
+          Alert.alert('Error', 'Google Sign-In failed.');
+        }
+      };
 
     const validateForm = () => {
         let errors = {};
@@ -104,7 +178,6 @@ export default function SignInScreen() {
                 <Text style={styles.title}>Masuk</Text>
             </View>
             <View style={styles.wrapper}>
-
                 <View>
                     <View style={styles.username}>
                         <Text style={[
@@ -182,7 +255,7 @@ export default function SignInScreen() {
 
                 <View>
                     <Text style= {styles.atau}>atau</Text>
-                    <TouchableOpacity style={styles.google}>
+                    <TouchableOpacity onPress={handleGoogleSignIn} style={styles.google}>
                         <Image source={require('../../assets/images/sign in/google.png')} style={styles.googleImg}></Image>
                         <Text style={styles.googletxt}>Masuk dengan Google</Text>
                     </TouchableOpacity>

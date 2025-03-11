@@ -8,6 +8,7 @@ const useLocation = () => {
 	const [errorMsg, setErrorMsg] = useState("");
 	const [longitude, setLongitude] = useState("");
 	const [latitude, setLatitude] = useState("");
+	const [formattedAddress, setFormattedAddress] = useState("");
 	const [city, setCity] = useState("");
 
 	const getUserLocation = async () => {
@@ -26,6 +27,7 @@ const useLocation = () => {
 			console.log("Latitude: ", latitude);
 			setLongitude(longitude);
 			setLatitude(latitude);
+			setFormattedAddress(formattedAddress)
 			let response = await Location.reverseGeocodeAsync({ latitude, longitude });
 			if (response.length > 0) {
 				setCity(response[0].city || "Unknown City");
@@ -38,7 +40,7 @@ const useLocation = () => {
 		getUserLocation();
 	}, []);
 
-	return {latitude, longitude, city, errorMsg};
+	return {latitude, longitude, city, errorMsg, formattedAddress};
 }; 
 
 export default useLocation;

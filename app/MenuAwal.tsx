@@ -8,7 +8,9 @@ const MenuAwal = () => {
     const router = useRouter();
     useEffect(() => {
         if (auth.currentUser) {
-            router.replace("./(tabs)/Home"); // Arahkan ke halaman Home jika sudah login
+            setTimeout(() => {
+                router.replace("./(tabs)/Home"); // Arahkan ke halaman Home jika sudah login
+            }, 100);
         }
       }, [router]);
     return (

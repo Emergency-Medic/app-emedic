@@ -10,20 +10,12 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { useRouter } from "expo-router";
 import MakeSchedule from '../screens/reminder/MakeSchedule'
-import { collection, query, where, getDocs, Timestamp, onSnapshot, deleteDoc, doc } from "firebase/firestore";
+import { collection, query, where, getDoc, Timestamp, onSnapshot, deleteDoc, doc } from "firebase/firestore";
 import { auth, db } from "@/firebaseConfig";
 import moment from 'moment-timezone';
-
-// type Reminder = {
-//   id: number;
-//   time: string;
-//   name: string;
-//   dose: string;
-// };
-
-// type RemindersType = {
-//   [key: string]: Reminder[];
-// };
+import * as Notifications from 'expo-notifications';
+import useReminders from "@/hooks/useReminders";
+import { deleteNotifications } from "@/utils/notificationUtils";
 
 export default function MedicationReminder() {
   const [selectedType, setSelectedType] = useState('Tablet'); // State untuk jenis obat
@@ -32,88 +24,10 @@ export default function MedicationReminder() {
     new Date().toISOString().split('T')[0]
   );
   const today = new Date().toISOString().split('T')[0]; // ini buat format tanggal
-
-// const [reminders, setReminders] = useState<RemindersType>({
-//     [today]: [
-//       { id: 1, time: '08:00', name: 'Obat xxx', dose: '1 sct (50 mg)' },
-//       { id: 2, time: '12:00', name: 'Obat xxx', dose: '1 sct (50 mg)' },
-//     ],
-// });
-  const [reminders, setReminders] = useState([]);
-
-
+  const reminders = useReminders(selectedDate);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingReminder, setEditingReminder] = useState(null);
   const [activeReminderId, setActiveReminderId] = useState(null);
-  
-
-  useEffect(() => {
-    const q = query(collection(db, "schedules"), where("userId", "==", auth.currentUser.uid));
-
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const remindersData = [];
-
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            const startDateTimestamp = data.startDate;
-            const endDateTimestamp = data.endDate;
-
-            // 1. Konversi ke Moment dengan zona waktu yang spesifik
-            const selectedDateMoment = moment.tz(selectedDate, 'Asia/Jakarta');
-            const startDateMoment = startDateTimestamp instanceof Timestamp
-                ? moment.tz(startDateTimestamp.toDate(), 'Asia/Jakarta')
-                : null;
-            const endDateMoment = endDateTimestamp instanceof Timestamp
-                ? moment.tz(endDateTimestamp.toDate(), 'Asia/Jakarta')
-                : null;
-
-            // 2. Gunakan startOf('day') untuk menghilangkan informasi waktu
-            const selectedDateStart = selectedDateMoment.startOf('day');
-            const startDateStart = startDateMoment ? startDateMoment.startOf('day') : null;
-            const endDateStart = endDateMoment ? endDateMoment.startOf('day') : null;
-
-            // 3. Format tanggal ke YYYY-MM-DD (opsional, tapi disarankan)
-            const selectedDateString = selectedDateStart.format('YYYY-MM-DD');
-            const startDateString = startDateStart ? startDateStart.format('YYYY-MM-DD') : null;
-            const endDateString = endDateStart ? endDateStart.format('YYYY-MM-DD') : null;
-
-            // 4. Lakukan perbandingan tanggal menggunakan string yang diformat
-            if (startDateString && endDateString) {
-                if (selectedDateString >= startDateString && selectedDateString <= endDateString) {
-                    remindersData.push({ id: doc.id, ...data });
-                } 
-            } else if (startDateString && data.forever) {
-                if (selectedDateString >= startDateString) {
-                    remindersData.push({ id: doc.id, ...data });
-                } 
-            } 
-        });
-
-        // Urutkan remindersData berdasarkan waktu (opsional, tapi disarankan)
-        remindersData.sort((a, b) => {
-          // Gabungkan semua jam pengingat dalam array, lalu urutkan
-          const allTimesA = a.reminders ? a.reminders.sort() : [];
-          const allTimesB = b.reminders ? b.reminders.sort() : [];
-
-          // Bandingkan jam satu per satu
-          for (let i = 0; i < Math.max(allTimesA.length, allTimesB.length); i++) {
-              const timeA = allTimesA[i] || ""; // Handle undefined
-              const timeB = allTimesB[i] || ""; // Handle undefined
-
-              if (timeA < timeB) return -1;
-              if (timeA > timeB) return 1;
-          }
-
-          return 0; // Jika semua jam sama
-      });
-
-        setReminders(remindersData);
-    }, (error) => {
-        console.error("Error listening for reminders:", error);
-    });
-
-    return () => unsubscribe();
-}, [selectedDate]);
   
   const handleDots = (reminder) => {
     setEditingReminder(reminder);
@@ -124,39 +38,28 @@ export default function MedicationReminder() {
     router.push(`/screens/reminder/EditSchedule?id=${item.id}`);
 };
 
-  const saveEdit = () => {
-    if (editingReminder) {
-      setReminders((prev) => ({
-        ...prev,
-        [selectedDate]: prev[selectedDate]?.map((item) =>
-          item.id === editingReminder.id ? editingReminder : item
-        ) || [],
-      }));
-      setModalVisible(false);
-      setEditingReminder(null);
-    }
-  };
-
-  // const handleDelete = (id) => {
-  //   setReminders((prev) => ({
-  //     ...prev,
-  //     [selectedDate]: prev[selectedDate]?.filter((item) => item.id !== id) || [],
-  //   }));
-  // };
-
   const handleDelete = async (id) => {
     try {
+        const scheduleDoc = await getDoc(doc(db, "schedules", id)); // Ambil dokumen
+        if (!scheduleDoc.exists()) {
+            Alert.alert("Error", "Reminder tidak ditemukan.");
+            return;
+        }
+
+        const scheduleData = scheduleDoc.data();
+        const notificationIds = scheduleData.notificationIds || [];
+
+        // Hapus dokumen dari database
         await deleteDoc(doc(db, "schedules", id));
-        Alert.alert("Sukses", "Reminder berhasil dihapus.");
-        setModalVisible(false); // Tutup modal setelah penghapusan
+
+        await deleteNotifications(scheduleData.notificationIds || []);
+
+        setModalVisible(false);
+        Alert.alert("Sukses", "Reminder berhasil dihapus!");
     } catch (error) {
         console.error("Error deleting reminder:", error);
         Alert.alert("Error", "Gagal menghapus reminder. Silakan coba lagi.");
     }
-  };
-
-  const toggleActive = (id) => {
-    setActiveReminderId(activeReminderId === id ? null : id);
   };
 
   return (
@@ -188,7 +91,7 @@ export default function MedicationReminder() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           
-          <TouchableOpacity onPress={() => toggleActive(item.id)}>
+          <TouchableOpacity>
             <View style={styles.rowContainer}>
               <View>
                 {item.reminders.map((time, index) => (
@@ -208,6 +111,8 @@ export default function MedicationReminder() {
                       iconName = 'syringe'; // Ikon untuk injeksi
                     } else if(item.type === 'Tablet'){
                       iconName = 'capsules'
+                    } else if (item.type === 'Salep') {
+                      iconName = 'flask'
                     }
         
                     return (
@@ -228,7 +133,7 @@ export default function MedicationReminder() {
                   title={item.medName}
                   titleStyle={[styles.titleCard, activeReminderId === item.id && styles.activeTitle]}
 
-                  subtitle={`${item.dose} sdm`}
+                  subtitle={`${item.dose} ${item.doseType}`}
                   subtitleStyle={[styles.subtitle, activeReminderId === item.id && styles.activeSubtitle]}
                   right={(props) => (
                     <Entypo

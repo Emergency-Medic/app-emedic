@@ -8,7 +8,6 @@ export default function ProfileLayout() {
         <Stack.Screen name="ChangePass" options={{ headerShown: false }} />
         <Stack.Screen name="ChangeName" options={{ headerShown: false }} />
         <Stack.Screen name="ChangeUsername" options={{ headerShown: false }} />
-        <Stack.Screen name="ChangePhone" options={{ headerShown: false }} />
         <Stack.Screen name="ChangeEmail" options={{ headerShown: false }} />
       </Stack>
     );
