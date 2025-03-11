@@ -34,7 +34,7 @@ const useSearch = () => {
           fetchedRecommendations.push({
             id: doc.id,
             title: data.judul,
-            keywords: data.katakunci.join(', '),
+            keywords: data.katakunci,
             description: data.deskripsi,
             image: data.gambarPenyakit,
             color: fetchedRecommendations.length % 2 === 0 ? Colors.blue : Colors.red,
@@ -62,7 +62,7 @@ const useSearch = () => {
         fetchedRecommendations.push({
           id: docId,
           title: data.judul,
-          keywords: data.katakunci.join(', '),
+          keywords: data.katakunci,
           description: data.deskripsi,
           image: data.gambarPenyakit,
           color: fetchedRecommendations.length % 2 === 0 ? Colors.blue : Colors.red,
