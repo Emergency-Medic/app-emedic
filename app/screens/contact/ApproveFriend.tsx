@@ -168,7 +168,7 @@ const ApproveFriend: React.FC = () => {
                         {sender?.firstName || sender?.username || sender?.name || "Nama Tidak Tersedia"}
                     </Text>
                     {/* Tampilkan nomor telepon user */}
-                    <Text style={styles.contactPhone}>{sender?.phone || "Nomor Tidak Tersedia"}</Text>
+                    <Text style={styles.contactPhone}>{sender?.username || "Nomor Tidak Tersedia"}</Text>
                 </View>
             </View>
 

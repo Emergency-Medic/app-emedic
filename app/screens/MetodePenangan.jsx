@@ -7,6 +7,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { db } from '@/firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
 import BackButton from "@/components/BackButton";
+import useFetchArticles from '@/hooks/useFetchArticles';
+import ArticleCard from "@/components/cards/ArticleCard";
 
 const data = {  
 	semuaKategori: [
@@ -26,74 +28,32 @@ const data = {
 export default function MetodePenangan() {
 	const router = useRouter();
 	const [selectedCategory, setSelectedCategory] = useState('semuaKategori');
-	const [articles, setArticles] = useState([]);
+	const { articles, isLoading } = useFetchArticles(selectedCategory, data);
 
-	// Function to fetch data from Firebase for the selected category
-	const fetchData = async () => {
-		const categoryDocuments = data[selectedCategory];  // Menggunakan data[selectedCategory]
-		const fetchedArticles = [];
 	
-		for (const docId of categoryDocuments) {
-		  const docRef = doc(db, "articles_no_cat", docId);
-		  const docSnap = await getDoc(docRef);
-	
-		  if (docSnap.exists()) {
-			const data = docSnap.data();
-			fetchedArticles.push({
-			  id: docId,
-			  title: data.judul,
-			  keywords: data.katakunci,
-			  description: data.deskripsi,
-			  image: data.gambarPenyakit,
-			});
-		  }
-		}
-		setArticles(fetchedArticles);
-	};
-	
-	useEffect(() => {
-		fetchData(); // Memanggil fetchData saat kategori berubah
-	}, [selectedCategory]);
+	const handleArticlePress = async (item) => {
+        try {
+            await saveLastRead(item); // Simpan artikel yang dibaca
+            router.push({ pathname: '/screens/artikel/Articlepage', params: { id: item.id } }); // Navigasi
+        } catch (error) {
+            console.error("Error saving lastRead:", error);
+        }
+    };
+
+    const saveLastRead = async (article) => {
+        try {
+            await AsyncStorage.setItem('lastRead', JSON.stringify(article));
+            setLastReadArticle(article); // Update state setelah disimpan
+        } catch (error) {
+            console.error("Error saving lastRead:", error);
+        }
+    };
 	
 	const renderCategoryInfo = () => {
-		return articles.map((item) => {
-			const backgroundColor = articles.indexOf(item) % 2 === 0 ? Colors.blue : Colors.red; // Gunakan index dalam array articles
-			const formattedKeywords = item.keywords.join(', ');
-			const truncateDescription = (description) => {
-				const words = description.split(' ');  // Pisahkan berdasarkan spasi
-				const truncated = words.slice(0, 7).join(' ');  // Ambil 20 kata pertama
-				return words.length > 7 ? truncated + '...' : truncated;  // Jika lebih dari 20 kata, tambahkan "..."
-			  };
-
-			return ( 
-				<View style={[styles.cart, { backgroundColor }]} key={item.id}> 
-					<View style={styles.pictureSection}>
-						<Image source={{ uri: item.image }} style={styles.image} />
-					</View>
-					<View style={styles.textSection}>
-						{/* <View style={styles.verifiedIcon}>
-							<MaterialIcons name="verified" size={20} color="white" />
-						</View> */}
-						<Text style={styles.judul}>{item.title}</Text>
-						<Text style={styles.kataKunci}>Kata Kunci: {formattedKeywords}</Text>
-						<Text style={styles.deskripsi}>{truncateDescription(item.description)}</Text>
-						<TouchableOpacity 
-							style={styles.pelajariSection} 
-							onPress={() => router.push(`../screens/artikel/Articlepage?id=${item.id}`)} // Menambahkan id artikel ke URL
-							>
-							<Text style={styles.pelajariText}>Pelajari</Text>
-							<View style={styles.pelajariIcon}>
-								<MaterialIcons name="article" size={10} color="black" />
-							</View>
-						</TouchableOpacity>
-					</View>  
-					<View>
-						<MaterialIcons name="verified" size={16} color={Colors.white} style={styles.verifiedContent}/>
-					</View>
-				</View>
-			);
-		}); 
-	}; 
+        return articles.map((item, index) => (
+          <ArticleCard key={item.id} item={{ ...item, index }} isLast={false} />
+        ));
+    };
 
 	return (
 		<View style={styles.container}>  
@@ -103,7 +63,7 @@ export default function MetodePenangan() {
 				<Text style={styles.titleText}>Rekomendasi Pembelajaran</Text>
 			</View>
 			
-			<ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.kategoriSection} contentContainerStyle={styles.kategoriContent}> 
+			<ScrollView horizontal={true} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false} style={styles.kategoriSection} contentContainerStyle={styles.kategoriContent}> 
 				<TouchableOpacity style={selectedCategory === 'semuaKategori' ? styles.sectionBerada : styles.section} onPress={() => setSelectedCategory('semuaKategori')}> 
 					<Text style={selectedCategory === 'semuaKategori' ? styles.keteranganBerada : styles.keterangan}>Semua</Text> 
 				</TouchableOpacity>
@@ -121,6 +81,7 @@ export default function MetodePenangan() {
 			<ScrollView 
 				style={styles.cartContainer}
 				contentContainerStyle={styles.cartContent}
+				showsVerticalScrollIndicator={false}
 			>
 				{renderCategoryInfo()}
 			</ScrollView>  
@@ -200,15 +161,19 @@ const styles = StyleSheet.create({
 	},
 	cartContainer: {
 		marginTop: 20, 
-		marginLeft: 20, 
+		marginLeft: 5, 
 		marginRight: 20,
 		borderRadius: 20,
-		height: '100%'
+		height: '100%',
+		width: '100%',
+		gap: 10,
 	},
 	cartContent: {
 		paddingBottom: 20,
-		justifyContent: 'flex-start',
-		alignItems: 'center'
+		justifyContent: 'center',
+		alignItems: 'center',
+		flexDirection: 'column',
+		gap: 10
 	},
 	cart: {
 		width: '100%', 

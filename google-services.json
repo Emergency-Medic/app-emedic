@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "382135671168",
+    "project_id": "emedic-app-52042",
+    "storage_bucket": "emedic-app-52042.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:382135671168:android:370f68dd8ac5a3756b0965",
+        "android_client_info": {
+          "package_name": "com.anonymous.appemedic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "382135671168-7oq58v8p8e8d5th1225pmosmr3o4qsbh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.anonymous.appemedic",
+            "certificate_hash": "a709162cc5fc0212cc7acf5b7e5265f51be90e40"
+          }
+        },
+        {
+          "client_id": "382135671168-a2p2o5embfj3euqqlb429sksfs8uoi01.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "REDACTED"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "382135671168-a2p2o5embfj3euqqlb429sksfs8uoi01.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

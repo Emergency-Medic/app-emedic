@@ -3,13 +3,17 @@ import { FlatList, ImageBackground, Modal, ScrollView, View, Image ,  Text, Styl
 import { useRouter } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { Colors } from '@/constants/Colors';
-import call from 'react-native-phone-call'; 
+import ArticleCard from "@/components/cards/ArticleCard";
 import Swiper from 'react-native-swiper';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { auth, db } from '@/firebaseConfig'
 import { doc,onSnapshot,getDoc,collection,query,where,Timestamp,} from "firebase/firestore";
 import moment from "moment-timezone";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import useUserData from '@/hooks/useUserData'
+import { makePhoneCall } from "@/utils/callUtills";
+import useFetchArticles from '@/hooks/useFetchArticles';
+import useReminders from "@/hooks/useReminders";
 
 const data = {  
   kategori1: [  
@@ -24,137 +28,16 @@ const data = {
 };  
 
 export default function Home() {
-
   const swiperRef = useRef(null);
   const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState('kategori1');
-  const [articles, setArticles] = useState([]);
-  const [todayReminders, setTodayReminders] = useState([]);
+  const { articles, isLoading } = useFetchArticles(selectedCategory, data);
+  const todayReminders = useReminders();
   const [sliderValue, setSliderValue] = useState(new Animated.Value(0));
-  const [name, setName] = useState('')
-  const user = auth.currentUser
   const [userData, setUserData] = useState(null)
-
-  const fetchData = async () => {
-      const categoryDocuments = data[selectedCategory];  // Menggunakan data[selectedCategory]
-      const fetchedArticles = [];
-    
-      for (const docId of categoryDocuments) {
-        const docRef = doc(db, "articles_no_cat", docId);
-        const docSnap = await getDoc(docRef);
-    
-        if (docSnap.exists()) {
-        const data = docSnap.data();
-        fetchedArticles.push({
-          id: docId,
-          title: data.judul,
-          keywords: data.katakunci,
-          description: data.deskripsi,
-          image: data.gambarPenyakit,
-        });
-        }
-      }
-      setArticles(fetchedArticles);
-    };
-
-    useEffect(() => {
-        fetchData(); // Memanggil fetchData saat kategori berubah
-      }, [selectedCategory]);
-
-  useEffect(() => {
-    if (!user) return;
-
-    // Listen to real-time updates on this user's document
-    const userRef = doc(db, "users", user.uid);
-    const unsubscribe = onSnapshot(userRef, (snapshot) => {
-      if (snapshot.exists()) {
-        console.log(snapshot.data())
-        const data = snapshot.data();
-        // setUserData({...data});
-        setName(snapshot.data().firstName);
-      } else {
-        console.log("User does not exist!");
-        setUserData(null);
-      }
-    });
-
-    return () => unsubscribe();  // Cleanup listener on unmount
-  }, [user]);
-
-  useEffect(() => {
-    const today = moment.tz("Asia/Jakarta").format("YYYY-MM-DD");
-    const q = query(
-        collection(db, "schedules"),
-        where("userId", "==", auth.currentUser.uid)
-    );
-
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        const remindersData = [];
-
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            const startDateMoment =
-                data.startDate instanceof Timestamp
-                    ? moment
-                        .tz(data.startDate.toDate(), "Asia/Jakarta")
-                        .startOf("day")
-                    : null;
-            const endDateMoment =
-                data.endDate instanceof Timestamp
-                    ? moment.tz(data.endDate.toDate(), "Asia/Jakarta").startOf("day")
-                    : null;
-            const startDate = startDateMoment
-                ? startDateMoment.format("YYYY-MM-DD")
-                : null;
-            const endDate = endDateMoment
-                ? endDateMoment.format("YYYY-MM-DD")
-                : null;
-
-            if (startDate && endDate) {
-                if (today >= startDate && today <= endDate) {
-                    remindersData.push({ id: doc.id, ...data });
-                }
-            } else if (startDate && data.forever) {
-                if (today >= startDate) {
-                    remindersData.push({ id: doc.id, ...data });
-                }
-            }
-        });
-
-        const todayReminders = remindersData.filter((reminder) => {
-            return reminder.reminders.some((time) => {
-                const reminderMoment = moment.tz(
-                    `${today} ${time}`,
-                    "YYYY-MM-DD HH:mm",
-                    "Asia/Jakarta"
-                );
-                return moment.tz("Asia/Jakarta").diff(reminderMoment, "minutes") >= 0;
-            });
-        });
-
-        todayReminders.sort((a, b) => {
-            const timeA = a.reminders[0] || "";
-            const timeB = b.reminders[0] || "";
-            return timeA.localeCompare(timeB);
-        });
-
-        setTodayReminders(todayReminders);
-    });
-
-    return () => unsubscribe();
-}, []);
-
-      const makePhoneCall = () => {
-          const args = {
-            number: '112',
-            prompt: false,
-            skipCanOpen: true
-          }
-      
-          call(args).catch(console.error);
-      };
+  const { user, name } = useUserData(); 
   
-      const panResponder = PanResponder.create({
+  const panResponder = PanResponder.create({
           onMoveShouldSetPanResponder: () => true,
           onPanResponderMove: Animated.event(
               [null, { dx: sliderValue }],
@@ -173,310 +56,236 @@ export default function Home() {
       });
 
       const renderCategoryInfo = () => {
-        return articles.map((item, index)=> {
-          const backgroundColor = articles.indexOf(item) % 2 === 0 ? Colors.blue : Colors.red; // Gunakan index dalam array articles
-          const formattedKeywords = item.keywords.join(', ');
-          const truncateDescription = (description) => {
-            const words = description.split(' ');  // Pisahkan berdasarkan spasi
-            const truncated = words.slice(0, 6).join(' ');  // Ambil 20 kata pertama
-            return words.length > 6 ? truncated + '...' : truncated;  // Jika lebih dari 20 kata, tambahkan "..."
-          };
-
-          return (
-            <View
-              style={[
-                styles.cart,
-                {
-                  backgroundColor,
-                  marginRight: index < articles.length - 1 ? 10 : 0, // Tambahkan marginRight kecuali item terakhir
-                },
-              ]}
-              key={item.id}
-            >
-              <View style={styles.contain}>
-                <View style={styles.pictureSection}>
-                  <Image source={{ uri: item.image }} style={styles.image} />
-                </View>
-                <View style={styles.textSection}>
-                {/* <View style={styles.verifiedIcon2}>
-                  <MaterialIcons name="verified" size={20} color="white" />
-                </View> */}
-                  <Text style={styles.judul}> 
-                    {item.title} 
-                  </Text>
-                  <Text style={styles.kataKunci}>
-                    Kata Kunci: {formattedKeywords}
-                  </Text>
-                  <Text style={styles.deskripsi}>
-                    {truncateDescription(item.description)} 
-                  </Text>
-      
-                  <TouchableOpacity style={styles.pelajariSection} onPress={() => router.push(`../screens/artikel/Articlepage?id=${item.id}`)}> 
-                    <Text style={styles.pelajariText}> 
-                      Pelajari
-                    </Text>
-                    <View style={styles.pelajariIcon}> 
-                      <MaterialIcons name="article" size={10} color="black" />
-                    </View>
-                  </TouchableOpacity>
-                </View>
-                <View>
-                  <MaterialIcons name="verified" size={20} color={Colors.white} style={styles.verifiedContent}/>
-                </View>
-              </View>
-            </View>
-          );
-        }); 
-      }; 
+        return articles.map((item, index) => (
+          <ArticleCard key={item.id} item={{ ...item, index }} isLast={index === articles.length - 1} />
+        ));
+      };
 
     return (
-      <ScrollView contentContainerStyle={styles.container}>
-        <StatusBar style='dark' translucent={true} />
-        {/* Hello, (name) */}
-        <View style={styles.header}> 
-          <View style={styles.profileSection}> 
-            <TouchableOpacity style={styles.profileIcon}>
-              <MaterialIcons name="person-outline" size={18} color={Colors.grey} />
-            </TouchableOpacity>
-            {/* Greating Section */}
-            <View style={styles.greatingSection}>
-              <Text style={styles.halo}>
-                Halo,
-              </Text>
-              <Text style={styles.name}> 
-                {name}
-              </Text>
-            </View>
-          </View> 
-          {/* <View style={styles.alarmIcon}> 
-            <MaterialIcons name="alarm" size={20} color= {Colors.blue} />
-          </View> */}
-        </View>
-
-        {/* Content */}
-        <View style={styles.containercontent}>
-        <StatusBar style="light" translucent={true} backgroundColor="transparent" />
-        <Swiper
-          autoplay
-          autoplayTimeout={7}
-          ref={swiperRef}
-          loop={false}
-          showsPagination={true}
-          dotStyle={styles.dotStyle}
-          activeDotStyle={styles.activeDotStyle}
-          paginationStyle={styles.paginationStyle}
-        >
-        
-        {/* Slide 1 */}
-        <View style={styles.slide}>
-          <ImageBackground
-            source={{
-              uri: 'https://mysiloam-api.siloamhospitals.com/public-asset/website-cms/website-cms-16831818208485759.webp',
-            }}
-            style={styles.backgroundImage}
-            blurRadius={0.5}
-            borderRadius={10}
-          />
-          {/* <Text style={styles.headerText}>Tahap Awal Penanganan</Text> */}
-          <View style={styles.contentBottomContainer}>
-            <View>
-              <Text style={styles.title}>Penilaian Awal Situasi</Text>
-              <Text style={styles.description}>
-                Ketika ingin membantu korban, gunakan langkah-langkah "DRS" ini!
-              </Text>
-            </View>
-            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/SliderTahapA")} style={styles.nextButtonTap}>
-              <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
-            </TouchableOpacity>
+        <ScrollView contentContainerStyle={styles.container}>
+          <StatusBar style='dark' translucent={true} />
+          {/* Hello, (name) */}
+          <View style={styles.header}> 
+            <View style={styles.profileSection}> 
+              <TouchableOpacity style={styles.profileIcon}>
+                <MaterialIcons name="person-outline" size={18} color={Colors.grey} />
+              </TouchableOpacity>
+              {/* Greating Section */}
+              <View style={styles.greatingSection}>
+                <Text style={styles.halo}>
+                  Halo,
+                </Text>
+                <Text style={styles.name}> 
+                  {name}
+                </Text>
+              </View>
+            </View> 
           </View>
+
+          {/* Content */}
+          <View style={styles.containercontent}>
+          <StatusBar style="light" translucent={true} backgroundColor="transparent" />
+          <Swiper
+            autoplay
+            autoplayTimeout={7}
+            ref={swiperRef}
+            loop={false}
+            showsPagination={true}
+            dotStyle={styles.dotStyle}
+            activeDotStyle={styles.activeDotStyle}
+            paginationStyle={styles.paginationStyle}
+          >
+          
+          {/* Slide 1 */}
+          <View style={styles.slide}>
+            <ImageBackground
+              source={{
+                uri: 'https://mysiloam-api.siloamhospitals.com/public-asset/website-cms/website-cms-16831818208485759.webp',
+              }}
+              style={styles.backgroundImage}
+              blurRadius={0.5}
+              borderRadius={10}
+            />
+            {/* <Text style={styles.headerText}>Tahap Awal Penanganan</Text> */}
+            <View style={styles.contentBottomContainer}>
+              <View>
+                <Text style={styles.title}>Penilaian Awal Situasi</Text>
+                <Text style={styles.description}>
+                  Ketika ingin membantu korban, gunakan langkah-langkah "DRS" ini!
+                </Text>
+              </View>
+              <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/SliderTahapA")} style={styles.nextButtonTap}>
+                <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
+              </TouchableOpacity>
+            </View>
+              <View style={styles.verifiedIcon}>
+                <MaterialIcons name="verified" size={24} color="white" />
+              </View>
+          </View>
+
+          {/* Slide 2 */}
+          <View style={styles.slide}>
+            <ImageBackground
+              source={{
+                uri: 'https://images.unsplash.com/photo-1624638760852-8ede1666ab07?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+              }}
+              style={styles.backgroundImage}
+              blurRadius={0.5}
+              borderRadius={10}
+            />
+            <View style={styles.contentBottomContainer}>
+              <View>
+                <Text style={styles.title}>Penanganan Masalah</Text>
+                <Text style={styles.description}>
+                  Setelah menilai situasi, mulai tangani masalah dengan langkah "ABC" ini!
+                </Text>
+              </View>
+              <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/SliderTahapB")} style={styles.nextButtonTap}>
+                <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
+              </TouchableOpacity>
+            </View>
             <View style={styles.verifiedIcon}>
               <MaterialIcons name="verified" size={24} color="white" />
-            </View>
-        </View>
-
-        {/* Slide 2 */}
-        <View style={styles.slide}>
-          <ImageBackground
-            source={{
-              uri: 'https://images.unsplash.com/photo-1624638760852-8ede1666ab07?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-            }}
-            style={styles.backgroundImage}
-            blurRadius={0.5}
-            borderRadius={10}
-          />
-          <View style={styles.contentBottomContainer}>
-            <View>
-              <Text style={styles.title}>Penanganan Masalah</Text>
-              <Text style={styles.description}>
-                Setelah menilai situasi, mulai tangani masalah dengan langkah "ABC" ini!
-              </Text>
-            </View>
-            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/SliderTahapB")} style={styles.nextButtonTap}>
-              <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
-            </TouchableOpacity>
           </View>
-          <View style={styles.verifiedIcon}>
-            <MaterialIcons name="verified" size={24} color="white" />
-        </View>
-        </View>
-
-        {/* Slide 3 */}
-        <View style={styles.slide}>
-          <ImageBackground
-            source={{
-              uri: 'https://cdn1-production-images-kly.akamaized.net/ecL6Y9yvV56LSWbAtZM8QhmfnpM=/800x450/smart/filters:quality(75):strip_icc():format(webp)/kly-media-production/medias/5045878/original/059069700_1733900022-1733894601873_tujuan-pertolongan-pertama.jpg',
-            }}
-            style={styles.backgroundImage}
-            blurRadius={0.5}
-            borderRadius={10}
-          />
-          <View style={styles.contentBottomContainer}>
-            <View>
-              <Text style={styles.title}>Pengumpulan Informasi</Text>
-              <Text style={styles.description}>
-                Setelah korban sadar, lakukan langkah "SAMPLE" ini!
-              </Text>
-            </View>
-            <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/SliderTahapC")} style={styles.nextButtonTap}>
-              <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
-            </TouchableOpacity>
           </View>
-          <View style={styles.verifiedIcon}>
-            <MaterialIcons name="verified" size={24} color="white" />
-        </View>
-        </View>
-        </Swiper>
 
-        {/* Navigation Buttons */}
-        {/* <View style={styles.navigationButtons}>
-        <TouchableOpacity
-          style={styles.prevButton}
-          onPress={() => swiperRef.current.scrollBy(-1)}
-        >
-          <Text style={styles.buttonText}>{'<'}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.nextButton}
-          onPress={() => swiperRef.current.scrollBy(1)}
-        >
-          <Text style={styles.buttonText}>{'>'}</Text>
-        </TouchableOpacity>
-        </View> */}
-        </View>
-
-
-        {/* Content */}
-        {/* Rekomendasi Pembelajaran */}
-        <View style={styles.rekomendasiPembelajaranTitle}>
-          <Text style={styles.titleText}>Rekomendasi Pembelajaran</Text>
-          <TouchableOpacity onPress={() => router.push('../screens/MetodePenangan')}>
-            <Text style={styles.lihatSemua}> Lihat Semua</Text>
-          </TouchableOpacity>
-        </View>
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.kategoriSection} contentContainerStyle={styles.kategoriContent}> 
-          <TouchableOpacity style={selectedCategory === 'kategori1' ? styles.sectionBerada : styles.section} onPress={() => setSelectedCategory('kategori1')}> 
-            <Text style={selectedCategory === 'kategori1' ? styles.keteranganBerada : styles.keterangan}>Kategori 1</Text> 
-          </TouchableOpacity>
-          <TouchableOpacity style={selectedCategory === 'kategori2' ? styles.sectionBerada : styles.section} onPress={() => setSelectedCategory('kategori2')}> 
-            <Text style={selectedCategory === 'kategori2' ? styles.keteranganBerada : styles.keterangan}>Kategori 2</Text> 
-          </TouchableOpacity>
-          <TouchableOpacity style={selectedCategory === 'kategori3' ? styles.sectionBerada : styles.section} onPress={() => setSelectedCategory('kategori3')}> 
-            <Text style={selectedCategory === 'kategori3' ? styles.keteranganBerada : styles.keterangan}>Kategori 3</Text> 
-          </TouchableOpacity>
-        </ScrollView>
-        
-        {/* Cart */}  
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.cartContainer}>
-          {renderCategoryInfo()}
-        </ScrollView>
-
-        {/* Layanan */}
-        <View style={styles.containerlayanan}>
-          <View style={styles.containerlayananawal}>
-            <Text style={styles.titleTextlayanan}>Layanan</Text>
-          </View>
-            <View style={styles.kotakjawaban}>
-                <View style={styles.containerkotak}>
-                    <View style={styles.textkotaklayanan}>
-                        <Text style={styles.textpanggilandarurat}>Panggilan</Text>
-                        <Text style={styles.textpanggilandarurat}>Darurat</Text>
-                    </View>
-                    <View style={styles.gambarkotaklayanan}>
-                        <Image
-                            source={require('@/assets/images/GambarAmbulance.png')}
-                            style={styles.cardImageAmbulance}
-                            resizeMode='contain'
-                        />
-                    </View>
-                </View>
-
-                {/* Slider */}
-                <View style={styles.sliderContainer}>
-                    <Animated.View
-                        style={[
-                            styles.sliderButton,
-                            {
-                                transform: [{ translateX: sliderValue }],
-                            },
-                        ]}
-                        {...panResponder.panHandlers}
-                    >
-                        <Text style={styles.sliderArrow}>{'>'}</Text>
-                    </Animated.View>
-                    <Text style={styles.sliderText}>Geser untuk melakukan panggilan</Text>
-                </View>
-            </View>
-        </View>
-
-        <Text style={styles.titleTextobat}>Pengingat Obat</Text>
-        {/* Pengingat obat */}
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={true} style={styles.cartContainer}>
-        <View style={styles.containerobat}>
-          {todayReminders.length > 0 ? (
-            <FlatList
-                data={todayReminders}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                    <View style={styles.cardobat}>
-                        <View style={styles.cardContentobat}>
-                            {/* Icon Obat */}
-                            <View style={styles.iconContainer}>
-                                {(() => {
-                                    let iconName = 'pill';
-                                    if (item.type === 'Sirup') {
-                                        iconName = 'tint';
-                                    } else if (item.type === 'Tetes') {
-                                        iconName = 'eye-dropper';
-                                    } else if (item.type === 'Injeksi') {
-                                        iconName = 'syringe';
-                                    } else if (item.type === 'Tablet') {
-                                        iconName = 'capsules';
-                                    }
-                                    return (
-                                        <FontAwesome5 name={iconName} size={30} color="#fff" />
-                                    );
-                                })()}
-                            </View>
-                            <View style={styles.textContentobat}>
-                                <Text style={styles.medicineNameobat}>{item.medName}</Text>
-                                <Text style={styles.timeobat}>{item.reminders.join(", ")}</Text>
-                                <Text style={styles.dosageobat}>{item.dose} sdm</Text>
-                            </View>
-                        </View>
-                    </View>
-                )}
-              horizontal={true} // Menampilkan daftar secara horizontal
-              showsHorizontalScrollIndicator={true}
+          {/* Slide 3 */}
+          <View style={styles.slide}>
+            <ImageBackground
+              source={{
+                uri: 'https://cdn1-production-images-kly.akamaized.net/ecL6Y9yvV56LSWbAtZM8QhmfnpM=/800x450/smart/filters:quality(75):strip_icc():format(webp)/kly-media-production/medias/5045878/original/059069700_1733900022-1733894601873_tujuan-pertolongan-pertama.jpg',
+              }}
+              style={styles.backgroundImage}
+              blurRadius={0.5}
+              borderRadius={10}
             />
-            ) : (
-              <View style={styles.noRemindersContainer}>
-                  <MaterialIcons name="notifications-off" size={40} color={Colors.grey} />
-                  <Text style={styles.noRemindersText}>Tidak ada pengingat hari ini</Text>
+            <View style={styles.contentBottomContainer}>
+              <View>
+                <Text style={styles.title}>Pengumpulan Informasi</Text>
+                <Text style={styles.description}>
+                  Setelah korban sadar, lakukan langkah "SAMPLE" ini!
+                </Text>
               </View>
-            )}
-          </View>   
-        </ScrollView>
-    </ScrollView>
+              <TouchableOpacity onPress={() => router.push("../screens/artikel/awal/SliderTahapC")} style={styles.nextButtonTap}>
+                <Text style={styles.nextButtonText}>{'Pelajari >'}</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.verifiedIcon}>
+              <MaterialIcons name="verified" size={24} color="white" />
+          </View>
+          </View>
+          </Swiper>
+          </View>
+
+
+          {/* Content */}
+          {/* Rekomendasi Pembelajaran */}
+          <View style={styles.rekomendasiPembelajaranTitle}>
+            <Text style={styles.titleText}>Rekomendasi Pembelajaran</Text>
+            <TouchableOpacity onPress={() => router.push('../screens/MetodePenangan')}>
+              <Text style={styles.lihatSemua}> Lihat Semua</Text>
+            </TouchableOpacity>
+          </View>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.kategoriSection} contentContainerStyle={styles.kategoriContent}> 
+            <TouchableOpacity style={selectedCategory === 'kategori1' ? styles.sectionBerada : styles.section} onPress={() => setSelectedCategory('kategori1')}> 
+              <Text style={selectedCategory === 'kategori1' ? styles.keteranganBerada : styles.keterangan}>Kategori 1</Text> 
+            </TouchableOpacity>
+            <TouchableOpacity style={selectedCategory === 'kategori2' ? styles.sectionBerada : styles.section} onPress={() => setSelectedCategory('kategori2')}> 
+              <Text style={selectedCategory === 'kategori2' ? styles.keteranganBerada : styles.keterangan}>Kategori 2</Text> 
+            </TouchableOpacity>
+            <TouchableOpacity style={selectedCategory === 'kategori3' ? styles.sectionBerada : styles.section} onPress={() => setSelectedCategory('kategori3')}> 
+              <Text style={selectedCategory === 'kategori3' ? styles.keteranganBerada : styles.keterangan}>Kategori 3</Text> 
+            </TouchableOpacity>
+          </ScrollView>
+          
+          {/* Cart */}  
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.cartContainer}>
+            {renderCategoryInfo()}
+          </ScrollView>
+
+          {/* Layanan */}
+          <View style={styles.containerlayanan}>
+            <View style={styles.containerlayananawal}>
+              <Text style={styles.titleTextlayanan}>Layanan</Text>
+            </View>
+              <View style={styles.kotakjawaban}>
+                  <View style={styles.containerkotak}>
+                      <View style={styles.textkotaklayanan}>
+                          <Text style={styles.textpanggilandarurat}>Panggilan</Text>
+                          <Text style={styles.textpanggilandarurat}>Darurat</Text>
+                      </View>
+                      <View style={styles.gambarkotaklayanan}>
+                          <Image
+                              source={require('@/assets/images/GambarAmbulance.png')}
+                              style={styles.cardImageAmbulance}
+                              resizeMode='contain'
+                          />
+                      </View>
+                  </View>
+
+                  {/* Slider */}
+                  <View style={styles.sliderContainer}>
+                      <Animated.View
+                          style={[
+                              styles.sliderButton,
+                              {
+                                  transform: [{ translateX: sliderValue }],
+                              },
+                          ]}
+                          {...panResponder.panHandlers}
+                      >
+                          <Text style={styles.sliderArrow}>{'>'}</Text>
+                      </Animated.View>
+                      <Text style={styles.sliderText}>Geser untuk melakukan panggilan</Text>
+                  </View>
+              </View>
+          </View>
+
+          <Text style={styles.titleTextobat}>Pengingat Obat</Text>
+          {/* Pengingat obat */}
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={true} style={styles.cartContainer}>
+          <View style={styles.containerobat}>
+          {todayReminders.length > 0 ? (
+            todayReminders.map((item) => {
+              let iconName = 'pill';
+              if (item.type === 'Sirup') {
+                iconName = 'tint';
+              } else if (item.type === 'Tetes') {
+                iconName = 'eye-dropper';
+              } else if (item.type === 'Injeksi') {
+                iconName = 'syringe';
+              } else if (item.type === 'Tablet') {
+                iconName = 'capsules';
+              } else if (item.type === 'Salep') {
+                iconName = 'flask'
+              }
+
+              return (
+                <View key={item.id.toString()} style={styles.cardobat}>
+                  <View style={styles.cardContentobat}>
+                    {/* Icon Obat */}
+                    <View style={styles.iconContainer}>
+                      <FontAwesome5 name={iconName} size={30} color="#fff" />
+                    </View>
+                    <View style={styles.textContentobat}>
+                      <Text style={styles.medicineNameobat}>{item.medName}</Text>
+                      <Text style={styles.timeobat}>{item.reminders.join(", ")}</Text>
+                      <Text style={styles.dosageobat}>{item.dose} {item.doseType}</Text>
+                    </View>
+                  </View>
+                </View>
+              );
+            })
+          ) : (
+            <View style={styles.noRemindersContainer}>
+              <MaterialIcons name="notifications-off" size={40} color={Colors.grey} />
+              <Text style={styles.noRemindersText}>Tidak ada pengingat hari ini</Text>
+            </View>
+          )}
+            </View>   
+          </ScrollView>
+      </ScrollView>
+   
   ); 
 }; 
 
@@ -584,17 +393,9 @@ const styles = StyleSheet.create({
     marginRight: 30,
     borderRadius: 20,
   },
-    cart: {
-    // width: '50%', 
-    // height: 110, 
+  cart: {
     backgroundColor: Colors.blue,
     borderRadius: 20, 
-    // flexDirection: 'row',
-    // justifyContent: 'space-between',
-    // paddingHorizontal: 10
-    // flexDirection: 'row',
-    // gap: 150,
-    // marginLeft: 10, 
   }, 
   contain: {
     flexDirection: 'row',

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Button } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
@@ -7,15 +6,10 @@ import BackButton from '@/components/BackButton'
 import { useRouter, useLocalSearchParams } from "expo-router";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-// import { useEvent } from 'expo';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { db } from '@/firebaseConfig';
-import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '@/firebaseConfig';
+import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
 import { WebView } from 'react-native-webview';
-
-// ini sementara dari link dulu yaa, blm nemu videonya
-// const videoSource =
-//   'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
 
 const Articlepage = () => {
     const router = useRouter();
@@ -30,14 +24,53 @@ const Articlepage = () => {
     const [gambarPenyakit, setGambarPenyakit] = useState('');
     const [gambarDos, setGambarDos] = useState('');
     const [video, setVideo] = useState('');
-    
+    const userId = auth.currentUser.uid
+    const [questions, setQuestions] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const handlePress = () => {
-      router.push('../quiz/Quiz')
+      router.push(`../quiz/Quiz?id=${id}`)
       setQuizStarted(true);
     };
 
     useEffect(() => {
+      setIsLoading(true)
+      const checkQuizStatus = async () => {
+          if (userId) {
+              try {
+                  const quizDocRef = doc(db, 'userAnswers', userId, 'articleAnswers', id);
+                  const quizDoc = await getDoc(quizDocRef);
+                  if (quizDoc.exists() && quizDoc.data().completed) {
+                      setQuizStarted(true);
+                  }
+              } catch (error) {
+                  console.error('Error checking quiz status:', error);
+              }
+          }
+      };
+      checkQuizStatus();
+
+      const fetchQuestions = async () => {
+          try {
+              const questionsCollection = collection(db, 'articles_no_cat', id, 'questions');
+              const questionSnapshot = await getDocs(questionsCollection);
+              const questionList = questionSnapshot.docs.map((doc) => ({
+                  id: doc.id,
+                  ...doc.data(),
+              }));
+              console.log(questionList)
+              setQuestions(questionList);
+          } catch (error) {
+              console.error('Error fetching questions:', error);
+          }
+      };
+      fetchQuestions();
+      setIsLoading(false)
+  }, [userId, id]);
+
+    useEffect(() => {
+      console.log(id)
+      setIsLoading(true)
       if (!id) return;
       // console.log("Articlepage ID:", id);
       const fetchData = async () => {
@@ -66,17 +99,13 @@ const Articlepage = () => {
           console.error("Error fetching document:", error);
       }
       };
+      setIsLoading(false)
       fetchData();
     }, [id]);
-    // video
-    // const player = useVideoPlayer(videoSource, player => {
-    //   player.loop = true;
-    //   player.play();
-    // });
-    // const { isPlaying } = useEvent(player, 'playingChange', { isPlaying: player.playing });
+
     return (
         <ScrollView style={styles.allwrap}>
-                      <BackButton top={45} color={Colors.red}/>
+            <BackButton top={45} color={Colors.red} goHome={true}/>
             <StatusBar style='dark' translucent={true}/>
             <View style={styles.header}>
                 <View style={styles.container}>
@@ -95,7 +124,7 @@ const Articlepage = () => {
                   domStorageEnabled={true}
                 />
               ) : (
-                <Text>No video available</Text>
+                <Text>Video loading..</Text>
               )}
             </View>
             <View style={styles.container}>
@@ -171,13 +200,20 @@ const Articlepage = () => {
                       <TouchableOpacity style={styles.quizButton} onPress={handlePress}>
                         <View style={styles.buttonContent}>
                           <Text style={styles.quizButtonText}>Mulai Kuis</Text>
-                          {quizStarted ? (
-                            <View style={styles.resultContainer}>
-                              <Text style={styles.resultText}>Lihat hasil</Text>
-                              <Icon name="check-circle" size={20} color="red" />
-                            </View>
-                          ) : null}
                         </View>
+                          {quizStarted ? (
+                            <TouchableOpacity 
+                            style={styles.resultContainer}
+                            onPress={() =>
+                                        router.push({
+                                            pathname: '../quiz/Summary',
+                                            params: { questions: JSON.stringify(questions), id: id },
+                                        })}
+                            >
+                              <Text style={styles.resultText}>Lihat hasil</Text>
+                              <Icon name="check-circle" size={20} color={Colors.red} />
+                            </TouchableOpacity>
+                          ) : null}
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => router.back()} style={styles.finishButton}>
                         <Text style={styles.finishButtonText}>Selesai</Text>
@@ -186,6 +222,7 @@ const Articlepage = () => {
         </ScrollView>
     )
 }
+
 const styles = StyleSheet.create({
     allwrap: {
       height: '100%',
@@ -329,6 +366,10 @@ const styles = StyleSheet.create({
       margin: 16,
       padding: 12,
       borderRadius: 8,
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
     },
     buttonContent: {
       flexDirection: 'row',
@@ -345,11 +386,16 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       alignItems: 'center',
       gap: 8,
+      backgroundColor: Colors.white,
+      paddingHorizontal: 7,
+      paddingVertical: 5,
+      borderRadius: 5
     },
     resultText: {
-      color: Colors.white,
+      color: Colors.blue,
       fontSize: 14,
       marginRight: 8,
+      fontFamily: 'bold',
     },
     finishButton: {
       backgroundColor: '#A8201A',
