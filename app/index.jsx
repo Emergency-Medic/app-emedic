@@ -4,7 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import MenuAwal from "./MenuAwal";
 import React, { useEffect, useState } from "react";
 import Home from "./(tabs)/Home";
-import { auth, db, app } from '@/firebaseConfig';
+import { auth, db } from '@/firebaseConfig';
 import { useRouter, useRootNavigationState } from "expo-router";
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
@@ -60,8 +60,6 @@ Notifications.setNotificationHandler({
   },
 });
 
-console.log("Done")
-
 
 export default function index() {
   useFonts({
@@ -80,9 +78,10 @@ export default function index() {
   const [isLoading, setIsLoading] = useState(true); // Track if loading or checking auth state
   const [user, setUser] = useState(null); // Track the authenticated user
   const rootNavigationState = useRootNavigationState();
-
+  
   useEffect( () => {
     if (!rootNavigationState?.key) return;
+
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       setIsLoading(false);
       setUser(user);
@@ -91,10 +90,9 @@ export default function index() {
         const userRef = doc(db, "users", user.uid);
         const userSnap = await getDoc(userRef);
 
-        if (!userSnap.exists() || !userSnap.data().pushToken) {
-          // Jika pushToken tidak ada, ulangi pendaftaran notifikasi
-          await registerForPushNotificationsAsync(user.uid);
-        }
+        
+        console.log(userSnap.data().pushToken)
+        await registerForPushNotificationsAsync(user.uid);
 
         setTimeout(() => {
           router.replace("./(tabs)/Home"); // Arahkan ke halaman Home jika sudah login
@@ -129,11 +127,7 @@ export default function index() {
           fullScreenIntent: true
         });
       }
-    };
-
-    // const channels = await Notifications.getNotificationChannelsAsync();
-    // console.log("🔊 Notifikasi Channels:", channels);
-
+    }
     
     setupNotificationChannel();
     Notifications.registerTaskAsync('MED_REMINDER_HANDLER');
@@ -141,52 +135,61 @@ export default function index() {
     const checkPermissions = async () => {
       const { status } = await Notifications.getPermissionsAsync();
       console.log("🔍 Status izin notifikasi:", status);
+      const token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log("�� Token push:", token);
   
       if (status !== 'granted') {
         const { status: newStatus } = await Notifications.requestPermissionsAsync();
         console.log("📌 Status izin setelah permintaan:", newStatus);
       }
     };
-  
     checkPermissions();
   
     // Fungsi untuk mendaftarkan push notification
     const registerForPushNotificationsAsync = async (uid) => {
       if (!uid) return;
+      try {
+        if (Device.isDevice) {
+          let { status } = await Notifications.getPermissionsAsync();
+          if (status !== 'granted') {
+            status = (await Notifications.requestPermissionsAsync()).status;
+          }
+          if (status !== 'granted') {
+            Alert.alert('Gagal mendapatkan token push untuk mengirim notifikasi! Silakan coba lagi.');
+            return;
+          }
+          const token = (await Notifications.getExpoPushTokenAsync()).data;
+          const userRef = doc(db, "users", uid);
+          const userSnap = await getDoc(userRef);
+          const savedToken = userSnap.exists() ? userSnap.data().pushToken : null;
 
-      if (Device.isDevice) {
-        let { status } = await Notifications.getPermissionsAsync();
-        if (status !== 'granted') {
-          const { status: newStatus } = await Notifications.requestPermissionsAsync();
-          status = newStatus;
+          if (savedToken !== token) {
+            await setDoc(userRef, { pushToken: token }, { merge: true });
+            console.log("Push token updated successfully.");
+          } else {
+            console.log("Push token is up to date.");
+          }
+
+          messaging().onTokenRefresh(async (newToken) => {
+            await setDoc(userRef, { pushToken: newToken }, { merge: true });
+            console.log("Push token refreshed and updated successfully.");
+          });
+        } else {
+          Alert.alert('Harus menggunakan perangkat fisik untuk push notifications');
         }
-
-        if (status !== 'granted') {
-          Alert.alert('Gagal mendapatkan token push untuk mengirim notifikasi! Silakan coba lagi.');
-          return registerForPushNotificationsAsync(uid); // Ulangi permintaan izin
+        if (Platform.OS === 'android') {
+          await Notifications.setNotificationChannelAsync('default', {
+            name: 'default',
+            importance: Notifications.AndroidImportance.MAX,
+            vibrationPattern: [0, 250, 250, 250],
+            lightColor: '#FF231F7C'
+          });
         }
-
-        const token = (await Notifications.getExpoPushTokenAsync()).data;
-        const userRef = doc(db, "users", uid);
-        try {
-          await setDoc(userRef, { pushToken: token }, { merge: true });
-          console.log("Push token saved successfully.");
-        } catch (error) {
-          console.error("Error saving push token:", error);
-        }
-      } else {
-        Alert.alert('Harus menggunakan perangkat fisik untuk push notifications');
-      }
-
-      if (Platform.OS === 'android') {
-        Notifications.setNotificationChannelAsync('default', {
-          name: 'default',
-          importance: Notifications.AndroidImportance.MAX,
-          vibrationPattern: [0, 250, 250, 250],
-          lightColor: '#FF231F7C',
-        });
+      } catch (error) {
+        console.error("Error registering for push notifications:", error);
       }
     };
+    
 
     const foregroundSubscription = Notifications.addNotificationReceivedListener(notification => {
       console.log("🎯 Notifikasi diterima di foreground:", notification);
@@ -218,7 +221,7 @@ export default function index() {
       foregroundSubscription.remove();
       unsubs
     };
-}, [router]);
+}, [router, user]);
 
 
   return (
@@ -227,4 +230,4 @@ export default function index() {
       </View>
   );
 }
-AppRegistry.registerComponent('index', () => index);
+// AppRegistry.registerComponent('index', () => index);
