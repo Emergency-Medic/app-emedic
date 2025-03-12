@@ -15,7 +15,8 @@ const LastReadArticle = ({ article, onPress }) => {
     );
   }
 
-  const formattedKeywords = article?.keywords?.join(', ') ?? '';
+  const formattedKeywords = Array.isArray(article?.keywords) ? article.keywords.join(', ') : '';
+
   const truncateDescription = article?.description ? (description => {
     const words = description.split(' ');
     const truncated = words.slice(0, 7).join(' ');

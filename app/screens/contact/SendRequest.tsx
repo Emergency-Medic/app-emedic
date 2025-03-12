@@ -153,11 +153,11 @@ const SendRequest: React.FC = () => {
                   </View>
                   <View>
                     {!!selectedContact ? (
-                      <View>
+                      <Text style={styles.qcontain}>
                         <Text style={styles.modalWarningQuestion}>Anda yakin menambahkan </Text>
                         <Text style={styles.getContactName}>{selectedContact.name}</Text>
                         <Text style={styles.modalWarningQuestion}> kedalam daftar pertemanan anda?</Text>
-                      </View>
+                      </Text>
                     ) : null}
                   </View>
                   <View style={styles.answerContent}>
@@ -342,6 +342,11 @@ const styles = StyleSheet.create({
   },
   getContactName: {
     fontFamily: 'bold'
+  },
+  qcontain: {
+    paddingHorizontal: 30,
+    marginVertical: 20,
+    gap: 0,
   },
   answerContent: {
     flexDirection: 'row', 
