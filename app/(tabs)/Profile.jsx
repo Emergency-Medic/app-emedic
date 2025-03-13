@@ -19,7 +19,7 @@ import { truncateDescription } from '@/utils/truncateDescription';
 const Profile = ({ modalVisible, setModalVisible }) => {
   const router = useRouter();
   const { name, username, completedQuizzes } = useUserData();
-  const progress = Math.round((completedQuizzes.length / 13) * 100);
+  const progress = Math.round(((completedQuizzes?.length ?? 0)/13)*100);
   const { lastReadArticle, modalHeight, loadLastRead, handleArticlePress } = useLastRead();
 
   useEffect(() => {
