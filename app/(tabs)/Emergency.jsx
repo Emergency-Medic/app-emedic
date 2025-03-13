@@ -97,6 +97,7 @@ const Emergency = () => {
           setModalVisible(false);
           setModalVisible2(true);
         }}
+        onOthers={makePhoneCall}
       />
       {/* Modal 2 Section */}
       <CustomModal
@@ -107,6 +108,7 @@ const Emergency = () => {
         confirmText="Ya"
         cancelText="Tidak"
         onConfirm={makePhoneCall}
+        onOthers={() => setModalVisible2(false)}
       />
     </ScrollView>
   );

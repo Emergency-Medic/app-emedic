@@ -1,10 +1,10 @@
 import { useFonts } from "expo-font";
-import { View, Platform, Alert, AppRegistry, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Platform, Alert, AppRegistry } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import MenuAwal from "./MenuAwal";
 import React, { useEffect, useState } from "react";
 import Home from "./(tabs)/Home";
-import { auth, db, app } from '@/firebaseConfig';
+import { auth, db } from '@/firebaseConfig';
 import { useRouter, useRootNavigationState } from "expo-router";
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
@@ -13,7 +13,6 @@ import { collection, doc, setDoc, getDoc } from 'firebase/firestore';
 import * as TaskManager from 'expo-task-manager';
 import { getMessaging, onBackgroundMessage } from 'firebase/messaging';
 import messaging from '@react-native-firebase/messaging';
-import { Colors } from '@/constants/Colors';
 
 // const messaging = getMessaging(); // Gunakan API modular
 // onBackgroundMessage(messaging, async (remoteMessage) => {
@@ -25,14 +24,11 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
 });
 
 Notifications.addNotificationResponseReceivedListener(response => {
-  console.log(response.notification.request.content.data)
-  if (response.notification.request.content.data) {
-    const { latitude, longitude, action } = response.notification.request.content.data;
-  
-    if (action === "open_map" && latitude && longitude) {
-      const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
-      Linking.openURL(url);
-    }
+  const { latitude, longitude, action } = response.notification.request.content.data;
+
+  if (action === "open_map" && latitude && longitude) {
+    const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
+    Linking.openURL(url);
   }
 });
 
@@ -64,8 +60,6 @@ Notifications.setNotificationHandler({
   },
 });
 
-console.log("Done")
-
 
 export default function index() {
   useFonts({
@@ -84,12 +78,11 @@ export default function index() {
   const [isLoading, setIsLoading] = useState(true); // Track if loading or checking auth state
   const [user, setUser] = useState(null); // Track the authenticated user
   const rootNavigationState = useRootNavigationState();
-
+  
   useEffect( () => {
-    console.log("rootNavigationState:", rootNavigationState);
     if (!rootNavigationState?.key) return;
+
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      console.log("Auth state changed. User:", user); 
       setIsLoading(false);
       setUser(user);
       
@@ -97,36 +90,29 @@ export default function index() {
         const userRef = doc(db, "users", user.uid);
         const userSnap = await getDoc(userRef);
 
-        if (!userSnap.exists() || !userSnap.data().pushToken) {
-          // Jika pushToken tidak ada, ulangi pendaftaran notifikasi
-          await registerForPushNotificationsAsync(user.uid);
-        }
+        
+        console.log(userSnap.data().pushToken)
+        await registerForPushNotificationsAsync(user.uid);
 
-        // setTimeout(() => {
-        //   console.log("Redirecting to Home...");
-        //   router.replace("/(tabs)/Home"); // Arahkan ke halaman Home jika sudah login
-        // }, 1000);
-        console.log("Redirecting to Home...");
-        router.replace("/(tabs)/Home");
+        setTimeout(() => {
+          router.replace("./(tabs)/Home"); // Arahkan ke halaman Home jika sudah login
+        }, 100);
       } else {
-        console.log("Redirecting to Menu Awal...");
-        router.replace("./MenuAwal");
+        setTimeout(() => {
+          router.replace("./MenuAwal");
+        }, 100);
       }
     });
 
-    const unsubs = messaging().setBackgroundMessageHandler(async remoteMessage => {
-      console.log('Message handled in the background!', remoteMessage);
-    
-      const { latitude, longitude, action } = remoteMessage?.data || {};
-    
-      if (action === "open_map" && latitude && longitude) {
+    const unsubs = messaging().onMessage(async remoteMessage => {
+      if (remoteMessage?.data?.action === "open_map") {
+        const { latitude, longitude } = remoteMessage.data;
         const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
         Linking.openURL(url);
-      } else {
-        console.warn("⚠️ Background message tidak memiliki data lokasi!");
       }
     });
-    
+
+    // return unsubs;
 
     const setupNotificationChannel = async () => {
       if (Platform.OS === 'android') {
@@ -141,11 +127,7 @@ export default function index() {
           fullScreenIntent: true
         });
       }
-    };
-
-    // const channels = await Notifications.getNotificationChannelsAsync();
-    // console.log("🔊 Notifikasi Channels:", channels);
-
+    }
     
     setupNotificationChannel();
     Notifications.registerTaskAsync('MED_REMINDER_HANDLER');
@@ -153,52 +135,61 @@ export default function index() {
     const checkPermissions = async () => {
       const { status } = await Notifications.getPermissionsAsync();
       console.log("🔍 Status izin notifikasi:", status);
+      const token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log("�� Token push:", token);
   
       if (status !== 'granted') {
         const { status: newStatus } = await Notifications.requestPermissionsAsync();
         console.log("📌 Status izin setelah permintaan:", newStatus);
       }
     };
-  
     checkPermissions();
   
     // Fungsi untuk mendaftarkan push notification
     const registerForPushNotificationsAsync = async (uid) => {
       if (!uid) return;
+      try {
+        if (Device.isDevice) {
+          let { status } = await Notifications.getPermissionsAsync();
+          if (status !== 'granted') {
+            status = (await Notifications.requestPermissionsAsync()).status;
+          }
+          if (status !== 'granted') {
+            Alert.alert('Gagal mendapatkan token push untuk mengirim notifikasi! Silakan coba lagi.');
+            return;
+          }
+          const token = (await Notifications.getExpoPushTokenAsync()).data;
+          const userRef = doc(db, "users", uid);
+          const userSnap = await getDoc(userRef);
+          const savedToken = userSnap.exists() ? userSnap.data().pushToken : null;
 
-      if (Device.isDevice) {
-        let { status } = await Notifications.getPermissionsAsync();
-        if (status !== 'granted') {
-          const { status: newStatus } = await Notifications.requestPermissionsAsync();
-          status = newStatus;
+          if (savedToken !== token) {
+            await setDoc(userRef, { pushToken: token }, { merge: true });
+            console.log("Push token updated successfully.");
+          } else {
+            console.log("Push token is up to date.");
+          }
+
+          messaging().onTokenRefresh(async (newToken) => {
+            await setDoc(userRef, { pushToken: newToken }, { merge: true });
+            console.log("Push token refreshed and updated successfully.");
+          });
+        } else {
+          Alert.alert('Harus menggunakan perangkat fisik untuk push notifications');
         }
-
-        if (status !== 'granted') {
-          Alert.alert('Gagal mendapatkan token push untuk mengirim notifikasi! Silakan coba lagi.');
-          return registerForPushNotificationsAsync(uid); // Ulangi permintaan izin
+        if (Platform.OS === 'android') {
+          await Notifications.setNotificationChannelAsync('default', {
+            name: 'default',
+            importance: Notifications.AndroidImportance.MAX,
+            vibrationPattern: [0, 250, 250, 250],
+            lightColor: '#FF231F7C'
+          });
         }
-
-        const token = (await Notifications.getExpoPushTokenAsync()).data;
-        const userRef = doc(db, "users", uid);
-        try {
-          await setDoc(userRef, { pushToken: token }, { merge: true });
-          console.log("Push token saved successfully.");
-        } catch (error) {
-          console.error("Error saving push token:", error);
-        }
-      } else {
-        Alert.alert('Harus menggunakan perangkat fisik untuk push notifications');
-      }
-
-      if (Platform.OS === 'android') {
-        Notifications.setNotificationChannelAsync('default', {
-          name: 'default',
-          importance: Notifications.AndroidImportance.MAX,
-          vibrationPattern: [0, 250, 250, 250],
-          lightColor: '#FF231F7C',
-        });
+      } catch (error) {
+        console.error("Error registering for push notifications:", error);
       }
     };
+    
 
     const foregroundSubscription = Notifications.addNotificationReceivedListener(notification => {
       console.log("🎯 Notifikasi diterima di foreground:", notification);
@@ -210,14 +201,18 @@ export default function index() {
     // Tambahkan listener untuk notifikasi
     const subscription = Notifications.addNotificationResponseReceivedListener(response => {
       console.log("📩 Notifikasi ditekan:", response);
-      if (response.notification.request.content.data) {
-        const { latitude, longitude, formattedAddress, name } = response.notification.request.content.data;
-        console.log(latitude, longitude)
-        if (latitude && longitude) {
-          const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
-          Linking.openURL(url);
-        }
+      const { latitude, longitude, formattedAddress, name } = response.notification.request.content.data;
+      console.log(latitude, longitude)
+      if (latitude && longitude) {
+        const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
+        Linking.openURL(url);
       }
+      // if (latitude && longitude) {
+      //   router.push({
+      //     pathname: "/Location",
+      //     params: { latitude, longitude, formattedAddress, name },
+      //   });
+      // }
     });
 
     return () => {
@@ -226,32 +221,13 @@ export default function index() {
       foregroundSubscription.remove();
       unsubs
     };
-}, [router, rootNavigationState]);
-
-
+}, [router, user]);
 
 
   return (
-    <View>
-    {isLoading ? (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color={Colors.blue} animating={true}/>
+      <View>
+        {!!user ? <Home /> : <MenuAwal />}
       </View>
-    ) : (
-      !!user ? <Home /> : <MenuAwal />
-    )}
-  </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: Colors.white,
-    height: '100%'
-  }
-})
-
-AppRegistry.registerComponent('index', () => index);
+// AppRegistry.registerComponent('index', () => index);
