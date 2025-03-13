@@ -15,7 +15,8 @@ const LastReadArticle = ({ article, onPress }) => {
     );
   }
 
-  const formattedKeywords = article?.keywords?.join(', ') ?? '';
+  const formattedKeywords = Array.isArray(article?.keywords) ? article.keywords.join(', ') : '';
+
   const truncateDescription = article?.description ? (description => {
     const words = description.split(' ');
     const truncated = words.slice(0, 7).join(' ');
@@ -116,6 +117,19 @@ const styles = StyleSheet.create({
         fontFamily: 'italic',
         fontSize: 8,
         marginTop: 3,
+    },
+    noRemindersContainer: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%', // Occupy full width
+      height: 100,
+    },
+    noRemindersText: {
+      fontSize: 12,
+      color: Colors.grey,
+      textAlign: 'center',
+      fontFamily: 'regular',
+      marginTop: 10,
     },
 });
 
