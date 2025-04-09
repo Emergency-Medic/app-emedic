@@ -21,7 +21,7 @@ const data = {
 		'fraktur', 'lukatusuk', 'pingsan', 'lukabakar'
 	],  
 	kategori3: [  
-		'gigitanular', 'hentijantung', 'kesetrum', 'seranganjantung', 'tersedak', 'pendarahan' 
+		'gigitanular', 'hentijantung', 'kesetrum', 'seranganjantung', 'tersedak', 'pendarahan', 'anafilaksis' 
 	],  
 };  
 
