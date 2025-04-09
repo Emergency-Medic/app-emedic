@@ -32,14 +32,23 @@ export default function ChangeUsername() {
       }
       try {
         if (!auth.currentUser) return
-        await setDoc(doc(db, "usernames", username), { uid: auth.currentUser.uid });
-        const userRef = doc(db, 'users', auth.currentUser.uid)
-        await updateDoc(userRef, { username: username })
-        if (oldUsername) { // Hanya hapus jika ada username lama
-          const oldUsernameRef = doc(db, 'usernames', oldUsername);
-          await deleteDoc(oldUsernameRef);
-      }
-        router.back()
+        const usernameDocRef = doc(db, "usernames", username);
+          const usernameDocSnapshot = await getDoc(usernameDocRef);
+      
+          if (usernameDocSnapshot.exists()) {
+            // Username already exists, handle the error
+            setError('Username sudah digunakan. Buat username baru yang unik.');
+            return
+          } else {
+            await setDoc(doc(db, "usernames", username), { uid: auth.currentUser.uid });
+            const userRef = doc(db, 'users', auth.currentUser.uid)
+            await updateDoc(userRef, { username: username })
+            if (oldUsername) { // Hanya hapus jika ada username lama
+              const oldUsernameRef = doc(db, 'usernames', oldUsername);
+              await deleteDoc(oldUsernameRef);
+            }
+            router.back();
+          }
       } catch (error) {
         console.log('Error updating user', error)
       }
