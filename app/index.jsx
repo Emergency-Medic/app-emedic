@@ -30,6 +30,7 @@ Notifications.addNotificationResponseReceivedListener(response => {
     const url = `https://www.google.com/maps?q=${latitude},${longitude}`;
     Linking.openURL(url);
   }
+  
 });
 
 const BACKGROUND_NOTIFICATION_TASK = 'BACKGROUND-NOTIFICATION-TASK';

@@ -23,7 +23,9 @@
        "buildType": "apk"
       },
       "env": {
-        "APP_ENV": "production"
+        "APP_ENV": "production",
+        "FIREBASE_API_KEY": "AIzaSyCnuFN5Q9D9AjmZqI9xYn885V1Ps75WBWc",
+        "FIREBASE_AUTH_DOMAIN": "emedic-app-52042.firebaseapp.com"
       }
     }
   },
