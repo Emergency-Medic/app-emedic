@@ -477,19 +477,7 @@ const styles = StyleSheet.create({
     left: 310,
     top: 34
 },
-
-  forgotPass: {
-      // width: '100%'
-      flexDirection: 'row',
-      alignSelf: 'flex-end',
-      marginTop: 7,
-      right: 0
-  },
-  forgotPassTxt: {
-      fontSize: 10,
-      fontFamily: 'bold',
-      color: '#A8201A'
-  },
+ 
   submit: {
       backgroundColor: '#A8201A',
       borderRadius: 30,

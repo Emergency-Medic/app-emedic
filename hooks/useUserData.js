@@ -21,7 +21,7 @@ const useUserData = () => {
         setName(data.firstName);
         setEmail(data.email);
         setUsername(data.username);
-        setCompletedQuizzes(data.completedQuizzes);
+        setCompletedQuizzes(data.completedQuizzes??[]);
       } else {
         console.log("User does not exist!");
       }

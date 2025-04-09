@@ -11,35 +11,35 @@ import { doc, onSnapshot } from "firebase/firestore";
 import AntDesign from '@expo/vector-icons/AntDesign';
 
 export default function EditProfile() {
-        const [name, setName] = useState('')
-        const [username, setUsername] = useState('')
-        const [email, setEmail] = useState('')
-        const [modalVisible, setModalVisible] = useState(false);
-        const user = auth.currentUser
-        // const { user, setUser } = useUser()
-        const [showPasswordFields, setShowPasswordFields] = useState(false); // sebenarnya selain dipake buat show password atau ga, bakal buat email juga
+    const [name, setName] = useState('')
+    const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('')
+    const [modalVisible, setModalVisible] = useState(false);
+    const user = auth.currentUser
+    // const { user, setUser } = useUser()
+    const [showPasswordFields, setShowPasswordFields] = useState(false); // sebenarnya selain dipake buat show password atau ga, bakal buat email juga
 
-        useEffect(() => {
-            const currentUser = auth.currentUser;
-            if (currentUser) {
-                const isGoogleUser = currentUser.providerData.some(
+    useEffect(() => {
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+            const isGoogleUser = currentUser.providerData.some(
                 (provider) => provider.providerId === 'google.com'
             );
             setShowPasswordFields(!isGoogleUser);
-            }
-        }, []);
-
-        const handleEmail = async () => {
-            router.push('./ChangeEmail')
-            return
         }
-        
-        useEffect(() => {
-            if (!user) return;
-                
-            // Listen to real-time updates on this user's document
-            const userRef = doc(db, "users", user.uid);
-            const unsubscribe = onSnapshot(userRef, (snapshot) => {
+    }, []);
+
+    const handleEmail = async () => {
+        router.push('./ChangeEmail')
+        return
+    }
+
+    useEffect(() => {
+        if (!user) return;
+
+        // Listen to real-time updates on this user's document
+        const userRef = doc(db, "users", user.uid);
+        const unsubscribe = onSnapshot(userRef, (snapshot) => {
             if (snapshot.exists()) {
                 console.log(snapshot.data())
                 const data = snapshot.data();
@@ -49,75 +49,75 @@ export default function EditProfile() {
             } else {
                 console.log("User does not exist!");
             }
-            });
-                
-            return () => unsubscribe();  // Cleanup listener on unmount
-        }, [user]);
+        });
+
+        return () => unsubscribe();  // Cleanup listener on unmount
+    }, [user]);
 
 
 
-  return (
-    <ScrollView style={styles.allwrap}>
-        <BackButton color={Colors.white} top={45}/>
-        <View style={styles.header}></View>
-        <View style={styles.container}>
-            <View style={styles.profileCont}>
-                <View style={styles.profileImgContCont}>
-                    <View style={styles.profileImgCont}>
-                        <Image style={styles.profileImg} resizeMode='contain' source={require('../../../assets/images/Maskot.png')}/>
+    return (
+        <ScrollView style={styles.allwrap}>
+            <BackButton color={Colors.white} top={45} />
+            <View style={styles.header}></View>
+            <View style={styles.container}>
+                <View style={styles.profileCont}>
+                    <View style={styles.profileImgContCont}>
+                        <View style={styles.profileImgCont}>
+                            <Image style={styles.profileImg} resizeMode='contain' source={require('../../../assets/images/Maskot.png')} />
+                        </View>
+                        {/* <TouchableOpacity style={styles.camBtn}>
+                            <Entypo style={styles.camIcon} name="camera" size={15} color={Colors.red} />
+                        </TouchableOpacity> */}
                     </View>
-                    <TouchableOpacity style={styles.camBtn}>
-                        <Entypo style={styles.camIcon} name="camera" size={15} color={Colors.red} />
-                    </TouchableOpacity>
                 </View>
-            </View>
-            <View style={styles.dataContWrap}>
-                <View style={styles.dataCont}>
-                    <View style={styles.dataText}>
-                        <Text style={styles.dataTitle}>Nama Lengkap</Text>
-                        <Text style={styles.dataSpec}>{name}</Text>
+                <View style={styles.dataContWrap}>
+                    <View style={styles.dataCont}>
+                        <View style={styles.dataText}>
+                            <Text style={styles.dataTitle}>Nama Lengkap</Text>
+                            <Text style={styles.dataSpec}>{name}</Text>
+                        </View>
+                        <TouchableOpacity style={styles.editBtn} onPress={() => router.push('./ChangeName')}>
+                            <Feather name="edit" size={14} color={Colors.blue} />
+                        </TouchableOpacity>
                     </View>
-                    <TouchableOpacity style={styles.editBtn}onPress={() => router.push('./ChangeName')}>
-                        <Feather name="edit" size={14} color={Colors.blue} />
-                    </TouchableOpacity>
-                </View>
 
-                <View style={styles.dataCont}>
-                    <View style={styles.dataText}>
-                        <Text style={styles.dataTitle}>Username</Text>
-                        <Text style={styles.dataSpec}>{username}</Text>
+                    <View style={styles.dataCont}>
+                        <View style={styles.dataText}>
+                            <Text style={styles.dataTitle}>Username</Text>
+                            <Text style={styles.dataSpec}>{username}</Text>
+                        </View>
+                        <TouchableOpacity onPress={() => router.push('./ChangeUsername')} style={styles.editBtn}>
+                            <Feather name="edit" size={14} color={Colors.blue} />
+                        </TouchableOpacity>
                     </View>
-                    <TouchableOpacity onPress={() => router.push('./ChangeUsername')} style={styles.editBtn}>
-                        <Feather name="edit" size={14} color={Colors.blue} />
-                    </TouchableOpacity>
-                </View>
 
-                
-                <View style={styles.dataCont}>
-                    <View style={styles.dataText}>
-                        <Text style={styles.dataTitle}>Alamat Email</Text>
-                        <Text style={styles.dataSpec}>{email}</Text>
+
+                    <View style={styles.dataCont}>
+                        <View style={styles.dataText}>
+                            <Text style={styles.dataTitle}>Alamat Email</Text>
+                            <Text style={styles.dataSpec}>{email}</Text>
+                        </View>
+                        {showPasswordFields ?
+                            <TouchableOpacity onPress={handleEmail} style={styles.editBtn}>
+                                <Feather name="edit" size={14} color={Colors.blue} />
+                            </TouchableOpacity> : null
+                        }
                     </View>
                     {showPasswordFields ?
-                    <TouchableOpacity onPress={handleEmail} style={styles.editBtn}>
-                        <Feather name="edit" size={14} color={Colors.blue} />
-                    </TouchableOpacity> : null
-                }
-                </View> 
-                {showPasswordFields ?
-                <View style={styles.dataCont}>
-                    <View style={styles.dataText}>
-                        <Text style={styles.dataTitle}>Kata Sandi</Text>
-                        <Text style={styles.dataSpec}>******</Text>
-                    </View>
-                    <TouchableOpacity style={styles.editBtn} onPress={() => router.push('./ChangePass')}>
-                        <Feather name="edit" size={14} color={Colors.blue} />
-                    </TouchableOpacity>
-                </View> : null
-                }
+                        <View style={styles.dataCont}>
+                            <View style={styles.dataText}>
+                                <Text style={styles.dataTitle}>Kata Sandi</Text>
+                                <Text style={styles.dataSpec}>******</Text>
+                            </View>
+                            <TouchableOpacity style={styles.editBtn} onPress={() => router.push('./ChangePass')}>
+                                <Feather name="edit" size={14} color={Colors.blue} />
+                            </TouchableOpacity>
+                        </View> : null
+                    }
+                </View>
             </View>
-        </View>
-        <Modal transparent={true} visible={modalVisible} animationType="fade" onRequestClose={() => setModalVisible(false)}>
+            {/* <Modal transparent={true} visible={modalVisible} animationType="fade" onRequestClose={() => setModalVisible(false)}>
             <TouchableWithoutFeedback onPressOut={() => setModalVisible(false)}>
             <View style={styles.modalContainer2}>
                 <TouchableWithoutFeedback>
@@ -144,9 +144,9 @@ export default function EditProfile() {
                 </TouchableWithoutFeedback>
             </View>
             </TouchableWithoutFeedback>
-      </Modal>
-    </ScrollView>
-  )
+      </Modal> */}
+        </ScrollView>
+    )
 }
 const styles = StyleSheet.create({
     allwrap: {
@@ -194,10 +194,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 4,
         // zIndex: 99,
-        shadowColor: '#000', 
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25, 
-        shadowRadius: 3.84, 
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
         elevation: 2.5,
         right: 15,
         bottom: 15
@@ -264,22 +264,22 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         textAlign: 'center',
         alignItems: 'center',
-      },
-      modalWarningContainer2: {
+    },
+    modalWarningContainer2: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 10,
-      },
-      modalWarningIcon2: {
+    },
+    modalWarningIcon2: {
         marginRight: 10,
-      },
-      modalWarningText2: {
+    },
+    modalWarningText2: {
         color: Colors.red,
         fontSize: 14,
         fontFamily: 'semibold',
-      },
-      modalWarningQuestion2: {
+    },
+    modalWarningQuestion2: {
         fontFamily: 'semibold',
         fontSize: 14,
         color: Colors.blue,
@@ -287,14 +287,14 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: 23,
         marginBottom: 33
-      },
-      answerContent2: {
+    },
+    answerContent2: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         gap: 20,
         marginBottom: 4
-      },
-      meButton2: {
+    },
+    meButton2: {
         paddingHorizontal: 34,
         paddingVertical: 7,
         backgroundColor: Colors.red,
@@ -306,13 +306,13 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.1,
         shadowRadius: 10,
-      },
-      yaText: {
+    },
+    yaText: {
         color: Colors.white,
         fontFamily: 'semibold',
         fontSize: 14,
-      },
-      otherButton2: {
+    },
+    otherButton2: {
         paddingHorizontal: 34,
         paddingVertical: 7,
         backgroundColor: Colors.white,
@@ -324,10 +324,10 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 10 },
         shadowOpacity: 0.1,
         shadowRadius: 10,
-      },
-      tidakText: {
+    },
+    tidakText: {
         color: Colors.grey,
         fontFamily: 'semibold',
         fontSize: 14,
-      },
+    },
 })
